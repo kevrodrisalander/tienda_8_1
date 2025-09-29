@@ -7,12 +7,31 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarContent">
-            <!-- Menú principal -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="/ropa">Ropa</a></li>
-                <li class="nav-item"><a class="nav-link" href="/electronica">Electrónica</a></li>
-                <li class="nav-item"><a class="nav-link" href="/hogar">Hogar</a></li>
-                <li class="nav-item"><a class="nav-link" href="/belleza">Belleza</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="productosDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Productos
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="productosDropdown">
+                        <li><a class="dropdown-item" href="/ropa">Ropa</a></li>
+                        <li><a class="dropdown-item" href="/electronica">Electrónica</a></li>
+                        <li><a class="dropdown-item" href="/hogar">Hogar</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="/tiendas">Tiendas</a></li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Administración
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                        <li><a class="dropdown-item" href="/empleados">Empleados</a></li>
+                        <li><a class="dropdown-item" href="/proveedores">Proveedores</a></li>
+                        <li><a class="dropdown-item" href="/clientes">Clientes</a></li>
+                    </ul>
+                </li>
             </ul>
 
             <!-- Botones de acción -->

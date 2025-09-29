@@ -29,15 +29,5 @@
                 </ul>
             </div>
         </div>
-
-        {{-- <hr class="bg-light"> --}}
-
-        {{-- <div class="d-flex justify-content-between align-items-center">
-            <p class="mb-0">&copy; {{ date('Y') }} Tienda Departamental. Todos los derechos reservados.</p>
-            <div>
-                <a href="/login" class="btn btn-outline-light btn-sm me-2">Iniciar sesión</a>
-                <a href="/registro" class="btn btn-light btn-sm">Empezar</a>
-            </div>
-        </div> --}}
     </div>
 </footer>
