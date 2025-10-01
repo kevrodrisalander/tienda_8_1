@@ -3,14 +3,14 @@
     width: 100%;
     border-collapse: collapse;
     background-color: #f5f5f5;
-    color: #182677;
+    color: #1e2d85;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Encabezado */
 #tbl_productos thead tr {
-    background-color: #661414;
+    background-color: #09351f;
     color: #ffffff;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -36,12 +36,12 @@
 #tbl_productos tbody td {
     padding: 10px;
     text-align: center;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #a5a5a5;
 }
 
 /* Hover sobre filas */
 #tbl_productos tbody tr:hover {
-    background-color: #d0e7f5;
+    background-color: #a1dfbd;
     cursor: pointer;
 }
 

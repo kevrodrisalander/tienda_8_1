@@ -18,5 +18,6 @@ Route::get('/productos', function () {
     return view('productos');
 });
 
+//Ruta para consulta productos
+Route::post('/productos', [ProductosController::class, 'consultaProductos'])->name('productos.consulta');
 
-//  Route::get('productos', [ProductosController::class, 'productos']);
