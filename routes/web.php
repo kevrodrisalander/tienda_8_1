@@ -18,6 +18,11 @@ Route::get('/productos', function () {
     return view('productos');
 });
 
+Route::get('/ropa', function () {
+    return view('categorias.ropa');
+});
+
+
 //Ruta para consulta productos
 Route::post('/productos', [ProductosController::class, 'consultaProductos'])->name('productos.consulta');
 
