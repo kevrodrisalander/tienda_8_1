@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductosController;
+use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CartController;
 
@@ -17,8 +17,8 @@ Route::get('/home', function () {
     return view('home');
 });
 
-Route::get('/productos', function () {
-    return view('productos');
+Route::get('/inventario', function () {
+    return view('inventario');
 });
 
 Route::get('/ropa', function () {
@@ -27,7 +27,7 @@ Route::get('/ropa', function () {
 
 
 //Ruta para consulta productos
-Route::post('/productos', [ProductosController::class, 'consultaProductos'])->name('productos.consulta');
+Route::post('/inventario', [InventarioController::class, 'consultaInventario'])->name('productos.consulta');
 
 Route::get('/ropa', [ProductoController::class, 'ropa'])->name('ropa');
 

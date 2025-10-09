@@ -6,9 +6,9 @@
 
 @section('content')
     <div class="container">
-        <b><h2 class="text-center my-5">Productos</h2></b>
+        <b><h2 class="text-center my-5">Inventario</h2></b>
 
-        <b><p class="text-center">Encuentra todo lo que necesitas en un solo lugar: ropa, electrónica, hogar, belleza y más.</p></b>
+        <b><p class="text-center">Listado de los productos que se encuentran en  disponibles</p></b>
 
         <div class="row">
             <div class="col-lg-12">
@@ -25,6 +25,8 @@
                                     <th class="text-center">Stock</th>
                                     <th class="text-center">Precio de venta</th>
                                     <th class="text-center">Status</th>
+                                    <th class="text-center">Id Marca</th>
+                                    <th class="text-center">Marca</th>
                                     <th class="text-center">Categoría</th>
                                 </tr>
                             </thead>
@@ -38,5 +40,5 @@
 
 @section('js_footer')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{{ asset('js/tienda/productos.js') }}"></script>
+    <script src="{{ asset('js/tienda/inventario.js') }}"></script>
 @endsection
