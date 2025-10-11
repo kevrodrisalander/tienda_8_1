@@ -21,12 +21,13 @@ $(document).ready(function () {
         columnDefs: [
             {
                 targets: [0,5],
+                // targets: [],
                 visible: false,
                 searchable: false,
             },
             {
                 width: "30%",
-                targets: [1], // Descripción
+                targets: [], // Descripción
             },
         ],
         ajax: {
@@ -39,16 +40,18 @@ $(document).ready(function () {
                 return $("#formproductos").serialize(); // si tienes filtros
             },
         },
-
         columns: [
             { data: "IdProducto" }, // ID del producto
             { data: "Descripcion" }, // Descripción del producto
             { data: "Stock" }, // Cantidad en inventario
             { data: "PrecioVenta" }, // Precio de venta
-            { data: "Estatus" }, // Estatus desde cat_estatus_inventario
-            { data: "IdMarca" }, // ID de la marca desde cat_marcas
+            { data: "estatus" }, // Estatus desde cat_estatus_inventario
+            { data: "id_marca" }, // ID de la marca desde cat_marcas
             { data: "MarcaNombre" }, // Nombre de la marca desde cat_marcas
-            { data: "categoria" }, // Categoría desde cat_categorias
+            { data: "categoria" }, // Nombre de la categoría desde cat_categorias
+            { data: "IdSeccion" }, // ID de la sección desde cat_secciones
+            { data: "SeccionNombre" }, // Nombre de la sección desde cat_secciones
+            { data: "SeccionSlug" }, // Slug de la sección (opcional para navegación)
         ],
     });
 });

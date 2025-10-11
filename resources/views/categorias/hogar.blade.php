@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Ropa - Tienda Departamental')
+@section('title', 'Hogar - Tienda Departamental')
 
 @section('content')
 <div class="container">
     <!-- Encabezado visual -->
     <div class="py-4 text-center bg-light rounded mb-4">
-        <h1 class="fw-bold">Colección de Ropa</h1>
-        <p class="text-muted">Explora nuestra selección de prendas disponibles</p>
+        <h1 class="fw-bold">Colección de productos de hogar</h1>
+        <p class="text-muted">Explora nuestra selección de productos del hogar para mayor comodidad en familia</p>
     </div>
 
     <div class="row">
@@ -38,7 +38,7 @@
             </div>
         @empty
             <div class="col-12">
-                <p class="text-center text-muted">No hay productos de ropa disponibles en este momento.</p>
+                <p class="text-center text-muted">No hay productos de hogar disponibles en este momento.</p>
             </div>
         @endforelse
     </div>

@@ -3,27 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
+use App\Models\CatSeccion;
+use Illuminate\Support\Facades\View;
 
 class ProductoController extends Controller
 {
-    // public function ropa()
-    // {
-    //     // Aquí filtramos por categoría 1 (ajústalo si es otro id)
-    //     $productos = Producto::where('id_categoria', 2)
-    //                          ->where('id_status', 1) // solo activos
-    //                          ->get();
-
-    //     return view('categorias.ropa', compact('productos'));
-    // }
-
-    public function ropa()
+    // Vista específica para la categoría
+    public function mostrarCategoria($slug)
 {
-    $productos = Producto::where('id_categoria', 2)   // categoría Ropa
-                         ->where('id_status', 1)       // solo activos
-                         ->orderBy('descripcion', 'asc')  // ordenar A → Z
+    // Busca la categoría por slug
+    $categoria = CatSeccion::where('slug', $slug)->firstOrFail();
+
+    // Busca los productos que pertenecen a esa categoría usando el nuevo campo 'id'
+    $productos = Producto::where('id_categoria', $categoria->id) // ← cambio aquí
+                         ->where('id_status', 1)
+                         ->orderBy('descripcion', 'asc')
                          ->get();
 
-    return view('categorias.ropa', compact('productos'));
+    // Carga la vista específica si existe
+    if (View::exists("categorias.$slug")) {
+        return view("categorias.$slug", compact('categoria', 'productos'));
+    }
+    return response()->view('mensaje.sin_categoria', ['slug' => $slug], 404);
 }
-
 }

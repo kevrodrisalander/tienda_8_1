@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="/">Tienda Departamental</a>
+        <a class="navbar-brand" href="/home">Tienda Departamental</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
             <span class="navbar-toggler-icon"></span>
@@ -14,9 +14,9 @@
                         Productos
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="productosDropdown">
-                        <li><a class="dropdown-item" href="/ropa">Ropa</a></li>
-                        <li><a class="dropdown-item" href="/electronica">Electrónica</a></li>
-                        <li><a class="dropdown-item" href="/hogar">Hogar</a></li>
+                        {{-- <li><a class="dropdown-item" href="/ropa">Ropa</a></li> --}}
+                        {{-- <li><a class="dropdown-item" href="/electronica">Electrónica</a></li> --}}
+                        {{-- <li><a class="dropdown-item" href="/hogar">Hogar</a></li> --}}
                     </ul>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="/tiendas">Tiendas</a></li>
@@ -27,9 +27,9 @@
                         Administración
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                        <li><a class="dropdown-item" href="/empleados">Empleados</a></li>
-                        <li><a class="dropdown-item" href="/proveedores">Proveedores</a></li>
-                        <li><a class="dropdown-item" href="/clientes">Clientes</a></li>
+                        <li><a class="dropdown-item" href="/administracion">Administración</a></li>
+                        {{-- <li><a class="dropdown-item" href="/proveedores">Proveedores</a></li> --}}
+                        {{-- <li><a class="dropdown-item" href="/clientes">Clientes</a></li> --}}
                     </ul>
                 </li>
             </ul>

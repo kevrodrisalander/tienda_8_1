@@ -4,7 +4,9 @@
 
 @section('content')
 <style>
+    /* Banner principal */
     .hero-section {
+        width: 100%;
         background: url("{{ asset('images/tienda-banner.jpg') }}") no-repeat center center;
         background-size: cover;
         height: 350px;
@@ -17,6 +19,7 @@
         margin-bottom: 40px;
     }
 
+    /* Tarjetas de categoría */
     .card {
         border: none;
         border-radius: 15px;
@@ -35,73 +38,53 @@
         object-fit: cover;
     }
 
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .card-text {
+        font-size: 0.95rem;
+        color: #555;
+    }
+
     .btn-primary {
         border-radius: 25px;
         padding: 8px 20px;
         font-weight: bold;
+        background-color: #054991;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    /* Responsive ajustes */
+    @media (max-width: 768px) {
+        .card img {
+            height: 180px;
+        }
     }
 </style>
 
 <div class="container">
-      <h1><p class="text-center fs-5">Bienvenido a tu tienda.</p></h1>
-    <p class="text-center fs-5">Encuentra todo lo que necesitas en un solo lugar: ropa, electrónica, hogar, belleza y más.</p>
+   <p class="text-center fs-5">Encuentra todo lo que necesitas en un solo lugar: ropa, electrónica, hogar, belleza y más.</p>
 
     <div class="row mt-5">
-        <!-- Categoría: Ropa -->
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <img src="{{ asset('imagenes/ropa.jpg') }}" class="card-img-top" alt="Ropa">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Ropa</h5>
-                    <p class="card-text">Moda para toda la familia: casual, formal y deportiva.</p>
-                    <a href="ropa" class="btn btn-primary">Ver más</a>
+        @foreach($secciones as $seccion)
+            <div class="col-12 col-sm-6 col-md-3 mb-4">
+                <div class="card">
+                    <img src="{{ asset('imagenes/' . strtolower($seccion->nombre) . '.jpg') }}" class="card-img-top" alt="{{ $seccion->nombre }}">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ $seccion->nombre }}</h5>
+                        <p class="card-text">{{ $seccion->descripcion ?? 'Explora esta categoría.' }}</p>
+                        <a href="{{ route('categoria.mostrar', ['slug' => $seccion->slug]) }}" class="btn btn-primary">Ver más</a>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Categoría: Electrónica -->
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <img src="{{ asset('imagenes/electronica.jpg') }}" class="card-img-top" alt="Electrónica">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Electrónica</h5>
-                    <p class="card-text">Celulares, laptops, audífonos y más tecnología.</p>
-                    <a href="#" class="btn btn-primary">Ver más</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Categoría: Hogar -->
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <img src="{{ asset('imagenes/hogar.jpg') }}" class="card-img-top" alt="Hogar">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Hogar</h5>
-                    <p class="card-text">Muebles, decoración, cocina y artículos para tu casa.</p>
-                    <a href="#" class="btn btn-primary">Ver más</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <img src="{{ asset('imagenes/juguetes.jpg') }}" class="card-img-top" alt="Hogar">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Juguetes</h5>
-                    <p class="card-text">Muebles, decoración, cocina y artículos para tu casa.</p>
-                    <a href="#" class="btn btn-primary">Ver más</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <img src="{{ asset('imagenes/deportes.jpg') }}" class="card-img-top" alt="Hogar">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Deportes</h5>
-                    <p class="card-text">Muebles, decoración, cocina y artículos para tu casa.</p>
-                    <a href="#" class="btn btn-primary">Ver más</a>
-                </div>
-            </div>
-        </div>
+        @endforeach
     </div>
 </div>
 @endsection

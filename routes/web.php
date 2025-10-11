@@ -4,34 +4,46 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\TiendaController;
 
+//Rutas de Inventario
+Route::view('/inventario', 'inventario')->name('inventario.vista');
+Route::post('/inventario', [InventarioController::class, 'consultaInventario'])->name('productos.consulta');
 
-use Yajra\DataTables\Facades\DataTables;
+//Rutas de Tienda
+Route::get('/home', [TiendaController::class, 'home'])->name('home');
 
+//Rutas de Productos por Categoría
+Route::get('/categoria/{slug}', [ProductoController::class, 'mostrarCategoria'])->name('categoria.mostrar');
 
-Route::get('/', function () {
-    return view('welcome');
+//Rutas de Carrito
+Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+
+Route::get('/test-vista/{slug}', function ($slug) {
+    return view('mensaje.sin_categoria', ['slug' => $slug]);
 });
 
-Route::get('/home', function () {
-    return view('home');
-});
+
+Route::get('/administracion', function () {
+    return view('administracion');
+})->name('administracion');
+
 
 Route::get('/inventario', function () {
     return view('inventario');
-});
+})->name('inventario');
 
-Route::get('/ropa', function () {
-    return view('categorias.ropa');
-});
+Route::get('/stock', function () {
+    return view('stock');
+})->name('stock');
 
+Route::get('/usuarios', function () {
+    return view('usuarios');
+})->name('usuarios');
 
-//Ruta para consulta productos
-Route::post('/inventario', [InventarioController::class, 'consultaInventario'])->name('productos.consulta');
+Route::get('/provedores', function () {
+    return view('provedores');
+})->name('provedores');
 
-Route::get('/ropa', [ProductoController::class, 'ropa'])->name('ropa');
-
-
-Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
 
 

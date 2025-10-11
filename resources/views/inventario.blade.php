@@ -8,7 +8,7 @@
     <div class="container">
         <b><h2 class="text-center my-5">Inventario</h2></b>
 
-        <b><p class="text-center">Listado de los productos que se encuentran en  disponibles</p></b>
+        <b><p class="text-center">Listado de los productos que se encuentran registrados en la tienda</p></b>
 
         <div class="row">
             <div class="col-lg-12">
@@ -17,7 +17,7 @@
                     <meta name="csrf-token" content="{{ csrf_token() }}">
 
                     <div class="row">
-                        <table class="table_id" id="tbl_productos">
+                            <table class="table_id" id="tbl_productos">
                             <thead>
                                 <tr>
                                     <th class="text-center">Id</th>
@@ -28,6 +28,9 @@
                                     <th class="text-center">Id Marca</th>
                                     <th class="text-center">Marca</th>
                                     <th class="text-center">Categoría</th>
+                                    <th class="text-center">id sec</th>
+                                     <th class="text-center">Categoría sec</th>
+                                    <th class="text-center">Vista</th>
                                 </tr>
                             </thead>
                         </table>

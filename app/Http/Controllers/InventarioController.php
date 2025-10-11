@@ -7,14 +7,16 @@ use Illuminate\Support\Facades\DB;
 
 class InventarioController extends Controller
 {
-    public function consultaInventario(Request $request)
+    /**
+     * Consulta el inventario completo con relaciones.
+     */
+    public function consultaInventario()
     {
-
-  $inventario = DB::table('productos as p')
-    ->join('cat_categorias as c', 'p.id_categoria', '=', 'c.id')
-    ->join('cat_estatus_inventario as e', 'p.id_status', '=', 'e.id')
-    ->join('cat_marcas as m', 'p.id_marca', '=', 'm.id') // ← nuevo JOIN
-    // ->join('cat_marcas as m', 'p.marca_id', '=', 'm.id')
+        $inventario = DB::table('productos as p')
+    ->leftJoin('cat_categorias as c', 'p.id_categoria', '=', 'c.id')
+    ->leftJoin('cat_secciones as s', 'p.id_categoria', '=', 's.id')
+    ->leftJoin('cat_estatus_inventario as e', 'p.id_status', '=', 'e.id')
+    ->leftJoin('cat_marcas as m', 'p.id_marca', '=', 'm.id')
     ->select(
         'p.id as IdProducto',
         'p.descripcion as Descripcion',
@@ -22,10 +24,13 @@ class InventarioController extends Controller
         'p.precio_venta as PrecioVenta',
         'p.id_categoria',
         'c.categoria as categoria',
+        's.id as IdSeccion',
+        's.nombre as SeccionNombre',
+        's.slug as SeccionSlug',
         'p.id_status',
-        'e.tipo as Estatus',
-        'm.id as IdMarca',           // ← nuevo campo
-        'm.nombre as MarcaNombre'    // ← nuevo campo
+        'e.tipo as estatus',
+        'm.id as id_marca',
+        'm.nombre as MarcaNombre'
     )
     ->get();
 
