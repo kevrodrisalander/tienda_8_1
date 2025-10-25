@@ -2,7 +2,7 @@
 #tbl_productos {
     width: 100%;
     border-collapse: collapse;
-    background-color: #f5f5f5;
+    background-color: #ffffff;
     color: #1e2d85;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -49,4 +49,92 @@
 #tbl_productos {
     border-radius: 8px;
     overflow: hidden;
+}
+
+
+/* Tabla stock  */
+
+.table_id {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.table_id thead th {
+    background-color: #09351f;
+    color: #ffffff;
+    padding: 12px;
+    text-align: center;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table_id tbody td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table_id tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.table_id tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table_id tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+/* Responsive scroll if needed */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Optional: highlight critical stock levels */
+.table_id td[data-low="true"] {
+    background-color: #ffe5e5;
+    color: #b30000;
+    font-weight: bold;
+}
+
+.table_id {
+    color: #1e2d85; /* Azul Bootstrap, puedes usar otro tono si prefieres */
+}
+
+.table_id  tbody tr:hover {
+    background-color: #97dbd0;
+    cursor: pointer;
+}
+
+.table_id  {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+
+/* modal */
+
+#modalSimple .modal-header {
+  background-color: #212529; /* Fondo negro */
+  color: #fff;            /* Texto blanco */
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #444;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+#modalSimple .modal-title {
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+/* Botón de cerrar en fondo oscuro */
+#modalSimple .btn-close {
+  filter: invert(1); /* Convierte el ícono a blanco */
 }

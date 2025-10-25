@@ -22,6 +22,7 @@ class Producto extends Model
         'precio_venta',
         'id_status',
         'id_categoria',
+        'id_marca',
         'name_file',
         'fecha',
     ];
