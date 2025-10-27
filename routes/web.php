@@ -39,3 +39,9 @@ Route::get('/test-vista/{slug}', function ($slug) {
 Route::view('/administracion', 'administracion')->name('administracion');
 Route::view('/usuarios', 'usuarios')->name('usuarios');
 Route::view('/provedores', 'provedores')->name('provedores');
+
+
+// Ruta carrito
+Route::get('/carrito-test', function () {
+    return view('cart.test');
+});

@@ -34,10 +34,19 @@
                 </li>
             </ul>
 
-            <!-- Botones de acción -->
-            <div class="d-flex">
-                <a href="/login" class="btn btn-outline-light me-2">Iniciar sesión</a>
-                <a href="/registro" class="btn btn-light">Registrarse</a>
+            <!-- Botones de acción y carrito -->
+            <div class="d-flex align-items-center gap-2">
+                <a href="/login" class="btn btn-outline-light btn-sm">Iniciar sesión</a>
+                <a href="/registro" class="btn btn-light btn-sm">Registrarse</a>
+
+                <!--Carrito -->
+                <button class="btn btn-outline-warning position-relative"
+                        data-bs-toggle="modal" data-bs-target="#cartModal">
+                    <i class="bi bi-cart3"></i>
+                    <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        0
+                    </span>
+                </button>
             </div>
         </div>
     </div>

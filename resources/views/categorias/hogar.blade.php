@@ -24,15 +24,16 @@
                         <p class="text-muted mb-1">${{ number_format($producto->precio_venta, 2) }} MXN</p>
                         <p><small>Stock: {{ $producto->stock }}</small></p>
 
-                        <form action="{{ route('cart.add', $producto->id) }}" method="POST">
-                            @csrf
-                            <input type="number" name="cantidad" value="1" min="1" max="{{ $producto->stock }}"
-                                   class="form-control mb-2 text-center"
-                                   style="width: 80px; margin:auto;">
-                            <button type="submit" class="btn btn-primary btn-sm w-100">
-                                <i class="bi bi-cart-plus"></i> Añadir al carrito
-                            </button>
-                        </form>
+                        {{-- Input cantidad y botón JS --}}
+                        <input type="number" id="cantidad-{{ $producto->id }}" value="1" min="1" max="{{ $producto->stock }}"
+                               class="form-control mb-2 text-center"
+                               style="width: 80px; margin:auto;">
+                        <button class="btn btn-primary btn-sm w-100 btn-add"
+                                data-id="{{ $producto->id }}"
+                                data-nombre="{{ $producto->descripcion }}"
+                                data-precio="{{ $producto->precio_venta }}">
+                            <i class="bi bi-cart-plus"></i> Añadir al carrito
+                        </button>
                     </div>
                 </div>
             </div>
