@@ -55,7 +55,9 @@
 <div class="modal fade" id="modalNuevoProducto" tabindex="-1" aria-labelledby="modalNuevoProductoLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form method="POST" action="{{ route('producto.guardar') }}">
+        {{-- <form method="POST" action="{{ route('producto.guardar') }}"> --}}
+            <form method="POST" action="{{ route('producto.guardar') }}" enctype="multipart/form-data">
+
             @csrf
 
             <div class="modal-content">
@@ -161,6 +163,10 @@
                             <label for="observaciones" class="form-label">Observaciones</label>
                             <input type="text" name="observaciones" id="observaciones" class="form-control"
                                 required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="imagen" class="form-label">Imagen del producto</label>
+                            <input type="file" name="imagen" id="imagen" class="form-control" accept="image/*">
                         </div>
 
                     </div>

@@ -35,7 +35,7 @@ class StockController extends Controller
                 'stock.observaciones',
                 'stock.activo',
                 'stock.tipo_movimiento',
-                'usuarios.nombre as usuario_nombre',
+                // 'usuarios.nombre as usuario_nombre',
             ])
             ->get();
 

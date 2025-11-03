@@ -7,29 +7,30 @@ use App\Models\Producto;
 use App\Models\CatSeccion;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
+use Intervention\Image\Facades\Image;
+
 
 class ProductoController extends Controller
 {
     // Vista específica para la categoría
     public function mostrarCategoria($slug)
     {
-        // Busca la categoría por slug
         $categoria = CatSeccion::where('slug', $slug)->firstOrFail();
 
-        // Busca los productos que pertenecen a esa categoría usando el nuevo campo 'id'
-        $productos = Producto::where('id_categoria', $categoria->id) // ← cambio aquí
+        $productos = Producto::where('id_categoria', $categoria->id)
             ->where('id_status', 1)
             ->orderBy('descripcion', 'asc')
             ->get();
 
-        // Carga la vista específica si existe
         if (View::exists("categorias.$slug")) {
             return view("categorias.$slug", compact('categoria', 'productos'));
         }
+
         return response()->view('mensaje.sin_categoria', ['slug' => $slug], 404);
     }
 
-public function store(Request $request)
+    // Guardar producto
+    public function store(Request $request)
 {
     $validated = $request->validate([
         'nombre_producto'    => 'required|string|max:255',
@@ -46,28 +47,35 @@ public function store(Request $request)
         'fecha_vencimiento'  => 'nullable|date|after_or_equal:fecha_ingreso',
         'observaciones'      => 'nullable|string|max:255',
         'ubicacion'          => 'required|string|max:255',
+        'imagen'             => 'nullable|image|max:2048',
     ]);
 
-    //Crear nuevo lote
+    // Crear nuevo lote
     $idLote = DB::table('lotes_producto')->insertGetId([
         'codigo_lote'   => $validated['nuevo_lote'],
         'fecha_ingreso' => $validated['fecha_ingreso'],
         'cantidad'      => $validated['cantidad_inicial'],
     ], 'id_lote');
 
-    //Guardar producto
+    // Subir imagen si existe (sin redimensionar)
+    $imagePath = null;
+    if ($request->hasFile('imagen')) {
+        $imagePath = $request->file('imagen')->store('productos', 'public');
+    }
+
+    // Guardar producto
     $producto = Producto::create([
-        'descripcion'   => $validated['nombre_producto'],
-        'stock'         => $validated['cantidad_inicial'],
-        'precio_venta'  => $validated['precio_venta'],
-        'id_status'     => 1,
-        'id_categoria'  => $validated['id_categoria'],
-        'id_marca'      => $validated['id_marca'], // ✔ Marca incluida
-        'fecha'         => $validated['fecha_ingreso'],
-        'name_file'     => '',
+        'descripcion'  => $validated['nombre_producto'],
+        'stock'        => $validated['cantidad_inicial'],
+        'precio_venta' => $validated['precio_venta'],
+        'id_status'    => 1,
+        'id_categoria' => $validated['id_categoria'],
+        'id_marca'     => $validated['id_marca'],
+        'fecha'        => $validated['fecha_ingreso'],
+        'name_file'    => $imagePath,
     ]);
 
-    //Guardar stock
+    // Guardar stock
     DB::table('stock')->insert([
         'producto_id'       => $producto->id,
         'cantidad'          => $validated['cantidad_inicial'],

@@ -13,7 +13,8 @@
         @forelse($productos as $producto)
             <div class="col-12 col-sm-6 col-md-3 mb-4">
                 <div class="card h-100 shadow-sm border-0 rounded-3">
-                    <img src="{{ asset('imagenes/' . ($producto->name_file ?? 'default.jpg')) }}"
+                    {{-- <img src="{{ asset('imagenes/' . ($producto->name_file ?? 'default.jpg')) }}" --}}
+                        <img src="{{ asset('storage/' . ($producto->name_file ?? 'productos/default.jpg')) }}"
                          class="card-img-top"
                          alt="{{ $producto->descripcion }}"
                          style="height: 200px; object-fit: cover;">
