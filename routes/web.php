@@ -7,6 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\TiendaController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ProvedoresController;
+use App\Http\Controllers\Auth\LoginController;
 
 
 // Página principal de la tienda
@@ -45,3 +46,17 @@ Route::view('/provedores', 'provedores')->name('provedores');
 Route::post('/provedores', [ProvedoresController::class, 'consultaProvedores']);
 
 
+
+// Mostrar formulario de login
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+
+// Procesar login
+Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+
+// Logout
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Ruta protegida de ejemplo
+Route::get('/dashboard', function () {
+    return "Bienvenido al dashboard";
+})->middleware('auth')->name('dashboard');

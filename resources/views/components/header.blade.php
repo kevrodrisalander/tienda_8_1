@@ -37,7 +37,7 @@
             <!-- Botones de acción y carrito -->
             <div class="d-flex align-items-center gap-2">
                 <a href="/login" class="btn btn-outline-light btn-sm">Iniciar sesión</a>
-                <a href="/registro" class="btn btn-light btn-sm">Registrarse</a>
+                <a href="/login" class="btn btn-light btn-sm">Registrarse</a>
 
                 <!--Carrito -->
                 <button class="btn btn-outline-warning position-relative"
