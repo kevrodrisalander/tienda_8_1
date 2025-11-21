@@ -149,35 +149,61 @@ window.CartApp = (function () {
     };
 
     const checkout = () => {
-        const cart = readCart();
-        if (cart.length === 0) {
-            Swal.fire("Tu carrito está vacío", "", "info");
-            return;
+    const cart = readCart();
+    if (cart.length === 0) {
+        Swal.fire("Tu carrito está vacío", "", "info");
+        return;
+    }
+
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    const csrfToken = csrfMeta ? csrfMeta.getAttribute("content") : null;
+
+    if (!csrfToken) {
+        console.error("CSRF token no encontrado. Agrega <meta name='csrf-token'> en el <head>");
+        return;
+    }
+
+    const total = cart.reduce((s, p) => s + p.precio * p.cantidad, 0);
+
+    Swal.fire({
+        title: "Confirmar compra",
+        text: `Total: ${total.toLocaleString("es-MX", { style: "currency", currency: "MXN" })}`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Sí, comprar",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({ cart })
+            })
+            .then(response => response.blob()) // esperamos un PDF
+            .then(blob => {
+                // Descargar PDF
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ticket_compra_${Date.now()}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            })
+            .catch(err => console.error(err));
+
+            // Limpiar carrito
+            clearCart();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('cartModal'));
+            if (modal) modal.hide();
+            Swal.fire("Compra realizada", "Gracias por tu compra 🎉", "success");
         }
-        const total = cart.reduce((s, p) => s + p.precio * p.cantidad, 0);
-        Swal.fire({
-            title: "Confirmar compra",
-            text: `Total: ${total.toLocaleString("es-MX", {
-                style: "currency",
-                currency: "MXN",
-            })}`,
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Sí, comprar",
-            cancelButtonText: "Cancelar",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                clearCart();
-                const modal = bootstrap.Modal.getInstance($("#cartModal"));
-                if (modal) modal.hide();
-                Swal.fire(
-                    "Compra realizada",
-                    "Gracias por tu compra 🎉",
-                    "success"
-                );
-            }
-        });
-    };
+    });
+};
+
 
     const setupListeners = () => {
         document.addEventListener("click", (e) => {

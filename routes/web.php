@@ -37,26 +37,20 @@ Route::post('/productos', [ProductoController::class, 'store'])->name('producto.
 
 // Agregar producto al carrito
 Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
-Route::get('/carrito-test', function () {
-    return view('cart.test');
-});
+Route::get('/cart/show', [CartController::class, 'show'])->name('cart.show');
+Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
 //Ruta de provedores
 Route::view('/provedores', 'provedores')->name('provedores');
 Route::post('/provedores', [ProvedoresController::class, 'consultaProvedores']);
 
 
-
 // Mostrar formulario de login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-
-// Procesar login
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-
-// Logout
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-// Ruta protegida de ejemplo
 Route::get('/dashboard', function () {
     return "Bienvenido al dashboard";
 })->middleware('auth')->name('dashboard');

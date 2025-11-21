@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Mi Proyecto')</title>
     <link rel="icon" href="{{ asset('icono.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
