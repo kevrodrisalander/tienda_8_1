@@ -8,10 +8,13 @@ use App\Http\Controllers\TiendaController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ProvedoresController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\HomeController;
 
 
 // Página principal de la tienda
-Route::get('/home', [TiendaController::class, 'home'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+
 
 // Mostrar productos de una categoría por slug
 Route::get('/categoria/{slug}', [ProductoController::class, 'mostrarCategoria'])->name('categoria.mostrar');
@@ -54,3 +57,10 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/dashboard', function () {
     return "Bienvenido al dashboard";
 })->middleware('auth')->name('dashboard');
+
+// Cierre de sesión
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Registro
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register'])->name('register.post');

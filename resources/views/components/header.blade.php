@@ -36,8 +36,23 @@
 
             <!-- Botones de acción y carrito -->
             <div class="d-flex align-items-center gap-2">
-                <a href="/login" class="btn btn-outline-light btn-sm">Iniciar sesión</a>
-                <a href="/login" class="btn btn-light btn-sm">Registrarse</a>
+
+                @if(Auth::check())
+                    <!-- Usuario logueado -->
+                    <span class="text-light me-2">
+                        {{ Auth::user()->usuario }}
+                        ({{ Auth::user()->rolNombre() }})
+                    </span>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-danger btn-sm">Cerrar sesión</button>
+                    </form>
+                @else
+                    <!-- Usuario no logueado -->
+                    <a href="{{ route('login') }}" class="btn btn-outline-light btn-sm">Iniciar sesión</a>
+                    <a href="{{ route('register') }}" class="btn btn-light btn-sm">Registrarse</a>
+                @endif
 
                 <!--Carrito -->
                 <button class="btn btn-outline-warning position-relative"

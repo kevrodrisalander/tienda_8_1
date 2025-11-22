@@ -1,22 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class LoginController extends Controller
+class AuthController extends Controller
 {
-    //Mostrar vista de login
-    public function showLoginForm()
+    public function showLogin()
     {
-        return view('auth.login');
+        return view('login');
     }
-//Procesar login
+
     public function login(Request $request)
     {
-        // Validación
         $request->validate([
             'correo' => 'required|email',
             'password' => 'required'
@@ -27,24 +24,21 @@ class LoginController extends Controller
             'password' => $request->password
         ];
 
-        $remember = $request->filled('remember');
-        if (Auth::attempt($credentials, $remember)) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/home'); // ← aquí
+            return redirect()->intended('/home');
         }
 
-        return back()
-            ->with('error', 'Credenciales incorrectas.')
-            ->withInput();
+        return back()->withErrors([
+            'correo' => 'Credenciales incorrectas'
+        ]);
     }
 
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
         return redirect('/login');
     }
 }
