@@ -10,6 +10,7 @@ use App\Http\Controllers\ProvedoresController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UsuariosController;
 
 
 // Página principal de la tienda
@@ -64,3 +65,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Registro
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
+
+//Usuarios
+Route::view('/usuarios', 'usuarios')->name('usuarios');
+Route::post('/usuarios', [UsuariosController::class, 'consultaUsuarios']);
