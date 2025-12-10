@@ -23,7 +23,8 @@
                     <div class="card-body text-center">
                         <h6 class="card-title fw-bold">{{ $producto->descripcion }}</h6>
                         <p class="text-muted mb-1">${{ number_format($producto->precio_venta, 2) }} MXN</p>
-                        <p><small>Stock: {{ $producto->stock }}</small></p>
+                        {{-- <p><small>Stock: {{ $producto->stock }}</small></p> --}}
+                          <p><small>Stock: {{ $producto->cantidad_stock ?? 0 }}</small></p>
 
                         {{-- Input cantidad y botón JS --}}
                         <input type="number" id="cantidad-{{ $producto->id }}" value="1" min="1" max="{{ $producto->stock }}"

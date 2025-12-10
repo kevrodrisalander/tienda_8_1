@@ -18,18 +18,22 @@ $(document).ready(function () {
             },
         },
         pageLength: 10,
+
+        //Se ordena por la columna 1
+        order: [[1, "asc"]],
+
         columnDefs: [
             {
-                targets: [0,5],
-                // targets: [],
+                targets: [0, 5], // ocultar ID y id_marca
                 visible: false,
                 searchable: false,
             },
             {
                 width: "30%",
-                targets: [], // Descripción
+                targets: [1], // columna Descripción
             },
         ],
+
         ajax: {
             url: "inventario",
             type: "POST",
@@ -37,21 +41,28 @@ $(document).ready(function () {
                 "X-CSRF-TOKEN": formToken,
             },
             data: function (d) {
-                return $("#formproductos").serialize(); // si tienes filtros
+                return $("#formproductos").serialize();
             },
         },
+
         columns: [
-            { data: "IdProducto" }, // ID del producto
-            { data: "Descripcion" }, // Descripción del producto
-            { data: "Stock" }, // Cantidad en inventario
-            { data: "PrecioVenta" }, // Precio de venta
-            { data: "estatus" }, // Estatus desde cat_estatus_inventario
-            { data: "id_marca" }, // ID de la marca desde cat_marcas
-            { data: "MarcaNombre" }, // Nombre de la marca desde cat_marcas
-            { data: "categoria" }, // Nombre de la categoría desde cat_categorias
-            { data: "IdSeccion" }, // ID de la sección desde cat_secciones
-            { data: "SeccionNombre" }, // Nombre de la sección desde cat_secciones
-            { data: "SeccionSlug" }, // Slug de la sección (opcional para navegación)
+            { data: "IdProducto" },
+            { data: "Descripcion" },
+            {
+                data: "Stock",
+                render: function(data, type, row) {
+                    return data ? data : 0;
+                },
+                className: "text-center",
+            },
+            { data: "PrecioVenta" },
+            { data: "estatus" },
+            { data: "id_marca" },
+            { data: "MarcaNombre" },
+            { data: "categoria" },
+            { data: "IdSeccion" },
+            { data: "SeccionNombre" },
+            { data: "SeccionSlug" },
         ],
     });
 });

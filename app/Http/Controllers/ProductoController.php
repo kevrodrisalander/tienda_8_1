@@ -14,20 +14,22 @@ class ProductoController extends Controller
 {
     // Vista específica para la categoría
     public function mostrarCategoria($slug)
-    {
-        $categoria = CatSeccion::where('slug', $slug)->firstOrFail();
+{
+    $categoria = CatSeccion::where('slug', $slug)->firstOrFail();
 
-        $productos = Producto::where('id_categoria', $categoria->id)
-            ->where('id_status', 1)
-            ->orderBy('descripcion', 'asc')
-            ->get();
+    $productos = Producto::leftJoin('stock as s', 'productos.id', '=', 's.producto_id')
+        ->where('productos.id_categoria', $categoria->id)
+        ->where('productos.id_status', 1)
+        ->orderBy('productos.descripcion', 'asc')
+        ->select(
+            'productos.*',
+            's.cantidad as cantidad_stock' // aquí traemos la cantidad desde la tabla stock
+        )
+        ->get();
 
-        if (View::exists("categorias.$slug")) {
-            return view("categorias.$slug", compact('categoria', 'productos'));
-        }
+    return view("categorias.$slug", compact('categoria', 'productos'));
+}
 
-        return response()->view('mensaje.sin_categoria', ['slug' => $slug], 404);
-    }
 
     // Guardar producto
     public function store(Request $request)

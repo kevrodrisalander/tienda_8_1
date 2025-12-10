@@ -6,16 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Producto extends Model
 {
-    // Nombre real de la tabla
     protected $table = 'productos';
-
-    // Llave primaria
     protected $primaryKey = 'id';
-
-    // Tu tabla NO tiene created_at / updated_at
     public $timestamps = false;
 
-    // Campos permitidos para asignación masiva
     protected $fillable = [
         'descripcion',
         'stock',
@@ -26,4 +20,10 @@ class Producto extends Model
         'name_file',
         'fecha',
     ];
+
+    // Relación con Stock
+    public function stock()
+    {
+        return $this->hasMany(Stock::class, 'producto_id');
+    }
 }
