@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id(); // serial4 + primary key
 
             $table->string('nombre', 255);
-            $table->string('descripcion', 20)->nullable();
+            $table->string('descripcion', 100)->nullable();
             $table->string('tipo', 100)->nullable();
 
             // clave foránea corregida

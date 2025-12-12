@@ -17,11 +17,10 @@ return new class extends Migration
             $table->text('descripcion')->nullable();
             $table->string('pais_origen', 50)->nullable();
             $table->string('sitio_web', 255)->nullable();
-            $table->boolean('estatus')->default(true)->nullable();
-            $table->timestamp('fecha_registro')->useCurrent()->nullable();
+            $table->boolean('estatus')->default(true); // Sin nullable(), valor predeterminado de true
+            $table->timestamp('fecha_registro')->useCurrent(); // Eliminado nullable()
         });
     }
-
 
     /**
      * Reverse the migrations.

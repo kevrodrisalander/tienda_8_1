@@ -109,6 +109,46 @@ class ProveedoresSeeder extends Seeder
                 'direccion' => 'Calle Zaragoza 500, Toluca',
                 'fecha_registro' => '2025-10-02 14:49:36.693',
                 'id_cat_marcas' => 10
+            ],
+            [
+                'id' => 10,
+                'nombre' => 'Reebok Proveedor',
+                'contacto' => 'Ricardo Mendoza',
+                'telefono' => '555-2109',
+                'email' => 'reebok@proveedor.com',
+                'direccion' => 'Calle Zaragoza 500, Toluca',
+                'fecha_registro' => '2025-10-02 14:49:36.693',
+                'id_cat_marcas' => 11
+            ],
+            [
+                'id' => 10,
+                'nombre' => 'Reebok Proveedor',
+                'contacto' => 'Ricardo Mendoza',
+                'telefono' => '555-2109',
+                'email' => 'reebok@proveedor.com',
+                'direccion' => 'Calle Zaragoza 500, Toluca',
+                'fecha_registro' => '2025-10-02 14:49:36.693',
+                'id_cat_marcas' => 12
+            ],
+            [
+                'id' => 10,
+                'nombre' => 'Reebok Proveedor',
+                'contacto' => 'Ricardo Mendoza',
+                'telefono' => '555-2109',
+                'email' => 'reebok@proveedor.com',
+                'direccion' => 'Calle Zaragoza 500, Toluca',
+                'fecha_registro' => '2025-10-02 14:49:36.693',
+                'id_cat_marcas' => 13
+            ],
+            [
+                'id' => 10,
+                'nombre' => 'Reebok Proveedor',
+                'contacto' => 'Ricardo Mendoza',
+                'telefono' => '555-2109',
+                'email' => 'reebok@proveedor.com',
+                'direccion' => 'Calle Zaragoza 500, Toluca',
+                'fecha_registro' => '2025-10-02 14:49:36.693',
+                'id_cat_marcas' => 14
             ]
         ]);
     }

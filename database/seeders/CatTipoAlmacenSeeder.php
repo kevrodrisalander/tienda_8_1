@@ -9,17 +9,21 @@ class CatTipoAlmacenSeeder extends Seeder
 {
     public function run()
     {
+        // Elimina todos los registros de la tabla y reinicia el contador de auto-incremento
+        DB::table('cat_tipo_almacen')->truncate();
+
+        // Inserta los nuevos registros
         DB::table('cat_tipo_almacen')->insert([
-            ['id_tipo_almacen' => 1, 'nombre' => 'Almacén General', 'descripcion' => 'Almacén principal para todo tipo de productos'],
-            ['id_tipo_almacen' => 2, 'nombre' => 'Almacén de Materia Prima', 'descripcion' => 'Recepción y resguardo de insumos'],
-            ['id_tipo_almacen' => 3, 'nombre' => 'Almacén de Producto Terminado', 'descripcion' => 'Productos listos para distribución'],
-            ['id_tipo_almacen' => 4, 'nombre' => 'Almacén de Seguridad', 'descripcion' => 'Materiales peligrosos o controlados'],
-            ['id_tipo_almacen' => 5, 'nombre' => 'Almacén de Repuestos', 'descripcion' => 'Piezas y componentes para mantenimiento'],
-            ['id_tipo_almacen' => 6, 'nombre' => 'Almacén Temporal', 'descripcion' => 'Almacenaje provisional por alta rotación'],
-            ['id_tipo_almacen' => 7, 'nombre' => 'Almacén Fiscal', 'descripcion' => 'Almacén bajo régimen aduanal'],
-            ['id_tipo_almacen' => 8, 'nombre' => 'Almacén de Devoluciones', 'descripcion' => 'Productos devueltos por clientes'],
-            ['id_tipo_almacen' => 9, 'nombre' => 'Almacén de Frío', 'descripcion' => 'Productos que requieren refrigeración'],
-            ['id_tipo_almacen' => 10, 'nombre' => 'Almacén de Alta Rotación', 'descripcion' => 'Productos con salida frecuente'],
+            ['nombre' => 'Almacén General', 'descripcion' => 'Almacén principal para todo tipo de productos'],
+            ['nombre' => 'Almacén de Materia Prima', 'descripcion' => 'Recepción y resguardo de insumos'],
+            ['nombre' => 'Almacén de Producto Terminado', 'descripcion' => 'Productos listos para distribución'],
+            ['nombre' => 'Almacén de Seguridad', 'descripcion' => 'Materiales peligrosos o controlados'],
+            ['nombre' => 'Almacén de Repuestos', 'descripcion' => 'Piezas y componentes para mantenimiento'],
+            ['nombre' => 'Almacén Temporal', 'descripcion' => 'Almacenaje provisional por alta rotación'],
+            ['nombre' => 'Almacén Fiscal', 'descripcion' => 'Almacén bajo régimen aduanal'],
+            ['nombre' => 'Almacén de Devoluciones', 'descripcion' => 'Productos devueltos por clientes'],
+            ['nombre' => 'Almacén de Frío', 'descripcion' => 'Productos que requieren refrigeración'],
+            ['nombre' => 'Almacén de Alta Rotación', 'descripcion' => 'Productos con salida frecuente'],
         ]);
     }
 }

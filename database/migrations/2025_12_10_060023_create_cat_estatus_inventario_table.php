@@ -12,15 +12,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('cat_estatus_inventario', function (Blueprint $table) {
-            $table->id(); // id con auto-incremento
-
-            $table->string('tipo')->nullable();
-            $table->boolean('activo')->nullable();
-
-            $table->timestamp('created_at')->nullable();
-            $table->timestamp('modified_at')->nullable();
-            $table->timestamp('deleted_at')->nullable();
-        });
+    $table->id();  // Esto configura el campo 'id' como auto-incremental
+    $table->boolean('activo');
+    $table->timestamps();
+    $table->softDeletes(); // Si usas soft deletes
+});
     }
 
     public function down()

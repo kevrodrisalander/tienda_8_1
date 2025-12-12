@@ -9,14 +9,18 @@ class CatCategoriasSeeder extends Seeder
 {
     public function run()
     {
+        // Elimina todos los registros de la tabla cat_categorias antes de insertar
+        DB::table('cat_categorias')->truncate();
+
+        // Ahora puedes insertar los registros sin problemas
         DB::table('cat_categorias')->insert([
-            ['id' => 1, 'categoria' => 'Electronica', 'fecha' => '2024-05-12 23:55:39'],
-            ['id' => 2, 'categoria' => 'Ropa', 'fecha' => '2024-05-12 23:55:39'],
-            ['id' => 3, 'categoria' => 'Hogar', 'fecha' => '2024-05-12 23:55:39'],
-            ['id' => 4, 'categoria' => 'Juguetes', 'fecha' => '2025-10-01 00:25:59'],
-            ['id' => 5, 'categoria' => 'Deportes', 'fecha' => '2025-10-07 10:25:58'],
-            ['id' => 6, 'categoria' => 'Oficina', 'fecha' => '2025-10-07 10:47:14'],
-            ['id' => 7, 'categoria' => 'Frutas', 'fecha' => '2025-10-07 10:48:21'],
+            ['categoria' => 'Electronica', 'fecha' => now()],
+            ['categoria' => 'Ropa', 'fecha' => now()],
+            ['categoria' => 'Hogar', 'fecha' => now()],
+            ['categoria' => 'Juguetes', 'fecha' => now()],
+            ['categoria' => 'Deportes', 'fecha' => now()],
+            ['categoria' => 'Oficina', 'fecha' => now()],
+            ['categoria' => 'Frutas', 'fecha' => now()],
         ]);
     }
 }

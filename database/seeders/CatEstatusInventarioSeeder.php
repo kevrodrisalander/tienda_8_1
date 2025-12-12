@@ -7,25 +7,17 @@ use Illuminate\Support\Facades\DB;
 
 class CatEstatusInventarioSeeder extends Seeder
 {
-    public function run()
-    {
-        DB::table('cat_estatus_inventario')->insert([
-            [
-                'id' => 1,
-                'tipo' => 'Disponible',
-                'activo' => true,
-                'created_at' => '2024-03-08 10:49:06',
-                'modified_at' => null,
-                'deleted_at' => null
-            ],
-            [
-                'id' => 2,
-                'tipo' => 'Apartado x',
-                'activo' => true,
-                'created_at' => '2024-03-08 10:49:06',
-                'modified_at' => null,
-                'deleted_at' => null
-            ]
-        ]);
-    }
+   public function run()
+{
+    // Elimina todos los registros y reinicia el contador del auto-incremento
+    DB::table('cat_estatus_inventario')->truncate();
+
+    // Ahora puedes insertar los nuevos registros sin conflictos
+    DB::table('cat_estatus_inventario')->insert([
+        ['activo' => 1, 'created_at' => now(), 'deleted_at' => null, 'modified_at' => now(), 'tipo' => 'Disponible'],
+        ['activo' => 1, 'created_at' => now(), 'deleted_at' => null, 'modified_at' => now(), 'tipo' => 'Apartado x'],
+        // Otros registros...
+    ]);
+}
+
 }

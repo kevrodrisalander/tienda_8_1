@@ -9,10 +9,16 @@ class CatTipoProductoSeeder extends Seeder
 {
     public function run()
     {
+        // Elimina todos los registros de la tabla y reinicia el contador de auto-incremento
+        DB::table('cat_tipo_producto')->truncate();
+
+        // Ahora puedes insertar los nuevos registros
         DB::table('cat_tipo_producto')->insert([
-            ['id' => 1, 'nombre' => 'Alimento', 'descripcion' => 'Productos comestibles'],
-            ['id' => 2, 'nombre' => 'Ropa', 'descripcion' => 'Vestimenta y accesorios'],
-            ['id' => 3, 'nombre' => 'Hogar', 'descripcion' => 'Artículos para el hogar'],
+            ['nombre' => 'Alimento', 'descripcion' => 'Productos comestibles'],
+            ['nombre' => 'Ropa', 'descripcion' => 'Vestimenta y accesorios'],
+            ['nombre' => 'Hogar', 'descripcion' => 'Artículos para el hogar'],
         ]);
     }
 }
+
+
