@@ -37,7 +37,15 @@ Route::view('/inventario', 'inventario')->name('inventario');
 Route::get('/stock', [StockController::class, 'catalogos'])->name('stock'); // Muestra el stock (vista principal)
 Route::get('/stock/consulta', [StockController::class, 'consultaStock'])->name('stock.consulta'); //Devuelve los datos en formato JSON para DataTables
 Route::post('/stock/guardar', [StockController::class, 'guardar'])->name('stock.guardar');  //Guarda nuevo stock desde un formulario/modal
-Route::post('/productos', [ProductoController::class, 'store'])->name('producto.guardar');
+Route::post('/productos', [ProductoController::class, 'store'])->name('producto.guardar');  //Se guarda registro en productos , cantidad inicial
+Route::get('/stock/{id}', [StockController::class, 'show'])->name('stock.show');  //Localizacion del id del producto
+Route::put('/stock/{id}', [StockController::class, 'update'])->name('stock.update'); //Edición del producto id
+Route::delete('/stock/{id}', [StockController::class, 'destroy'])->name('stock.destroy'); //Se elimina el producto
+Route::put('/stock/{id}/restaurar', [StockController::class, 'restaurar'])->name('stock.restaurar'); // Se restaura de nuevo el producto
+
+
+
+
 
 // Agregar producto al carrito
 Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
