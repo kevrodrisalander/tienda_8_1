@@ -45,7 +45,7 @@
 
         .boton-verde {
             padding: 8px 16px;
-            background-color: #0e6149;
+            background-color: #86150d;
             color: #fff;
             border-radius: 6px;
             font-size: 13px;
@@ -104,6 +104,16 @@
             <div class="card">
                 <div class="icon text-4xl mb-2">🏬</div>
                 <div class="title">Provedores</div>
+                <div class="description">
+                    Creamos herramientas funcionales, atractivas y adaptadas al crecimiento de tus ventas.
+                </div>
+                <a href="{{ route('provedores') }}" class="boton-verde">
+                    Entrar
+                </a>
+            </div>
+            <div class="card">
+                <div class="icon text-4xl mb-2">🚛</div>
+                <div class="title">Envios</div>
                 <div class="description">
                     Creamos herramientas funcionales, atractivas y adaptadas al crecimiento de tus ventas.
                 </div>

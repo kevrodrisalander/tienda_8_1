@@ -1,95 +1,116 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <title>Ticket de compra</title>
 
     <style>
         body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            color: #333;
+            font-family: "Courier New", monospace;
+            font-size: 11px;
+            color: #020202;
+            margin: 0;
+            padding: 0;
+        }
+
+        .ticket {
+            width: 280px;
+            margin: auto;
+            padding: 10px;
         }
 
         h2, h3 {
             text-align: center;
-            margin: 0;
+            margin: 2px 0;
         }
 
-        .ticket-header {
-            margin-bottom: 20px;
+        .center {
+            text-align: center;
+        }
+
+        .line {
+            border-top: 1px dashed #000;
+            margin: 8px 0;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
         }
 
         th, td {
-            padding: 8px;
-            text-align: left;
+            padding: 3px 0;
+            font-size: 11px;
         }
 
         th {
-            background-color: #ddd9d9;
-            border-bottom: 2px solid #e7abab;
+            text-align: left;
         }
 
-        td {
-            border-bottom: 1px solid #e7abab;
+        td.right, th.right {
+            text-align: right;
         }
 
         .total {
-            text-align: right;
-            font-size: 14px;
             font-weight: bold;
-            margin-top: 10px;
+            text-align: right;
+            font-size: 12px;
         }
 
         .footer {
             text-align: center;
-            margin-top: 20px;
             font-size: 10px;
-            color: #1f1e1e;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-<div class="ticket-header">
-    <h2>Cherry Tienda </h2>
-    <h3>Ticket de Compra</h3>
-    <p style="text-align:center;">
-        Fecha: {{ now()->format('d/m/Y H:i') }}
+<div class="ticket">
+
+    <h2>CHERRY TIENDA</h2>
+    <h3>TICKET DE COMPRA</h3>
+
+    <p class="center">
+        {{ now()->format('d/m/Y H:i') }}
     </p>
-</div>
 
-<table>
-    <tr>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Precio</th>
-        <th>Subtotal</th>
-    </tr>
+    <div class="line"></div>
 
-    @foreach($cart as $item)
-    <tr>
-        <td>{{ $item['nombre'] }}</td>
-        <td>{{ $item['cantidad'] }}</td>
-        <td>${{ number_format($item['precio'], 2) }}</td>
-        <td>${{ number_format($item['precio'] * $item['cantidad'], 2) }}</td>
-    </tr>
-    @endforeach
-</table>
+    <table>
+        <thead>
+            <tr>
+                <th>Prod</th>
+                <th class="right">Cant</th>
+                <th class="right">Sub</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($cart as $item)
+            <tr>
+                <td>{{ $item['nombre'] }}</td>
+                <td class="right">{{ $item['cantidad'] }}</td>
+                <td class="right">
+                    ${{ number_format($item['precio'] * $item['cantidad'], 2) }}
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
 
-<p class="total">
-    Total: ${{ number_format(collect($cart)->sum(fn($i) => $i['precio'] * $i['cantidad']), 2) }}
-</p>
+    <div class="line"></div>
 
-<div class="footer">
-    ¡Gracias por su compra!<br>
-    www.mitienda.com
+    <p class="total">
+        TOTAL: ${{ number_format(collect($cart)->sum(fn($i) => $i['precio'] * $i['cantidad']), 2) }}
+    </p>
+
+    <div class="line"></div>
+
+    <div class="footer">
+        ¡Gracias por su compra!<br>
+        www.cherrytienda.com
+    </div>
+
 </div>
 
 </body>

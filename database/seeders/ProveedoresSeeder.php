@@ -111,7 +111,7 @@ class ProveedoresSeeder extends Seeder
                 'id_cat_marcas' => 10
             ],
             [
-                'id' => 10,
+                'id' => 11,
                 'nombre' => 'Reebok Proveedor',
                 'contacto' => 'Ricardo Mendoza',
                 'telefono' => '555-2109',
@@ -121,7 +121,7 @@ class ProveedoresSeeder extends Seeder
                 'id_cat_marcas' => 11
             ],
             [
-                'id' => 10,
+                'id' => 12,
                 'nombre' => 'Reebok Proveedor',
                 'contacto' => 'Ricardo Mendoza',
                 'telefono' => '555-2109',
@@ -131,7 +131,7 @@ class ProveedoresSeeder extends Seeder
                 'id_cat_marcas' => 12
             ],
             [
-                'id' => 10,
+                'id' => 13,
                 'nombre' => 'Reebok Proveedor',
                 'contacto' => 'Ricardo Mendoza',
                 'telefono' => '555-2109',
@@ -141,7 +141,7 @@ class ProveedoresSeeder extends Seeder
                 'id_cat_marcas' => 13
             ],
             [
-                'id' => 10,
+                'id' => 14,
                 'nombre' => 'Reebok Proveedor',
                 'contacto' => 'Ricardo Mendoza',
                 'telefono' => '555-2109',
