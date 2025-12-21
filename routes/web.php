@@ -11,6 +11,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\VentaController;
+
 
 
 // Página principal de la tienda
@@ -43,10 +45,6 @@ Route::put('/stock/{id}', [StockController::class, 'update'])->name('stock.updat
 Route::delete('/stock/{id}', [StockController::class, 'destroy'])->name('stock.destroy'); //Se elimina el producto
 Route::put('/stock/{id}/restaurar', [StockController::class, 'restaurar'])->name('stock.restaurar'); // Se restaura de nuevo el producto
 
-
-
-
-
 // Agregar producto al carrito
 Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
 Route::get('/cart/show', [CartController::class, 'show'])->name('cart.show');
@@ -57,7 +55,6 @@ Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checko
 //Ruta de provedores
 Route::view('/provedores', 'provedores')->name('provedores');
 Route::post('/provedores', [ProvedoresController::class, 'consultaProvedores']);
-
 
 // Mostrar formulario de login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -77,3 +74,7 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 //Usuarios
 Route::view('/usuarios', 'usuarios')->name('usuarios');
 Route::post('/usuarios', [UsuariosController::class, 'consultaUsuarios']);
+
+//Venta del producto
+Route::post('/checkout', [VentaController::class, 'checkout']);
+

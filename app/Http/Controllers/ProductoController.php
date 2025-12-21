@@ -16,16 +16,26 @@ class ProductoController extends Controller
     public function mostrarCategoria($slug)
 {
     $categoria = CatSeccion::where('slug', $slug)->firstOrFail();
+//El sistema NO usa el campo productos.stock como stock real.
+//El inventario se calcula dinámicamente a partir de la tabla stock,
+//la cual funciona como un kardex de movimientos.
+//Valores positivos en stock.cantidad  → entradas de inventario
+//Valores negativos en stock.cantidad  → salidas (ventas, mermas, etc.)
+//Se utiliza LEFT JOIN para incluir productos sin movimientos registrados.
+//Se agrupa por producto para sumar todos sus movimientos.
+//COALESCE evita valores NULL y devuelve 0 cuando no hay registros.
 
     $productos = Producto::leftJoin('stock as s', 'productos.id', '=', 's.producto_id')
-        ->where('productos.id_categoria', $categoria->id)
-        ->where('productos.id_status', 1)
-        ->orderBy('productos.descripcion', 'asc')
-        ->select(
-            'productos.*',
-            's.cantidad as cantidad_stock' // aquí traemos la cantidad desde la tabla stock
-        )
-        ->get();
+    ->where('productos.id_categoria', $categoria->id)
+    ->where('productos.id_status', 1)
+    ->groupBy('productos.id')
+    ->orderBy('productos.descripcion', 'asc')
+    ->select(
+        'productos.*',
+        DB::raw('COALESCE(SUM(s.cantidad), 0) as cantidad_stock')
+    )
+    ->get();
+
 
     return view("categorias.$slug", compact('categoria', 'productos'));
 }
