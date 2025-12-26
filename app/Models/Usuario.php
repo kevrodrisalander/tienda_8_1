@@ -54,4 +54,8 @@ class Usuario extends Authenticatable
         default: return 'Usuario';
     }
 }
+public function cliente()
+{
+    return $this->hasOne(\App\Models\Cliente::class, 'id_usuario');
+}
 }

@@ -5,39 +5,48 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
+use App\Models\Cliente;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
 {
-    // Mostrar formulario
     public function showRegistrationForm()
     {
         return view('auth.register');
     }
 
-    // Registrar usuario
     public function register(Request $request)
     {
-        // Validación
         $request->validate([
-            'usuario' => 'required|string|max:50',
-            'correo' => 'required|email|unique:usuarios,correo',
+            'usuario'  => 'required|string|max:50',
+            'correo'   => 'required|email|unique:usuarios,correo',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        // Crear usuario con rol cliente (id_rol = 6)
-        $usuario = Usuario::create([
-            'usuario' => $request->usuario,
-            'correo' => $request->correo,
-            'clave' => Hash::make($request->password),
-            'id_rol' => 6
-        ]);
+        DB::transaction(function () use ($request) {
 
-        // Loguear automáticamente
-        Auth::login($usuario);
+            // Usuario
+            $usuario = Usuario::create([
+                'usuario' => $request->usuario,
+                'correo'  => $request->correo,
+                'clave'   => Hash::make($request->password),
+                'id_rol'  => 6, // cliente
+            ]);
 
-        // Redirigir a home
-        return redirect('/home')->with('success', 'Usuario registrado correctamente.');
+            //Cliente (YA RELACIONADO)
+            Cliente::create([
+                'nombre'     => $request->usuario,
+                'correo'     => $request->correo,
+                'id_usuario' => $usuario->id,
+            ]);
+
+            //Login automático
+            Auth::login($usuario);
+        });
+
+        return redirect('/home')
+            ->with('success', 'Cliente registrado correctamente.');
     }
 }
