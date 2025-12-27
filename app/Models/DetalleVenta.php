@@ -26,4 +26,13 @@ class DetalleVenta extends Model
         'descuento',
         'desc_venta'
     ];
+
+    /**
+     * Relación con Producto
+     * Necesaria para generar el PDF del ticket
+     */
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class, 'id_producto');
+    }
 }

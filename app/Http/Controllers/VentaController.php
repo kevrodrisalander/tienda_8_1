@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 use App\Models\Venta;
 use App\Models\DetalleVenta;
@@ -24,10 +26,8 @@ class VentaController extends Controller
         DB::beginTransaction();
 
         try {
-            // 🔹 calcular total REAL
-            $total = collect($cart)->sum(function ($item) {
-                return $item['precio'] * $item['cantidad'];
-            });
+            // 🔹 calcular total real
+            $total = collect($cart)->sum(fn($item) => $item['precio'] * $item['cantidad']);
 
             // 🔹 crear venta
             $venta = Venta::create([
@@ -38,43 +38,44 @@ class VentaController extends Controller
                 'id_estatus'  => 1,
             ]);
 
-            /*
-|--------------------------------------------------------------------------
-| Registro del detalle de venta y salida de inventario
-|--------------------------------------------------------------------------
-| Por cada producto incluido en el carrito:
-|
-| 1) Se registra el detalle de la venta en la tabla detalle_venta,
-|    asociando el producto, la cantidad vendida y el precio unitario.
-|
-| 2) Se registra un movimiento de salida en la tabla stock.
-|    - La cantidad se guarda como valor NEGATIVO para reflejar egreso.
-|    - Se utiliza abs() para asegurar que la salida siempre reste stock.
-|    - El tipo de movimiento 195 corresponde a "Salida por venta".
-|
-| El stock real del producto se obtiene posteriormente sumando todos
-| los movimientos registrados en la tabla stock (kardex).
-*/
             // 🔹 detalle + salida de stock
             foreach ($cart as $item) {
-
+                // Detalle de venta
                 DetalleVenta::create([
                     'id_venta'        => $venta->id_venta,
                     'id_producto'     => $item['id'],
                     'cantidad'        => $item['cantidad'],
                     'precio_unitario' => $item['precio'],
                 ]);
+
                 Stock::create([
-                    'producto_id'        => $item['id'],
-                    'cantidad'           => -abs($item['cantidad']), // salida SIEMPRE negativa
-                    'tipo_movimiento_id' => 195, // Salida por venta
-                    'estado'             => 'CONFIRMADO',
+                    'producto_id'    => $item['id'],
+                    'cantidad'       => $item['cantidad'], // siempre positivo
+                    'tipo_movimiento' => 'salida',          // aquí va 'entrada' o 'salida'
+                    'estado'         => 'disponible',
+                    'usuario_id'     => Auth::id(), // <- aquí pones el ID del usuario actual
+                    'created_at'     => now(),
+                    'updated_at'     => now(),
                 ]);
             }
 
             DB::commit();
 
-            return response()->json(['ok' => true]);
+            // 🔹 generar PDF automáticamente
+            $ventaConDetalles = Venta::with('detalles.producto')->findOrFail($venta->id_venta);
+            $metodo_pago = $ventaConDetalles->metodo_pago;
+
+
+            $cart = $ventaConDetalles->detalles->map(fn($d) => [
+                'nombre'   => $d->producto->descripcion,
+                'cantidad' => $d->cantidad,
+                'precio'   => $d->precio_unitario,
+            ])->toArray();
+
+            $pdf = Pdf::loadView('pdf.ticket', compact('cart','metodo_pago'))
+                ->setPaper([0, 0, 400.77, 600], 'portrait');
+
+            return $pdf->stream("ticket_{$venta->id_venta}.pdf");
         } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json([
@@ -82,5 +83,26 @@ class VentaController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+
+
+
+    public function ticketPdf($idVenta)
+    {
+        $venta = Venta::with('detalles.producto')->findOrFail($idVenta);
+
+        $cart = $venta->detalles->map(function ($d) {
+            return [
+                'nombre'   => $d->producto->nombre,
+                'cantidad' => $d->cantidad,
+                'precio'   => $d->precio_unitario,
+            ];
+        })->toArray();
+
+        $pdf = Pdf::loadView('pdf.ticket', compact('cart'))
+            ->setPaper([0, 0, 226.77, 600], 'portrait');
+
+        return $pdf->stream("ticket_{$idVenta}.pdf");
     }
 }

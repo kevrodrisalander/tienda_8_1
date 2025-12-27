@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Producto extends Model
 {
@@ -26,4 +27,20 @@ class Producto extends Model
     {
         return $this->hasMany(Stock::class, 'producto_id');
     }
+
+public function getStockActualAttribute()
+{
+    $total = DB::table('stock')
+        ->where('producto_id', $this->id)
+        ->sum(DB::raw("
+            CASE
+                WHEN tipo_movimiento = 'entrada' THEN cantidad
+                WHEN tipo_movimiento = 'salida' THEN -cantidad
+                ELSE 0
+            END
+        "));
+
+    return $total;
 }
+}
+

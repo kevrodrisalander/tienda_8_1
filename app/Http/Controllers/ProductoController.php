@@ -105,5 +105,4 @@ class ProductoController extends Controller
     return redirect()->back()->with('success', 'Producto y stock registrados correctamente.');
 }
 
-
 }

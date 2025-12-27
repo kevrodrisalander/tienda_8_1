@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <title>Ticket de compra</title>
@@ -19,7 +20,8 @@
             padding: 10px;
         }
 
-        h2, h3 {
+        h2,
+        h3 {
             text-align: center;
             margin: 2px 0;
         }
@@ -38,7 +40,8 @@
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             padding: 3px 0;
             font-size: 11px;
         }
@@ -47,7 +50,8 @@
             text-align: left;
         }
 
-        td.right, th.right {
+        td.right,
+        th.right {
             text-align: right;
         }
 
@@ -64,54 +68,59 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="ticket">
+    <div class="ticket">
 
-    <h2>CHERRY TIENDA</h2>
-    <h3>TICKET DE COMPRA</h3>
+        <h2>CHERRY TIENDA</h2>
+        <h3>TICKET DE COMPRA</h3>
 
-    <p class="center">
-        {{ now()->format('d/m/Y H:i') }}
-    </p>
+        <p class="center">
+            {{ now()->format('d/m/Y H:i') }}
+        </p>
 
-    <div class="line"></div>
+        <div class="line"></div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Prod</th>
-                <th class="right">Cant</th>
-                <th class="right">Sub</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($cart as $item)
-            <tr>
-                <td>{{ $item['nombre'] }}</td>
-                <td class="right">{{ $item['cantidad'] }}</td>
-                <td class="right">
-                    ${{ number_format($item['precio'] * $item['cantidad'], 2) }}
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <table>
+            <thead>
+                <tr>
+                    <th>Prod</th>
+                    <th class="right">Cant</th>
+                    <th class="right">Sub</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($cart as $item)
+                    <tr>
+                        <td>{{ $item['nombre'] }}</td>
+                        <td class="right">{{ $item['cantidad'] }}</td>
+                        <td class="right">
+                            ${{ number_format($item['precio'] * $item['cantidad'], 2) }}
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-    <div class="line"></div>
+        <div class="line"></div>
+        <p class="center">
+            Tipo de pago: {{ $metodo_pago }}
+        </p>
 
-    <p class="total">
-        TOTAL: ${{ number_format(collect($cart)->sum(fn($i) => $i['precio'] * $i['cantidad']), 2) }}
-    </p>
+        <p class="total">
+            TOTAL: ${{ number_format(collect($cart)->sum(fn($i) => $i['precio'] * $i['cantidad']), 2) }}
+        </p>
 
-    <div class="line"></div>
+        <div class="line"></div>
 
-    <div class="footer">
-        ¡Gracias por su compra!<br>
-        www.cherrytienda.com
+        <div class="footer">
+            ¡Gracias por su compra!<br>
+            www.cherrytienda.com
+        </div>
+
     </div>
 
-</div>
-
 </body>
+
 </html>

@@ -13,6 +13,9 @@ class Venta extends Model
         'fecha', 'total', 'id_cliente', 'metodo_pago', 'id_estatus'
     ];
 
+    /**
+     * Relación con los detalles de la venta
+     */
     public function detalles()
     {
         return $this->hasMany(DetalleVenta::class, 'id_venta', 'id_venta');

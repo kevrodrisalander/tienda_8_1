@@ -78,3 +78,5 @@ Route::post('/usuarios', [UsuariosController::class, 'consultaUsuarios']);
 //Venta del producto
 Route::post('/checkout', [VentaController::class, 'checkout']);
 
+//Creación del pdf
+Route::get('/venta/{id}/ticket', [VentaController::class, 'ticketPdf'])->name('venta.ticket');
