@@ -4,22 +4,14 @@ $(document).ready(function () {
     const formToken = $('meta[name="csrf-token"]').attr("content");
 
     const tabla = $("#tbl_usuarios").DataTable({
-        language: {
-            url: "es-MX.json",
-        },
+        language: { url: "es-MX.json" },
         pageLength: 10,
-
         ajax: {
             url: "/usuarios/consulta",
             type: "GET",
-            headers: {
-                "X-CSRF-TOKEN": formToken,
-            },
-            data: function (d) {
-                d.eliminados = verEliminados ? 1 : 0;
-            },
+            headers: { "X-CSRF-TOKEN": formToken },
+            data: function (d) { d.eliminados = verEliminados ? 1 : 0; },
         },
-
         columns: [
             { data: "usuario" },
             { data: "correo" },
@@ -38,94 +30,69 @@ $(document).ready(function () {
                             <a href="#" class="btn btn-sm desactivar-usuario" data-id="${row.id}">🗑️</a>
                         `;
                     } else {
-                        return `
-                            <a href="#" class="btn btn-sm restaurar-usuario" data-id="${row.id}">♻️</a>
-                        `;
+                        return `<a href="#" class="btn btn-sm restaurar-usuario" data-id="${row.id}">♻️</a>`;
                     }
                 },
             },
         ],
     });
 
-    //Editar usuario activo
+    // Editar usuario
     $("#tbl_usuarios").on("click", ".editar-usuario", function (e) {
         e.preventDefault();
-
         const id = $(this).data("id");
+        console.log("Editar usuario ID:", id); // para debug
 
-        $.get(`/usuarios/${id}`, function (data) {
-            $("#formEditarUsuario").attr("action", `/usuarios/${id}`);
+        // 1️ Obtener datos del usuario
+        $.get(`/usuarios/${id}`, function (usuario) {
+            $("#usuarioId").val(usuario.id); // ID oculto
+            $("#usuario").val(usuario.usuario);
+            $("#correo").val(usuario.correo);
 
-            $('[name="usuario"]').val(data.usuario);
-            $('[name="correo"]').val(data.correo);
-            $('[name="id_rol"]').val(data.id_rol);
+            // 2 Cargar roles dinámicamente
+            $.get("/roles", function (roles) {
+                const select = $("#id_rol");
+                select.empty();
+                select.append('<option value="">Selecciona un rol</option>');
+                roles.forEach(function (role) {
+                    const selected = role.id_rol == usuario.id_rol ? "selected" : "";
+                    select.append(`<option value="${role.id_rol}" ${selected}>${role.nombre}</option>`);
+                });
 
-            $("#modalUsuario").modal("show");
+                // 3️ Mostrar modal (Bootstrap 5)
+                const modal = new bootstrap.Modal(document.getElementById('modalEditarUsuario'));
+                modal.show();
+            });
         });
     });
 
-    //Desactivar usuario activo
-    $("#tbl_usuarios").on("click", ".desactivar-usuario", function (e) {
+    // Editar usuario
+    $("#formEditarUsuario").on("submit", function (e) {
         e.preventDefault();
+        const id = $("#usuarioId").val();
 
-        const id = $(this).data("id");
-
-        Swal.fire({
-            title: "¿Desactivar usuario?",
-            text: "El usuario no se eliminará, solo se desactivará",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Sí, desactivar",
-            cancelButtonText: "Cancelar"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: `/usuarios/${id}`,
-                    type: "DELETE",
-                    headers: {
-                        "X-CSRF-TOKEN": formToken,
-                    },
-                    success: function () {
-                        Swal.fire("Desactivado", "Usuario desactivado", "success");
-                        tabla.ajax.reload();
-                    },
-                });
+        $.ajax({
+            url: `/usuarios/${id}`,
+            type: "PUT",
+            headers: { "X-CSRF-TOKEN": formToken },
+            data: {
+                usuario: $("#usuario").val(),
+                correo: $("#correo").val(),
+                id_rol: $("#id_rol").val(),
+            },
+            success: function () {
+                Swal.fire("Éxito", "Usuario actualizado correctamente", "success");
+                $("#tbl_usuarios").DataTable().ajax.reload();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarUsuario'));
+                modal.hide();
+            },
+            error: function () {
+                Swal.fire("Error", "No se pudo actualizar el usuario", "error");
             }
         });
     });
 
-    //Restaurar usuario eliminado
-    $("#tbl_usuarios").on("click", ".restaurar-usuario", function (e) {
-        e.preventDefault();
-
-        const id = $(this).data("id");
-
-        Swal.fire({
-            title: "¿Restaurar usuario?",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Sí, restaurar",
-            cancelButtonText: "Cancelar"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: `/usuarios/${id}/restaurar`,
-                    type: "PUT",
-                    headers: {
-                        "X-CSRF-TOKEN": formToken,
-                    },
-                    success: function () {
-                        Swal.fire("Restaurado", "Usuario activo nuevamente", "success");
-                        tabla.ajax.reload();
-                    },
-                });
-            }
-        });
-    });
-
-
-    // Botón para usuarios eliminados/activos
-
+    // Ver usuarios eliminados
     $("#btnVerUsuariosEliminados").on("click", function () {
         verEliminados = !verEliminados;
         $(this).text(verEliminados ? "Ver activos" : "Ver eliminados");

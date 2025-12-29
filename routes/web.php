@@ -73,8 +73,8 @@ Route::get('usuarios/consulta', [UsuariosController::class, 'consultaUsuarios'])
 Route::get('usuarios/{id}', [UsuariosController::class, 'show']); //Mostrar usuario por ID (para edición)
 Route::put('usuarios/{id}', [UsuariosController::class, 'update']); //Actualizar usuario por ID
 Route::delete('usuarios/{id}', [UsuariosController::class, 'destroy']); //Desactivar usuario por ID
-Route::put('usuarios/{id}/restaurar', [UsuariosController::class, 'restaurar']);
-
+Route::put('usuarios/{id}/restaurar', [UsuariosController::class, 'restaurar']); //Restaurar usuario por ID
+Route::get('/roles', [UsuariosController::class, 'getRoles'])->name('roles.get'); //Obtener lista de roles para select dinámico
 
 //Venta del producto
 Route::post('/checkout', [VentaController::class, 'checkout']); //Procesar la venta

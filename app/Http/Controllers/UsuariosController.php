@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -53,7 +54,7 @@ class UsuariosController extends Controller
         ]);
 
         DB::table('usuarios')
-            ->where('id_usuario', $id)
+            ->where('id', $id)
             ->update([
                 'usuario'    => $request->usuario,
                 'correo'     => $request->correo,
@@ -73,7 +74,7 @@ class UsuariosController extends Controller
             ->where('id', $id)
             ->update([
                 'activo'     => 0,
-                'updated_at'=> now(),
+                'updated_at' => now(),
             ]);
 
         return response()->json([
@@ -88,14 +89,22 @@ class UsuariosController extends Controller
             ->where('id', $id)
             ->update([
                 'activo'     => 1,
-                'updated_at'=> now(),
+                'updated_at' => now(),
             ]);
 
         return response()->json([
             'message' => 'Usuario restaurado'
         ]);
     }
+
+    // Obtener lista de roles para select
+    public function getRoles()
+    {
+        $roles = DB::table('cat_roles')
+            ->select('id_rol', 'nombre')
+            ->orderBy('nombre')
+            ->get();
+
+        return response()->json($roles);
+    }
 }
-
-
-
