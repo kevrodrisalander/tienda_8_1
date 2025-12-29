@@ -16,8 +16,7 @@ use App\Http\Controllers\VentaController;
 
 
 // Página principal de la tienda
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-
+Route::get('/home', [HomeController::class, 'index'])->name('home');  // Ruta para la página principal de la tienda
 
 // Mostrar productos de una categoría por slug
 Route::get('/categoria/{slug}', [ProductoController::class, 'mostrarCategoria'])->name('categoria.mostrar');
@@ -28,8 +27,8 @@ Route::get('/test-vista/{slug}', function ($slug) {
 });
 
 // Rutas de administración
-Route::view('/administracion', 'administracion')->name('administracion');
-Route::view('/usuarios', 'usuarios')->name('usuarios');
+Route::view('/administracion', 'administracion')->name('administracion'); // Muestra la vista de administración
+Route::view('/usuarios', 'usuarios')->name('usuarios'); // Muestra la vista de usuarios
 
 // Consulta de inventario por POST
 Route::post('/inventario', [InventarioController::class, 'consultaInventario'])->name('productos.consulta');
@@ -46,35 +45,37 @@ Route::delete('/stock/{id}', [StockController::class, 'destroy'])->name('stock.d
 Route::put('/stock/{id}/restaurar', [StockController::class, 'restaurar'])->name('stock.restaurar'); // Se restaura de nuevo el producto
 
 // Agregar producto al carrito
-Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
-Route::get('/cart/show', [CartController::class, 'show'])->name('cart.show');
-Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add'); //Agregar producto al carrito
+Route::get('/cart/show', [CartController::class, 'show'])->name('cart.show');  //Mostrar el carrito
+Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout'); //Procesar la venta
+Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear'); //Vaciar el carrito
+Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout'); //Procesar la venta
 
 //Ruta de provedores
-Route::view('/provedores', 'provedores')->name('provedores');
-Route::post('/provedores', [ProvedoresController::class, 'consultaProvedores']);
+Route::view('/provedores', 'provedores')->name('provedores'); // Muestra los provedores (vista principal)
+Route::post('/provedores', [ProvedoresController::class, 'consultaProvedores']); //Consulta de provedores para DataTables
 
 // Mostrar formulario de login
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/dashboard', function () {
-    return "Bienvenido al dashboard";
-})->middleware('auth')->name('dashboard');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login'); // Mostrar formulario de login
+Route::post('/login', [LoginController::class, 'login'])->name('login.post'); // Procesar login
+// Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); //
+Route::get('/dashboard', function () { return "Bienvenido al dashboard"; })->middleware('auth')->name('dashboard'); // Ruta protegida por middleware de autenticación
 
 // Cierre de sesión
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); //Cerrar sesión
 
-// Registro
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
+// Registro de usuarios
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register'); // Mostrar formulario de registro
+Route::post('/register', [RegisterController::class, 'register'])->name('register.post'); // Procesar registro
 
 //Usuarios
-Route::view('/usuarios', 'usuarios')->name('usuarios');
-Route::post('/usuarios', [UsuariosController::class, 'consultaUsuarios']);
+Route::get('usuarios/consulta', [UsuariosController::class, 'consultaUsuarios']); //Consulta de usuarios para DataTables
+Route::get('usuarios/{id}', [UsuariosController::class, 'show']); //Mostrar usuario por ID (para edición)
+Route::put('usuarios/{id}', [UsuariosController::class, 'update']); //Actualizar usuario por ID
+Route::delete('usuarios/{id}', [UsuariosController::class, 'destroy']); //Desactivar usuario por ID
+Route::put('usuarios/{id}/restaurar', [UsuariosController::class, 'restaurar']);
+
 
 //Venta del producto
-Route::post('/checkout', [VentaController::class, 'checkout']);
+Route::post('/checkout', [VentaController::class, 'checkout']); //Procesar la venta
 

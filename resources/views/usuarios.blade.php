@@ -10,6 +10,17 @@
 
         <b><p class="text-center">Listado de usuarios</p></b>
 
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
+            Agregar usuario
+        </button>
+
+        <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalFiltrosUsuarios">
+            Filtros
+        </button>
+        <button id="btnVerUsuariosEliminados" class="btn btn-danger mb-3">
+            Ver eliminados
+        </button>
+
         <div class="row">
             <div class="col-lg-12">
                 <br>
@@ -20,12 +31,12 @@
                             <table class="table_id" id="tbl_usuarios">
                             <thead>
                                 <tr>
-                                    {{-- <th class="text-center">Id</th> --}}
                                     <th class="text-center">Usuario</th>
                                     <th class="text-center">Correo</th>
                                     <th class="text-center">Id Rol</th>
                                     <th class="text-center">Rol</th>
                                     <th class="text-center">Descripción rol</th>
+                                    <th class="text-center">Acciones</th>
                                 </tr>
                             </thead>
                         </table>
