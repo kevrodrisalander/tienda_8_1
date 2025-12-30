@@ -52,8 +52,14 @@ Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear')
 Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout'); //Procesar la venta
 
 //Ruta de provedores
-Route::view('/provedores', 'provedores')->name('provedores'); // Muestra los provedores (vista principal)
-Route::post('/provedores', [ProvedoresController::class, 'consultaProvedores']); //Consulta de provedores para DataTables
+Route::view('/provedores', 'provedores')->name('provedores'); // Muestra la vista de provedore
+Route::post('/provedores', [ProvedoresController::class, 'consultaProvedores']); // Consulta de provedores para DataTables
+Route::get('/provedores/{id}', [ProvedoresController::class, 'show'])->where('id', '[0-9]+'); // Traer un proveedor por ID
+Route::put('/provedores/{id}', [ProvedoresController::class, 'update'])->where('id', '[0-9]+'); // Actualizar un proveedor por ID
+Route::get('/provedores/marcas', [ProvedoresController::class, 'marcas']); // Obtener lista de marcas para select dinámico
+Route::put('/provedores/{id}', [ProvedoresController::class, 'update']);  // Actualizar un proveedor por ID
+Route::put('/provedores/{id}/restaurar', [ProvedoresController::class, 'restaurar']); // Restaurar un proveedor por ID
+Route::delete('/provedores/{id}', [ProvedoresController::class, 'destroy']); // Eliminar un proveedor por ID
 
 // Mostrar formulario de login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login'); // Mostrar formulario de login
