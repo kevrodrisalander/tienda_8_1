@@ -12,11 +12,15 @@ $(document).ready(function () {
             { targets: -1, orderable: false, searchable: false, className: "text-center" }, // Acciones
         ],
         ajax: {
-            url: "/provedores",
-            type: "POST",
+            // url: "/provedores",
+            url: "/provedores/lista", // ruta nueva solo para DataTable
+            // type: "POST",
+            type: "GET",
             headers: { "X-CSRF-TOKEN": formToken },
             data: function (d) {
                 d.eliminados = verEliminados ? 1 : 0;
+                d.marca = $("#filtroMarca").val();
+                d.nombre = $("#filtroNombre").val();
             },
         },
         columns: [
@@ -27,13 +31,16 @@ $(document).ready(function () {
             { data: "telefono" },
             { data: "email" },
             { data: "direccion" },
+            // { data: "activo" },
             {
                 data: null,
                 className: "text-center",
                 orderable: false,
                 searchable: false,
                 render: function (data, type, row) {
+                    // Mostrar botones según el estado del proveedor
                     if (row.activo == 1) {
+                        // Mostrar botones de editar y eliminar
                         return `
                             <a href="#" class="btn btn-sm editar-proveedor" data-id="${row.id_proveedor}">✏️</a>
                             <a href="#" class="btn btn-sm eliminar-proveedor" data-id="${row.id_proveedor}">🗑️</a>
@@ -46,7 +53,7 @@ $(document).ready(function () {
         ],
     });
 
-    // ========================= ELIMINAR PROVEEDOR =========================
+    // Eliminar proveedor (lógica de eliminación suave)
     $("#tbl_provedores").on("click", ".eliminar-proveedor", function (e) {
         e.preventDefault();
         const id = $(this).data("id");
@@ -72,7 +79,7 @@ $(document).ready(function () {
         });
     });
 
-    // ========================= RESTAURAR PROVEEDOR =========================
+    // Restaurar proveedor
     $("#tbl_provedores").on("click", ".restaurar-proveedor", function (e) {
         e.preventDefault();
         const id = $(this).data("id");
@@ -88,20 +95,20 @@ $(document).ready(function () {
         });
     });
 
-    // ========================= VER ELIMINADOS / ACTIVOS =========================
+    // Eliminar o ver proveedores eliminados
     $("#btnVerProveedoresEliminados").on("click", function () {
         verEliminados = !verEliminados;
         $(this).text(verEliminados ? "Ver activos" : "Ver eliminados");
         tabla.ajax.reload();
     });
 
-    // ========================= EDITAR PROVEEDOR =========================
+    // Editar proveedor - Abrir modal y cargar datos
+
     $("#tbl_provedores").on("click", ".editar-proveedor", function (e) {
         e.preventDefault();
         const id = $(this).data("id");
 
-        // 1️ Obtener datos del proveedor usando POST en vez de GET
-        $.post('/provedores', { id: id, _token: $('meta[name="csrf-token"]').attr("content") }, function (proveedor) {
+        $.get(`/provedores/${id}`, function (proveedor) {
             $("#proveedorId").val(proveedor.id_proveedor);
             $("#nombre_proveedor").val(proveedor.nombre_proveedor);
             $("#contacto").val(proveedor.contacto);
@@ -109,7 +116,7 @@ $(document).ready(function () {
             $("#email").val(proveedor.email);
             $("#direccion").val(proveedor.direccion);
 
-            // 2️  Cargar marcas dinámicamente
+            // Cargar marcas dinámicamente
             $.get("/provedores/marcas", function (marcas) {
                 const select = $("#id_cat_marcas");
                 select.empty();
@@ -119,15 +126,14 @@ $(document).ready(function () {
                     select.append(`<option value="${marca.id}" ${selected}>${marca.nombre}</option>`);
                 });
 
-                // 3️ Mostrar modal (Bootstrap 5)
+                // Mostrar modal
                 const modal = new bootstrap.Modal(document.getElementById('modalEditarProveedor'));
                 modal.show();
             });
         });
     });
 
-
-    // ========================= GUARDAR CAMBIOS DEL MODAL =========================
+    // Guardar cambios al editar proveedor
     $("#formEditarProveedor").on("submit", function (e) {
         e.preventDefault();
         const id = $("#proveedorId").val();
@@ -152,6 +158,95 @@ $(document).ready(function () {
             },
             error: function () {
                 Swal.fire("Error", "No se pudo actualizar el proveedor", "error");
+            }
+        });
+    });
+
+    // Abrir modal de filtros
+    $("#btnFiltrosProveedores").on("click", function () {
+        const modal = new bootstrap.Modal(
+            document.getElementById("modalFiltrosProveedores")
+        );
+        modal.show();
+    });
+
+    // Cargar marcas para el filtro
+    function cargarMarcasFiltro() {
+        $.get("/provedores/marcas", function (marcas) {
+            const select = $("#filtroMarca");
+            select.empty();
+            select.append('<option value="">Todas</option>');
+
+            marcas.forEach(function (marca) {
+                select.append(
+                    `<option value="${marca.id}">${marca.nombre}</option>`
+                );
+            });
+        });
+    }
+
+    // cargar marcas al iniciar
+    cargarMarcasFiltro();
+
+// Aplicar filtros y recargar tabla
+    $("#formFiltrosProveedores").on("submit", function (e) {
+        e.preventDefault();
+        tabla.ajax.reload();
+
+        const modal = bootstrap.Modal.getInstance(
+            document.getElementById("modalFiltrosProveedores")
+        );
+        modal.hide();
+    });
+
+    // Abrir modal de registro de proveedor
+    $("#btnRegistrarProveedor").on("click", function () {
+        const modal = $("#modalRegistrarProveedor");
+
+        // Limpiar todos los campos
+        modal.find("input, textarea").val("");
+        modal.find("select").val("");
+
+        // Cargar marcas en el select
+        $.get("/provedores/marcas", function (marcas) {
+            const select = $("#nuevoIdCatMarcas");
+            select.empty();
+            select.append('<option value="">Selecciona una marca</option>');
+            marcas.forEach(function (marca) {
+                select.append(`<option value="${marca.id}">${marca.nombre}</option>`);
+            });
+        });
+
+        // Mostrar modal
+        new bootstrap.Modal(document.getElementById("modalRegistrarProveedor")).show();
+    });
+
+    // Enviar formulario de registro de proveedor
+    $("#formRegistrarProveedor").on("submit", function (e) {
+        e.preventDefault();
+        const formToken = $('meta[name="csrf-token"]').attr("content");
+
+        $.ajax({
+            url: "/provedores", // ruta POST en web.php
+            type: "POST",
+            headers: { "X-CSRF-TOKEN": formToken },
+            data: {
+                nombre_proveedor: $("#nuevoNombre").val(),
+                contacto: $("#nuevoContacto").val(),
+                telefono: $("#nuevoTelefono").val(),
+                email: $("#nuevoEmail").val(),
+                direccion: $("#nuevaDireccion").val(),
+                id_cat_marcas: $("#nuevoIdCatMarcas").val()
+            },
+            success: function () {
+                Swal.fire("Éxito", "Proveedor registrado correctamente", "success");
+                tabla.ajax.reload();
+                const modal = bootstrap.Modal.getInstance(document.getElementById("modalRegistrarProveedor"));
+                modal.hide();
+            },
+            error: function (xhr) {
+                console.log(xhr.responseJSON); // para depuración
+                Swal.fire("Error", "No se pudo registrar el proveedor", "error");
             }
         });
     });

@@ -14,22 +14,26 @@
                         Productos
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="productosDropdown">
-                        {{-- <li><a class="dropdown-item" href="/ropa">Ropa</a></li> --}}
-                        {{-- <li><a class="dropdown-item" href="/electronica">Electrónica</a></li> --}}
-                        {{-- <li><a class="dropdown-item" href="/hogar">Hogar</a></li> --}}
                     </ul>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="/tiendas">Tiendas</a></li>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
+                        Tiendas
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                        <li><a class="dropdown-item" href="/x">Tiendas</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
                         Administración
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                         <li><a class="dropdown-item" href="/administracion">Administración</a></li>
-                        {{-- <li><a class="dropdown-item" href="/proveedores">Proveedores</a></li> --}}
-                        {{-- <li><a class="dropdown-item" href="/clientes">Clientes</a></li> --}}
+                        <li><a class="dropdown-item" href="/x">Reportes</a></li>
                     </ul>
                 </li>
             </ul>

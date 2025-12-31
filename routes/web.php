@@ -12,7 +12,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\VentaController;
-
+use App\Http\Controllers\ReporteController;
 
 
 // Página principal de la tienda
@@ -60,6 +60,8 @@ Route::get('/provedores/marcas', [ProvedoresController::class, 'marcas']); // Ob
 Route::put('/provedores/{id}', [ProvedoresController::class, 'update']);  // Actualizar un proveedor por ID
 Route::put('/provedores/{id}/restaurar', [ProvedoresController::class, 'restaurar']); // Restaurar un proveedor por ID
 Route::delete('/provedores/{id}', [ProvedoresController::class, 'destroy']); // Eliminar un proveedor por ID
+Route::post('/provedores', [ProvedoresController::class, 'store']);
+Route::get('/provedores/lista', [ProvedoresController::class, 'lista']);
 
 // Mostrar formulario de login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login'); // Mostrar formulario de login
@@ -87,3 +89,12 @@ Route::post('/checkout', [VentaController::class, 'checkout']); //Procesar la ve
 
 //Creación del pdf
 Route::get('/venta/{id}/ticket', [VentaController::class, 'ticketPdf'])->name('venta.ticket');
+
+
+// web.php
+Route::get('/reportes/reportes', [ReporteController::class, 'index']);
+Route::get('/reportes/lista', [ReporteController::class, 'lista']);
+
+
+
+
