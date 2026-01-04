@@ -33,7 +33,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                         <li><a class="dropdown-item" href="/administracion">Administración</a></li>
-                        <li><a class="dropdown-item" href="/x">Reportes</a></li>
+                        <li><a class="dropdown-item" href="/reportes/reportes">Reportes</a></li>
                     </ul>
                 </li>
             </ul>

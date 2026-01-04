@@ -121,6 +121,16 @@
                     Entrar
                 </a>
             </div>
+            <div class="card">
+                <div class="icon text-4xl mb-2">👤</div>
+                <div class="title">Clientes</div>
+                <div class="description">
+                    Creamos herramientas funcionales, atractivas y adaptadas al crecimiento de tus ventas.
+                </div>
+                <a href="{{ route('provedores') }}" class="boton-verde">
+                    Entrar
+                </a>
+            </div>
         </div>
     </div>
 @endsection

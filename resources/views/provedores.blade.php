@@ -2,7 +2,7 @@
 
 <link rel="stylesheet" href="{{ asset('css/tablas.css') }}">
 
-@section('title', 'Tienda Departamental')
+@section('title', 'Proveedores')
 
 @section('content')
     <div class="container">

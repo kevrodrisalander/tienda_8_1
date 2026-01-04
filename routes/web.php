@@ -32,7 +32,12 @@ Route::view('/usuarios', 'usuarios')->name('usuarios'); // Muestra la vista de u
 
 // Consulta de inventario por POST
 Route::post('/inventario', [InventarioController::class, 'consultaInventario'])->name('productos.consulta');
+Route::post('/inventario', [InventarioController::class, 'consultaInventario']);
 Route::view('/inventario', 'inventario')->name('inventario');
+Route::get('/inventario', [InventarioController::class, 'consultaInventario']);
+Route::get('/inventario/marcas', [InventarioController::class, 'marcas']);
+Route::get('/inventario/categorias', [InventarioController::class, 'categorias']);
+
 
 //Ruta de stock
 Route::get('/stock', [StockController::class, 'catalogos'])->name('stock'); // Muestra el stock (vista principal)
@@ -66,8 +71,9 @@ Route::get('/provedores/lista', [ProvedoresController::class, 'lista']);
 // Mostrar formulario de login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login'); // Mostrar formulario de login
 Route::post('/login', [LoginController::class, 'login'])->name('login.post'); // Procesar login
-// Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); //
-Route::get('/dashboard', function () { return "Bienvenido al dashboard"; })->middleware('auth')->name('dashboard'); // Ruta protegida por middleware de autenticación
+Route::get('/dashboard', function () {
+    return "Bienvenido al dashboard";
+})->middleware('auth')->name('dashboard'); // Ruta protegida por middleware de autenticación
 
 // Cierre de sesión
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); //Cerrar sesión
@@ -83,6 +89,8 @@ Route::put('usuarios/{id}', [UsuariosController::class, 'update']); //Actualizar
 Route::delete('usuarios/{id}', [UsuariosController::class, 'destroy']); //Desactivar usuario por ID
 Route::put('usuarios/{id}/restaurar', [UsuariosController::class, 'restaurar']); //Restaurar usuario por ID
 Route::get('/roles', [UsuariosController::class, 'getRoles'])->name('roles.get'); //Obtener lista de roles para select dinámico
+Route::post('usuarios', [UsuariosController::class, 'store']); // Crear usuario
+
 
 //Venta del producto
 Route::post('/checkout', [VentaController::class, 'checkout']); //Procesar la venta
@@ -90,11 +98,6 @@ Route::post('/checkout', [VentaController::class, 'checkout']); //Procesar la ve
 //Creación del pdf
 Route::get('/venta/{id}/ticket', [VentaController::class, 'ticketPdf'])->name('venta.ticket');
 
-
-// web.php
+// Reportes
 Route::get('/reportes/reportes', [ReporteController::class, 'index']);
 Route::get('/reportes/lista', [ReporteController::class, 'lista']);
-
-
-
-

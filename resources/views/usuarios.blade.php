@@ -2,7 +2,7 @@
 
 <link rel="stylesheet" href="{{ asset('css/tablas.css') }}">
 
-@section('title', 'Tienda Departamental')
+@section('title', 'Usuarios')
 
 @section('content')
     <div class="container">
@@ -104,6 +104,198 @@
         </div>
     </div>
     {{-- Fin Modal Editar Usuario --}}
+
+
+{{-- Modal Filtros Usuarios --}}
+<div class="modal fade" id="modalFiltrosUsuarios" tabindex="-1"
+    aria-labelledby="modalFiltrosUsuariosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            {{-- Header --}}
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFiltrosUsuariosLabel">
+                    Filtros de Usuarios
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Cerrar"></button>
+            </div>
+
+            {{-- Body --}}
+            <div class="modal-body">
+                <form id="formFiltrosUsuarios">
+
+                    <div class="row">
+                        {{-- Usuario --}}
+                        <div class="col-md-6 mb-3">
+                            <label for="filtro_usuario" class="form-label">
+                                Usuario
+                            </label>
+                            <input type="text" class="form-control"
+                                id="filtro_usuario" name="usuario"
+                                placeholder="Buscar por usuario">
+                        </div>
+
+                        {{-- Correo --}}
+                        <div class="col-md-6 mb-3">
+                            <label for="filtro_correo" class="form-label">
+                                Correo
+                            </label>
+                            <input type="text" class="form-control"
+                                id="filtro_correo" name="correo"
+                                placeholder="Buscar por correo">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        {{-- Rol con búsqueda --}}
+                        <div class="col-md-6 mb-3">
+                            <label for="filtro_rol" class="form-label">
+                                Rol
+                            </label>
+                            <select class="form-select"
+                                id="filtro_rol"
+                                name="rol"
+                                style="width: 100%">
+                                <option value="">Todos los roles</option>
+                            </select>
+                        </div>
+
+                        {{-- Estado --}}
+                        <div class="col-md-6 mb-3">
+                            <label for="filtro_estado" class="form-label">
+                                Estado
+                            </label>
+                            <select class="form-select"
+                                id="filtro_estado"
+                                disabled>
+                                <option value="">Activos</option>
+                                <option value="1">Eliminados</option>
+                            </select>
+                            <small class="text-muted">
+                                El estado se controla con el botón
+                                <b>"Ver eliminados"</b>
+                            </small>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            {{-- Footer --}}
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    id="btnLimpiarFiltros">
+                    Limpiar
+                </button>
+
+                <button type="button" class="btn btn-primary"
+                    id="btnAplicarFiltros">
+                    Aplicar filtros
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+{{-- Fin Modal Filtros Usuarios --}}
+
+{{-- Modal Nuevo Usuario --}}
+<div class="modal fade" id="modalNuevoUsuario" tabindex="-1"
+    aria-labelledby="modalNuevoUsuarioLabel" aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            {{-- Header --}}
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalNuevoUsuarioLabel">
+                    Nuevo Usuario
+                </h5>
+                <button type="button" class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Cerrar"></button>
+            </div>
+
+            {{-- Body --}}
+            <div class="modal-body">
+                <form id="formNuevoUsuario" method="POST">
+                    @csrf
+
+                    {{-- Usuario --}}
+                    <div class="mb-3">
+                        <label for="nuevo_usuario" class="form-label">
+                            Usuario
+                        </label>
+                        <input type="text" class="form-control"
+                            id="nuevo_usuario"
+                            name="usuario"
+                            required>
+                    </div>
+
+                    {{-- Correo --}}
+                    <div class="mb-3">
+                        <label for="nuevo_correo" class="form-label">
+                            Correo
+                        </label>
+                        <input type="email" class="form-control"
+                            id="nuevo_correo"
+                            name="correo"
+                            required>
+                    </div>
+
+                    {{-- Rol --}}
+                    <div class="mb-3">
+                        <label for="nuevo_id_rol" class="form-label">
+                            Rol
+                        </label>
+                        <select class="form-select"
+                            id="nuevo_id_rol"
+                            name="id_rol"
+                            required>
+                            <option value="">Selecciona un rol</option>
+                            {{-- Se carga dinámicamente --}}
+                        </select>
+                    </div>
+
+                    {{-- Password --}}
+                    <div class="mb-3">
+                        <label for="nuevo_password" class="form-label">
+                            Contraseña
+                        </label>
+                        <input type="password" class="form-control"
+                            id="nuevo_password"
+                            name="password"
+                            required>
+                    </div>
+
+                    {{-- Confirmar Password --}}
+                    <div class="mb-3">
+                        <label for="nuevo_password_confirmation"
+                            class="form-label">
+                            Confirmar Contraseña
+                        </label>
+                        <input type="password" class="form-control"
+                            id="nuevo_password_confirmation"
+                            name="password_confirmation"
+                            required>
+                    </div>
+
+                    {{-- Botón guardar --}}
+                    <button type="submit" class="btn btn-primary w-100">
+                        Guardar Usuario
+                    </button>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+{{-- Fin Modal Nuevo Usuario --}}
+
+
+
 @endsection
 
 @section('js_footer')
