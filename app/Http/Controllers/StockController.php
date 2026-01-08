@@ -41,6 +41,7 @@ class StockController extends Controller
             'stock.observaciones',
             'stock.activo',
             'stock.tipo_movimiento',
+            'stock.fecha_salida',
         ])->get();
 
         return response()->json(['data' => $stocks]);
@@ -130,27 +131,56 @@ class StockController extends Controller
     }
 
     //Eliminar registros , pasa a status 0
+
     public function destroy($id)
-    {
+{
+    // Obtener registro de stock
+    $stock = DB::table('stock')->where('id', $id)->first();
+
+    if ($stock && $stock->activo) {
+        // Descontar la cantidad del stock actual del producto
+        DB::table('productos')
+            ->where('id', $stock->producto_id)
+            ->decrement('stock_actual', $stock->cantidad);
+
+        // Marcar como inactivo y actualizar fecha de salida
         DB::table('stock')
             ->where('id', $id)
             ->update([
                 'activo' => 0,
+                'fecha_salida' => now(),
                 'updated_at' => now(),
             ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Registro eliminado correctamente'
-        ]);
     }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Registro eliminado correctamente'
+    ]);
+}
+
 
     //Recuperar registro pasa a status 1
     public function restaurar($id)
 {
-    DB::table('stock')
-        ->where('id', $id)
-        ->update(['activo' => 1]);
+    // Obtener registro de stock
+    $stock = DB::table('stock')->where('id', $id)->first();
+
+    if ($stock && !$stock->activo) {
+        // Sumar la cantidad al stock actual del producto
+        DB::table('productos')
+            ->where('id', $stock->producto_id)
+            ->increment('stock_actual', $stock->cantidad);
+
+        // Marcar como activo y limpiar fecha de salida
+        DB::table('stock')
+            ->where('id', $id)
+            ->update([
+                'activo' => 1,
+                'fecha_salida' => null,
+                'updated_at' => now(),
+            ]);
+    }
 
     return response()->json(['ok' => true]);
 }

@@ -44,6 +44,7 @@
                                     <th class="text-center">Fecha ingreso</th>
                                     <th class="text-center">Fecha vencimiento</th>
                                     <th class="text-center">Lote</th>
+                                    <th class="text-center">Fecha Salida</th>
                                     <th class="text-center">Observaciones</th>
                                     <th class="text-center">Tipo movimiento</th>
                                     <th class="text-center">Acciones</th>

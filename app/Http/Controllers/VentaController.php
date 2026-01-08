@@ -56,6 +56,7 @@ class VentaController extends Controller
                     'usuario_id'     => Auth::id(), // <- aquí pones el ID del usuario actual
                     'created_at'     => now(),
                     'updated_at'     => now(),
+                    'fecha_salida'    => now(), // <--- aquí va la fecha real de salida
                 ]);
             }
 
@@ -84,8 +85,6 @@ class VentaController extends Controller
             ], 500);
         }
     }
-
-
 
 
     public function ticketPdf($idVenta)

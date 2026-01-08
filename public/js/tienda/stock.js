@@ -49,45 +49,86 @@ let verEliminados = false;
         ajax: {
             url: "stock/consulta",
             type: "GET",
-            headers: {
-                "X-CSRF-TOKEN": formToken,
-            },
+            headers: { "X-CSRF-TOKEN": formToken },
             data: function (d) {
-                // Enviamos si queremos ver eliminados o no
                 d.eliminados = verEliminados ? 1 : 0;
             },
         },
 
         columns: [
             { data: "nombre_producto" },
-            { data: "cantidad" },
+            {
+                data: "cantidad",
+                className: "text-center",
+                render: function (data, type, row) {
+                    if (row.tipo_movimiento.toLowerCase() === "entrada") {
+                        return `<span class="badge bg-success">${data}</span>`;
+                    } else if (row.tipo_movimiento.toLowerCase() === "salida") {
+                        return `<span class="badge bg-danger">${data}</span>`;
+                    } else {
+                        return data;
+                    }
+                },
+            },
             { data: "ubicacion" },
             { data: "estado" },
             { data: "minimo_seguro" },
             { data: "maximo_permitido" },
-            { data: "fecha_ingreso" },
-            { data: "fecha_vencimiento" },
+            {
+                data: "fecha_ingreso",
+                className: "text-center",
+                render: function (data) {
+                    if (!data) return "-";
+                    const d = new Date(data + "Z"); // UTC
+                    return d.toLocaleString("es-MX");
+                },
+            },
+            {
+                data: "fecha_vencimiento",
+                className: "text-center",
+                render: function (data) {
+                    if (!data) return "-";
+                    const d = new Date(data + "Z");
+                    return d.toLocaleDateString("es-MX");
+                },
+            },
             { data: "lote" },
+            {
+                data: "fecha_salida",
+                className: "text-center",
+                render: function (data) {
+                    if (!data) return "-";
+                    const d = new Date(data + "Z"); // UTC
+                    return d.toLocaleString("es-MX"); // Sin badge ni color
+                },
+            },
             { data: "observaciones" },
-            { data: "tipo_movimiento" },
+            {
+                data: "tipo_movimiento",
+                className: "text-center",
+                render: function (data) {
+                    if (!data) return "-";
+                    let color = "";
+                    if (data.toLowerCase() === "entrada") color = "success";
+                    if (data.toLowerCase() === "salida") color = "danger";
+                    return `<span class="badge bg-${color}">${data}</span>`;
+                },
+            },
             {
                 data: null,
                 className: "text-center",
                 orderable: false,
                 searchable: false,
                 render: function (data, type, row) {
-                    // Acciones según estado del registro
                     if (row.activo == 1) {
                         return `
-                            <a href="#" class="btn btn-sm editar-stock" data-id="${row.id}" title="Editar">✏️</a>
-                            <a href="#" class="btn btn-sm eliminar-stock" data-id="${row.id}" title="Eliminar">🗑️</a>
-                        `;
+                        <a href="#" class="btn btn-sm editar-stock" data-id="${row.id}" title="Editar">✏️</a>
+                        <a href="#" class="btn btn-sm eliminar-stock" data-id="${row.id}" title="Eliminar">🗑️</a>
+                    `;
                     } else {
                         return `
-                            <a href="#" class="btn btn-sm restaurar-stock" data-id="${row.id}" title="Restaurar">
-                                ♻️
-                            </a>
-                        `;
+                        <a href="#" class="btn btn-sm restaurar-stock" data-id="${row.id}" title="Restaurar">♻️</a>
+                    `;
                     }
                 },
             },
@@ -140,67 +181,77 @@ let verEliminados = false;
     });
 
     $("#tbl_stock").on("click", ".eliminar-stock", function (e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    const id = $(this).data("id");
+        const id = $(this).data("id");
 
-    Swal.fire({
-        title: "¿Eliminar registro?",
-        text: "El stock no se perderá, solo se desactivará",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: `/stock/${id}`,
-                type: "DELETE",
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-                },
-                success: function () {
-                    Swal.fire("Eliminado", "Registro desactivado", "success");
-                    $("#tbl_stock").DataTable().ajax.reload();
-                },
-            });
-        }
+        Swal.fire({
+            title: "¿Eliminar registro?",
+            text: "El stock no se perderá, solo se desactivará",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/stock/${id}`,
+                    type: "DELETE",
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                            "content"
+                        ),
+                    },
+                    success: function () {
+                        Swal.fire(
+                            "Eliminado",
+                            "Registro desactivado",
+                            "success"
+                        );
+                        $("#tbl_stock").DataTable().ajax.reload();
+                    },
+                });
+            }
+        });
     });
-});
-
 
     /**************************************************
      * RESTAURAR STOCK
      **************************************************/
     $("#tbl_stock").on("click", ".restaurar-stock", function (e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    const id = $(this).data("id");
+        const id = $(this).data("id");
 
-    Swal.fire({
-        title: "¿Restaurar registro?",
-        text: "El producto volverá al stock activo",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Sí, restaurar",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: `/stock/${id}/restaurar`,
-                type: "PUT",
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-                },
-                success: function () {
-                    Swal.fire("Restaurado", "Registro activo nuevamente", "success");
-                    $("#tbl_stock").DataTable().ajax.reload();
-                },
-            });
-        }
+        Swal.fire({
+            title: "¿Restaurar registro?",
+            text: "El producto volverá al stock activo",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Sí, restaurar",
+            cancelButtonText: "Cancelar",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/stock/${id}/restaurar`,
+                    type: "PUT",
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                            "content"
+                        ),
+                    },
+                    success: function () {
+                        Swal.fire(
+                            "Restaurado",
+                            "Registro activo nuevamente",
+                            "success"
+                        );
+                        $("#tbl_stock").DataTable().ajax.reload();
+                    },
+                });
+            }
+        });
     });
-});
-
 
     /**************************************************
      * TOGGLE VER ELIMINADOS / ACTIVOS
@@ -219,5 +270,6 @@ let verEliminados = false;
     $("#formEditarStock").on("submit", function () {
         $(this).find('button[type="submit"]').prop("disabled", true);
     });
+
 
 })(); // ← auto-ejecución, no tocar

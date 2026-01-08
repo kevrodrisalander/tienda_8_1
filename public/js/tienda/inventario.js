@@ -65,7 +65,7 @@ $(document).ready(function () {
                 render: function (data, type, row) {
                     return `
                         <button
-                            class="btn btn-sm btn-info btn-detalles"
+                            class="btn btn-sm btn btn-detalles"
                             data-descripcion="${row.descripcion}"
                             data-detalles="${row.detalles ?? 'Sin detalles'}"
                         >

@@ -20,6 +20,8 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');  // Ruta pa
 
 // Mostrar productos de una categoría por slug
 Route::get('/categoria/{slug}', [ProductoController::class, 'mostrarCategoria'])->name('categoria.mostrar');
+// Route::get('/api/productos/{id}/stock', [ProductoController::class, 'stockActual']);
+
 
 //Ruta vista sin categoria
 Route::get('/test-vista/{slug}', function ($slug) {
@@ -30,14 +32,19 @@ Route::get('/test-vista/{slug}', function ($slug) {
 Route::view('/administracion', 'administracion')->name('administracion'); // Muestra la vista de administración
 Route::view('/usuarios', 'usuarios')->name('usuarios'); // Muestra la vista de usuarios
 
-// Consulta de inventario por POST
-Route::post('/inventario', [InventarioController::class, 'consultaInventario'])->name('productos.consulta');
-Route::post('/inventario', [InventarioController::class, 'consultaInventario']);
-Route::view('/inventario', 'inventario')->name('inventario');
-Route::get('/inventario', [InventarioController::class, 'consultaInventario']);
+
+//Inventario
+// Muestra la vista
+Route::get('/inventario', function () {
+    return view('inventario');
+})->name('inventario');
+
+// Procesa el formulario
+Route::post('/inventario', [InventarioController::class, 'consultaInventario'])
+    ->name('productos.consulta');
+
 Route::get('/inventario/marcas', [InventarioController::class, 'marcas']);
 Route::get('/inventario/categorias', [InventarioController::class, 'categorias']);
-
 
 //Ruta de stock
 Route::get('/stock', [StockController::class, 'catalogos'])->name('stock'); // Muestra el stock (vista principal)

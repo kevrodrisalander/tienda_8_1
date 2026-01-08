@@ -59,16 +59,13 @@ window.CartApp = (function () {
                     <td>${item.nombre}</td>
                     <td class="text-center">
                         <input type="number" class="form-control form-control-sm quantity-input"
-                               data-id="${item.id}" value="${
-                item.cantidad
-            }" min="1" style="width: 60px; margin:auto;">
+                               data-id="${item.id}" value="${item.cantidad}" min="1"
+                               max="${item.stock ?? 0}" style="width: 60px; margin:auto;">
                     </td>
                     <td class="text-end">${formatMoney(item.precio)}</td>
                     <td class="text-end subtotal">${formatMoney(subtotal)}</td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-danger btn-remove" data-id="${
-                            item.id
-                        }">x</button>
+                        <button class="btn btn-sm btn-danger btn-remove" data-id="${item.id}">x</button>
                     </td>
                 </tr>`;
         });
@@ -77,9 +74,7 @@ window.CartApp = (function () {
                  <tfoot>
                     <tr>
                         <th colspan="3" class="text-end">Total:</th>
-                        <th id="cartTotal" class="text-end">${formatMoney(
-                            total
-                        )}</th>
+                        <th id="cartTotal" class="text-end">${formatMoney(total)}</th>
                         <th></th>
                     </tr>
                  </tfoot>
@@ -87,18 +82,22 @@ window.CartApp = (function () {
 
         cartBody.innerHTML = html;
 
-        // Inputs de cantidad
+        // Inputs de cantidad con validación de stock
         const quantityInputs = cartBody.querySelectorAll(".quantity-input");
         quantityInputs.forEach((input) => {
-            input.addEventListener("change", (e) => {
+            input.addEventListener("input", (e) => {
                 const id = e.target.dataset.id;
-                let cantidad = parseInt(e.target.value);
-                if (isNaN(cantidad) || cantidad < 1) cantidad = 1;
+                const max = parseInt(e.target.max) || 0;
+                const min = parseInt(e.target.min) || 1;
+                let cantidad = parseInt(e.target.value) || min;
+
+                if (cantidad > max) cantidad = max;
+                if (cantidad < min) cantidad = min;
+
+                e.target.value = cantidad;
 
                 const cart = readCart();
-                const index = cart.findIndex(
-                    (p) => String(p.id) === String(id)
-                );
+                const index = cart.findIndex((p) => String(p.id) === String(id));
                 if (index >= 0) {
                     cart[index].cantidad = cantidad;
                     writeCart(cart);
@@ -119,15 +118,19 @@ window.CartApp = (function () {
         });
     };
 
-    const addItem = ({ id, nombre, precio, cantidad = 1 }) => {
+    const addItem = ({ id, nombre, precio, cantidad = 1, stock = 0 }) => {
         if (!id) return;
         let cart = readCart();
         const idx = cart.findIndex((p) => String(p.id) === String(id));
+        cantidad = Math.min(cantidad, stock); // no permitir más que stock
+        if (cantidad < 1) return;
+
         if (idx >= 0) {
-            cart[idx].cantidad += cantidad;
+            cart[idx].cantidad = Math.min(cart[idx].cantidad + cantidad, stock);
         } else {
             cart.push({ id, nombre, precio, cantidad });
         }
+
         writeCart(cart);
         updateCartCount();
         showToast(`${nombre} añadido al carrito ✅`);
@@ -149,61 +152,58 @@ window.CartApp = (function () {
     };
 
     const checkout = () => {
-    const cart = readCart();
-    if (cart.length === 0) {
-        Swal.fire("Tu carrito está vacío", "", "info");
-        return;
-    }
-
-    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-    const csrfToken = csrfMeta ? csrfMeta.getAttribute("content") : null;
-
-    if (!csrfToken) {
-        console.error("CSRF token no encontrado. Agrega <meta name='csrf-token'> en el <head>");
-        return;
-    }
-
-    const total = cart.reduce((s, p) => s + p.precio * p.cantidad, 0);
-
-    Swal.fire({
-        title: "Confirmar compra",
-        text: `Total: ${total.toLocaleString("es-MX", { style: "currency", currency: "MXN" })}`,
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Sí, comprar",
-        cancelButtonText: "Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch('/checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                body: JSON.stringify({ cart })
-            })
-            .then(response => response.blob()) // esperamos un PDF
-            .then(blob => {
-                // Descargar PDF
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `ticket_compra_${Date.now()}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-            })
-            .catch(err => console.error(err));
-
-            // Limpiar carrito
-            clearCart();
-            const modal = bootstrap.Modal.getInstance(document.getElementById('cartModal'));
-            if (modal) modal.hide();
-            Swal.fire("Compra realizada", "Gracias por tu compra 🎉", "success");
+        const cart = readCart();
+        if (cart.length === 0) {
+            Swal.fire("Tu carrito está vacío", "", "info");
+            return;
         }
-    });
-};
 
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfMeta ? csrfMeta.getAttribute("content") : null;
+
+        if (!csrfToken) {
+            console.error("CSRF token no encontrado.");
+            return;
+        }
+
+        const total = cart.reduce((s, p) => s + p.precio * p.cantidad, 0);
+
+        Swal.fire({
+            title: "Confirmar compra",
+            text: `Total: ${total.toLocaleString("es-MX", { style: "currency", currency: "MXN" })}`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Sí, comprar",
+            cancelButtonText: "Cancelar",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({ cart })
+                })
+                .then(response => response.blob()) // esperamos un PDF
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `ticket_compra_${Date.now()}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                })
+                .catch(err => console.error(err));
+
+                clearCart();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('cartModal'));
+                if (modal) modal.hide();
+                Swal.fire("Compra realizada", "Gracias por tu compra 🎉", "success");
+            }
+        });
+    };
 
     const setupListeners = () => {
         document.addEventListener("click", (e) => {
@@ -215,7 +215,9 @@ window.CartApp = (function () {
                 const precio = parseFloat(addBtn.dataset.precio) || 0;
                 const input = document.querySelector(`#cantidad-${id}`);
                 const cantidad = Math.max(1, parseInt(input?.value) || 1);
-                addItem({ id, nombre, precio, cantidad });
+                const stock = parseInt(input?.max) || 0;
+
+                addItem({ id, nombre, precio, cantidad, stock });
                 return;
             }
         });
@@ -241,6 +243,19 @@ window.CartApp = (function () {
         if (cartModalEl) {
             cartModalEl.addEventListener("show.bs.modal", renderCart);
         }
+
+//Desabilitar botton
+document.querySelectorAll(".btn-add").forEach(btn => {
+    const id = btn.dataset.id;
+    const input = document.querySelector(`#cantidad-${id}`);
+    if (parseInt(input?.max) === 0) {
+        btn.disabled = true;
+        btn.textContent = "Agotado";
+        btn.classList.remove("btn-primary"); // quitar azul
+        btn.classList.add("btn-danger"); // poner rojo
+    }
+});
+
     };
 
     const init = () => {
