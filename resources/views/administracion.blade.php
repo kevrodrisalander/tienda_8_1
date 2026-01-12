@@ -117,7 +117,7 @@
                 <div class="description">
                     Creamos herramientas funcionales, atractivas y adaptadas al crecimiento de tus ventas.
                 </div>
-                <a href="{{ route('provedores') }}" class="boton-verde">
+                <a href="{{ route('envios') }}" class="boton-verde">
                     Entrar
                 </a>
             </div>

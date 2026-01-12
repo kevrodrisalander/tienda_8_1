@@ -12,15 +12,17 @@ class Producto extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'descripcion',
-        'stock',
-        'precio_venta',
-        'id_status',
-        'id_categoria',
-        'id_marca',
-        'name_file',
-        'fecha',
-    ];
+    'descripcion',
+    'descripcion_larga', // <- debe estar aquí
+    'stock',
+    'precio_venta',
+    'id_status',
+    'id_categoria',
+    'id_marca',
+    'fecha',
+    'name_file',
+    'stock_actual',      // opcional si lo actualizas
+];
 
     // Relación con Stock
     public function stock()

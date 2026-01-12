@@ -14,17 +14,24 @@
             <p class="text-center">Listado del stock de productos registrados</p>
         </b>
 
-        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
-            Agregar producto
-        </button>
+        {{-- Botón Agregar producto solo para roles permitidos --}}
+        @if(auth()->check() && in_array(auth()->user()->id_rol, [1,4,8]))
+            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
+                Agregar producto
+            </button>
+        @endif
 
+        {{-- Botón Filtros visible para todos --}}
         <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalFiltros">
             Filtros
         </button>
-        <button id="btnVerEliminados" class="btn btn-danger mb-3">
-            Ver eliminados
-        </button>
 
+        {{-- Ver eliminados solo para roles permitidos --}}
+        @if(auth()->check() && in_array(auth()->user()->id_rol, [1,4]))
+            <button id="btnVerEliminados" class="btn btn-danger mb-3">
+                Ver eliminados
+            </button>
+        @endif
 
         <div class="row">
             <div class="col-lg-12">
@@ -60,14 +67,13 @@
     </div>
 @endsection
 
-
-{{-- Modal nuevo producto --}}
+{{-- Modal nuevo producto solo para roles permitidos --}}
+@if(auth()->check() && in_array(auth()->user()->id_rol, [1,4,8]))
 <div class="modal fade" id="modalNuevoProducto" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <form method="POST" action="{{ route('producto.guardar') }}" enctype="multipart/form-data">
             @csrf
             <div class="modal-content">
-
                 <div class="modal-header">
                     <h5 class="modal-title">Registrar nuevo producto</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -151,6 +157,12 @@
                             </select>
                         </div>
 
+                        <div class="col-md-12">
+                            <label class="form-label">Descripción larga</label>
+                            <textarea name="descripcion_larga" class="form-control" rows="4"
+                                placeholder="Ingresa la descripción detallada del producto"></textarea>
+                        </div>
+
                         <div class="col-md-6">
                             <label class="form-label">Fecha ingreso</label>
                             <input type="date" name="fecha_ingreso" class="form-control" required>
@@ -183,8 +195,10 @@
         </form>
     </div>
 </div>
+@endif
 
-{{-- Modal editar stock --}}
+{{-- Modal editar stock solo para roles permitidos --}}
+@if(auth()->check() && in_array(auth()->user()->id_rol, [1,4,8]))
 <div class="modal fade" id="modalSimple" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -280,6 +294,7 @@
         </div>
     </div>
 </div>
+@endif
 
 {{-- JS --}}
 @section('js_footer')

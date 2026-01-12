@@ -23,7 +23,7 @@ class Stock extends Model
         'observaciones',
         'usuario_id',
         'activo',
-        'fecha_salida' // <--- importante
+        'fecha_salida', // <--- importante
     ];
 
     public function producto()

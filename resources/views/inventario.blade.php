@@ -85,6 +85,13 @@
             <div class="modal-body">
                 <div class="row">
 
+                    {{-- Descripción --}}
+<div class="col-md-12 mb-3">
+    <label class="form-label">Descripción</label>
+    <input type="text" id="filtro_descripcion" class="form-control" placeholder="Buscar por descripción">
+</div>
+
+
                     {{-- Marca --}}
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Marca</label>

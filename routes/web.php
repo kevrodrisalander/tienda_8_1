@@ -16,7 +16,8 @@ use App\Http\Controllers\ReporteController;
 
 
 // Página principal de la tienda
-Route::get('/home', [HomeController::class, 'index'])->name('home');  // Ruta para la página principal de la tienda
+// Route::get('/home', [HomeController::class, 'index'])->name('home');  // Ruta para la página principal de la tienda
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // Mostrar productos de una categoría por slug
 Route::get('/categoria/{slug}', [ProductoController::class, 'mostrarCategoria'])->name('categoria.mostrar');
@@ -31,6 +32,8 @@ Route::get('/test-vista/{slug}', function ($slug) {
 // Rutas de administración
 Route::view('/administracion', 'administracion')->name('administracion'); // Muestra la vista de administración
 Route::view('/usuarios', 'usuarios')->name('usuarios'); // Muestra la vista de usuarios
+// Envios
+Route::view('/envios', 'envios')->name('envios'); // Muestra la vista de usuarios
 
 
 //Inventario

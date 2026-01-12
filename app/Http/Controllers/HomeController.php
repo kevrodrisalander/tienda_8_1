@@ -7,12 +7,15 @@ use App\Models\Seccion;
 
 class HomeController extends Controller
 {
-    public function index()
-    {
-        // Obtener todas las secciones
-        $secciones = Seccion::all();
+    public function index(Request $request)
+{
+    $secciones = Seccion::query()
+        ->when($request->filled('buscar'), function ($query) use ($request) {
+            $query->where('nombre', 'LIKE', '%' . $request->buscar . '%');
+        })
+        ->get();
 
-        // Pasarlas a la vista home
-        return view('home', compact('secciones'));
-    }
+    return view('home', compact('secciones'));
+}
+
 }

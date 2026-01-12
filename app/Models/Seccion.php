@@ -11,8 +11,11 @@ class Seccion extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'nombre',
         'descripcion',
-        'slug'
+        'descripcion_larga',   // 👈 NUEVO
+        'precio_venta',
+        'cantidad_stock',
+        'name_file',
+        'seccion_id'
     ];
 }

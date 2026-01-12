@@ -72,6 +72,22 @@
     <div class="container">
         <p class="text-center fs-5">Encuentra todo lo que necesitas en un solo lugar: ropa, electrónica, hogar, belleza y
             más.</p>
+<form method="GET" action="{{ route('home') }}" class="mb-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <input
+                type="text"
+                name="buscar"
+                class="form-control rounded-pill"
+                placeholder="Buscar categoría..."
+                value="{{ request('buscar') }}"
+            >
+        </div>
+    </div>
+</form>
+
+
+
         <div class="row mt-5">
             @foreach ($secciones as $seccion)
                 <div class="col-12 col-sm-6 col-md-3 mb-4">

@@ -1,44 +1,74 @@
 @extends('layouts.app')
 
-@section('title', 'Electrónica - Tienda Departamental')
+@section('title', 'Verduras - Tienda Departamental')
 
 @section('content')
-    <div class="container">
-        <!-- Encabezado visual -->
-        <div class="py-4 text-center bg-light rounded mb-4">
-            <h1 class="fw-bold">Colección de productos de electrónica</h1>
-            <p class="text-muted">Explora nuestra selección de dispositivos de tecnología</p>
-        </div>
+<div class="container">
+    <!-- Encabezado visual -->
+    <div class="py-4 text-center bg-light rounded mb-4">
+        <h1 class="fw-bold">Busca lo que necesitas para tus platillos en Frutas y Verduras</h1>
+        <p class="text-muted">Explora nuestra selección de productos frescos</p>
+    </div>
 
-        <div class="row">
-            @forelse($productos as $producto)
-                <div class="col-12 col-sm-6 col-md-3 mb-4">
-                    <div class="card h-100 shadow-sm border-0 rounded-3">
-                        <img src="{{ asset('storage/' . ($producto->name_file ?? 'default.jpg')) }}" class="card-img-top"
-                            alt="{{ $producto->descripcion }}" style="height: 200px; object-fit: cover;">
+    <div class="row">
+        @forelse($productos as $producto)
+            <div class="col-12 col-sm-6 col-md-3 mb-4">
+                <div class="card h-100 shadow-sm border-0 rounded-3">
+                    <img src="{{ asset('storage/' . ($producto->name_file ?? 'default.jpg')) }}" class="card-img-top"
+                        alt="{{ $producto->descripcion }}" style="height: 200px; object-fit: cover;">
 
-                        <div class="card-body text-center">
-                            <h6 class="card-title fw-bold">{{ $producto->descripcion }}</h6>
-                            <p class="text-muted mb-1">${{ number_format($producto->precio_venta, 2) }} MXN</p>
-                            <p><small>Stock: {{ $producto->stock_actual ?? 0 }}</small></p>
+                    <div class="card-body text-center">
+                        <h6 class="card-title fw-bold">{{ $producto->descripcion }}</h6>
+                        <p class="text-muted mb-1">${{ number_format($producto->precio_venta, 2) }} MXN</p>
 
-                            {{-- Input cantidad y botón JS --}}
-                            <input type="number" id="cantidad-{{ $producto->id }}" value="1" min="1"
-                                max="{{ $producto->stock_actual ?? 0 }}" class="form-control mb-2 text-center"
-                                style="width: 80px; margin:auto;">
+                        <p><small id="stock-{{ $producto->id }}">Stock: {{ $producto->cantidad_stock }}</small></p>
 
-                            <button class="btn btn-primary btn-sm w-100 btn-add" data-id="{{ $producto->id }}"
-                                data-nombre="{{ $producto->descripcion }}" data-precio="{{ $producto->precio_venta }}">
-                                <i class="bi bi-cart-plus"></i> Añadir al carrito
-                            </button>
+                        <input type="number" id="cantidad-{{ $producto->id }}" value="1" min="1"
+                               max="{{ $producto->cantidad_stock }}" class="form-control mb-2 text-center"
+                               style="width: 80px; margin:auto;">
+
+                        <!-- Botón para abrir el modal -->
+                        <button type="button" class="btn btn-info btn-sm w-100 mb-2"
+                                data-bs-toggle="modal" data-bs-target="#modal-{{ $producto->id }}">
+                            <i class="bi bi-info-circle"></i> Descripción
+                        </button>
+
+                        <!-- Botón añadir al carrito -->
+                        <button class="btn btn-primary btn-sm w-100 btn-add"
+                                data-id="{{ $producto->id }}"
+                                data-nombre="{{ $producto->descripcion }}"
+                                data-precio="{{ $producto->precio_venta }}">
+                            <i class="bi bi-cart-plus"></i> Añadir al carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="modal-{{ $producto->id }}" tabindex="-1"
+                     aria-labelledby="modalLabel-{{ $producto->id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalLabel-{{ $producto->id }}">{{ $producto->descripcion }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>{{ $producto->descripcion_larga }}</p>
+                                {{-- <p class="text-muted">Precio: ${{ number_format($producto->precio_venta, 2) }} MXN</p> --}}
+                                {{-- <p class="text-muted">Stock: {{ $producto->cantidad_stock }}</p> --}}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            @empty
-                <div class="col-12">
-                    <p class="text-center text-muted">No hay productos de electrónica disponibles en este momento.</p>
-                </div>
-            @endforelse
-        </div>
+            </div>
+        @empty
+            <div class="col-12">
+                <p class="text-center text-muted">No hay productos de frutas y verduras disponibles en este momento.</p>
+            </div>
+        @endforelse
     </div>
+</div>
 @endsection
