@@ -95,72 +95,70 @@ class StockController extends Controller
     }
 
     public function store(Request $request)
-{
+    { {
+            $validated = $request->validate([
+                'nombre_producto'    => 'required|string|max:255',
+                'id_categoria'       => 'required|exists:cat_categorias,id',
+                'id_marca'           => 'required|exists:cat_marcas,id',
+                'cantidad_inicial'   => 'required|integer|min:0',
+                'precio_venta'       => 'required|numeric|min:0',
+                'cantidad_minima'    => 'required|integer|min:0',
+                'cantidad_maxima'    => 'required|integer|min:0',
+                'estado'             => 'required|string',
+                'nuevo_lote'         => 'required|string|max:50',
+                'tipo_movimiento'    => 'required|string|in:entrada,salida,ajuste,traslado',
+                'fecha_ingreso'      => 'required|date',
+                'fecha_vencimiento'  => 'nullable|date|after_or_equal:fecha_ingreso',
+                'observaciones'      => 'nullable|string|max:255',
+                'ubicacion'          => 'required|string|max:255',
+                'imagen'             => 'nullable|image|max:2048',
 
-    {
-        $validated = $request->validate([
-            'nombre_producto'    => 'required|string|max:255',
-            'id_categoria'       => 'required|exists:cat_categorias,id',
-            'id_marca'           => 'required|exists:cat_marcas,id',
-            'cantidad_inicial'   => 'required|integer|min:0',
-            'precio_venta'       => 'required|numeric|min:0',
-            'cantidad_minima'    => 'required|integer|min:0',
-            'cantidad_maxima'    => 'required|integer|min:0',
-            'estado'             => 'required|string',
-            'nuevo_lote'         => 'required|string|max:50',
-            'tipo_movimiento'    => 'required|string|in:entrada,salida,ajuste,traslado',
-            'fecha_ingreso'      => 'required|date',
-            'fecha_vencimiento'  => 'nullable|date|after_or_equal:fecha_ingreso',
-            'observaciones'      => 'nullable|string|max:255',
-            'ubicacion'          => 'required|string|max:255',
-            'imagen'             => 'nullable|image|max:2048',
-            'descripcion_larga'  => 'nullable|string|max:1000', // <-- aquí
+            ]);
 
-        ]);
+            // Crear nuevo lote
+            $idLote = DB::table('lotes_producto')->insertGetId([
+                'codigo_lote'   => $validated['nuevo_lote'],
+                'fecha_ingreso' => $validated['fecha_ingreso'],
+                'cantidad'      => $validated['cantidad_inicial'],
+            ], 'id_lote');
 
-    // Crear nuevo lote
-    $idLote = DB::table('lotes_producto')->insertGetId([
-        'codigo_lote'   => $validated['nuevo_lote'],
-        'fecha_ingreso' => $validated['fecha_ingreso'],
-        'cantidad'      => $validated['cantidad_inicial'],
-    ], 'id_lote');
+            // Subir imagen si existe (sin redimensionar)
+            $imagePath = null;
+            if ($request->hasFile('imagen')) {
+                $imagePath = $request->file('imagen')->store('productos', 'public');
+            }
+            // Guardar producto
+            $producto = Producto::create([
+                'descripcion'  => $validated['nombre_producto'],
+                // 'descripcion_larga'  => $validated['descripcion_larga'] ?? null, // <-- aquí
+                'stock'        => $validated['cantidad_inicial'],
+                'precio_venta' => $validated['precio_venta'],
+                'id_status'    => 1,
+                'id_categoria' => $validated['id_categoria'],
+                'id_marca'     => $validated['id_marca'],
+                'fecha'        => $validated['fecha_ingreso'],
+                'name_file'    => $imagePath,
+            ]);
 
-    // Subir imagen si existe (sin redimensionar)
-    $imagePath = null;
-    if ($request->hasFile('imagen')) {
-        $imagePath = $request->file('imagen')->store('productos', 'public');
+            // Guardar stock
+            DB::table('stock')->insert([
+                'producto_id'       => $producto->id,
+                'cantidad'          => $validated['cantidad_inicial'],
+                'minimo_seguro'     => $validated['cantidad_minima'],
+                'maximo_permitido'  => $validated['cantidad_maxima'],
+                'estado'            => $validated['estado'],
+                'id_lote'           => $idLote,
+                'ubicacion'         => $validated['ubicacion'],
+                'tipo_movimiento'   => $validated['tipo_movimiento'],
+                'fecha_ingreso'     => $validated['fecha_ingreso'],
+                'fecha_vencimiento' => $validated['fecha_vencimiento'],
+                'observaciones'     => $validated['observaciones'],
+
+            ]);
+
+            return redirect()->back()->with('success', 'Producto y stock registrados correctamente.');
+        }
     }
-    // Guardar producto
-    $producto = Producto::create([
-        'descripcion'  => $validated['nombre_producto'],
-        'descripcion_larga'  => $validated['descripcion_larga'] ?? null, // <-- aquí
-        'stock'        => $validated['cantidad_inicial'],
-        'precio_venta' => $validated['precio_venta'],
-        'id_status'    => 1,
-        'id_categoria' => $validated['id_categoria'],
-        'id_marca'     => $validated['id_marca'],
-        'fecha'        => $validated['fecha_ingreso'],
-        'name_file'    => $imagePath,
-    ]);
-
-    // Guardar stock
-    DB::table('stock')->insert([
-        'producto_id'       => $producto->id,
-        'cantidad'          => $validated['cantidad_inicial'],
-        'minimo_seguro'     => $validated['cantidad_minima'],
-        'maximo_permitido'  => $validated['cantidad_maxima'],
-        'estado'            => $validated['estado'],
-        'id_lote'           => $idLote,
-        'ubicacion'         => $validated['ubicacion'],
-        'tipo_movimiento'   => $validated['tipo_movimiento'],
-        'fecha_ingreso'     => $validated['fecha_ingreso'],
-        'fecha_vencimiento' => $validated['fecha_vencimiento'],
-        'observaciones'     => $validated['observaciones'],
-    ]);
-
-    return redirect()->back()->with('success', 'Producto y stock registrados correctamente.');
-}
-}
 
     public function update(Request $request, $id)
     {
@@ -201,56 +199,55 @@ class StockController extends Controller
     //Eliminar registros , pasa a status 0
 
     public function destroy($id)
-{
-    // Obtener registro de stock
-    $stock = DB::table('stock')->where('id', $id)->first();
+    {
+        // Obtener registro de stock
+        $stock = DB::table('stock')->where('id', $id)->first();
 
-    if ($stock && $stock->activo) {
-        // Descontar la cantidad del stock actual del producto
-        DB::table('productos')
-            ->where('id', $stock->producto_id)
-            ->decrement('stock_actual', $stock->cantidad);
+        if ($stock && $stock->activo) {
+            // Descontar la cantidad del stock actual del producto
+            DB::table('productos')
+                ->where('id', $stock->producto_id)
+                ->decrement('stock_actual', $stock->cantidad);
 
-        // Marcar como inactivo y actualizar fecha de salida
-        DB::table('stock')
-            ->where('id', $id)
-            ->update([
-                'activo' => 0,
-                'fecha_salida' => now(),
-                'updated_at' => now(),
-            ]);
+            // Marcar como inactivo y actualizar fecha de salida
+            DB::table('stock')
+                ->where('id', $id)
+                ->update([
+                    'activo' => 0,
+                    'fecha_salida' => now(),
+                    'updated_at' => now(),
+                ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Registro eliminado correctamente'
+        ]);
     }
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Registro eliminado correctamente'
-    ]);
-}
 
 
     //Recuperar registro pasa a status 1
     public function restaurar($id)
-{
-    // Obtener registro de stock
-    $stock = DB::table('stock')->where('id', $id)->first();
+    {
+        // Obtener registro de stock
+        $stock = DB::table('stock')->where('id', $id)->first();
 
-    if ($stock && !$stock->activo) {
-        // Sumar la cantidad al stock actual del producto
-        DB::table('productos')
-            ->where('id', $stock->producto_id)
-            ->increment('stock_actual', $stock->cantidad);
+        if ($stock && !$stock->activo) {
+            // Sumar la cantidad al stock actual del producto
+            DB::table('productos')
+                ->where('id', $stock->producto_id)
+                ->increment('stock_actual', $stock->cantidad);
 
-        // Marcar como activo y limpiar fecha de salida
-        DB::table('stock')
-            ->where('id', $id)
-            ->update([
-                'activo' => 1,
-                'fecha_salida' => null,
-                'updated_at' => now(),
-            ]);
+            // Marcar como activo y limpiar fecha de salida
+            DB::table('stock')
+                ->where('id', $id)
+                ->update([
+                    'activo' => 1,
+                    'fecha_salida' => null,
+                    'updated_at' => now(),
+                ]);
+        }
+
+        return response()->json(['ok' => true]);
     }
-
-    return response()->json(['ok' => true]);
-}
-
 }

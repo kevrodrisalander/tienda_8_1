@@ -41,6 +41,9 @@ Route::view('/envios', 'envios')->name('envios'); // Muestra la vista de usuario
 Route::get('/inventario', function () {
     return view('inventario');
 })->name('inventario');
+Route::get('/producto/{id}/observaciones', [InventarioController::class, 'observaciones']);
+
+
 
 // Procesa el formulario
 Route::post('/inventario', [InventarioController::class, 'consultaInventario'])
@@ -111,3 +114,7 @@ Route::get('/venta/{id}/ticket', [VentaController::class, 'ticketPdf'])->name('v
 // Reportes
 Route::get('/reportes/reportes', [ReporteController::class, 'index']);
 Route::get('/reportes/lista', [ReporteController::class, 'lista']);
+
+Route::get('/clientes', function () {
+    return view('clientes');
+})->name('clientes');

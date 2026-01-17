@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-<link rel="stylesheet" href="{{ asset('css/tablas.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('css/tablas.css') }}"> --}}
+@vite('resources/css/tablas.css')
 
 @section('title', 'Usuarios')
 
@@ -52,7 +53,7 @@
     </div>
 
     {{-- Modal Editar Usuario --}}
-    <div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel"
+    <div class="modal fade modal-producto" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -107,7 +108,7 @@
 
 
 {{-- Modal Filtros Usuarios --}}
-<div class="modal fade" id="modalFiltrosUsuarios" tabindex="-1"
+<div class="modal fade modal-producto" id="modalFiltrosUsuarios" tabindex="-1"
     aria-labelledby="modalFiltrosUsuariosLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -201,7 +202,7 @@
 {{-- Fin Modal Filtros Usuarios --}}
 
 {{-- Modal Nuevo Usuario --}}
-<div class="modal fade" id="modalNuevoUsuario" tabindex="-1"
+<div class="modal fade modal-producto" id="modalNuevoUsuario" tabindex="-1"
     aria-labelledby="modalNuevoUsuarioLabel" aria-hidden="true">
 
     <div class="modal-dialog">

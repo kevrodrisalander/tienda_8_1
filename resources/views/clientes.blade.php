@@ -8,22 +8,22 @@
 @section('content')
     <div class="container">
         <b>
-            <h2 class="text-center my-5">Stock</h2>
+            <h2 class="text-center my-5">Clientes</h2>
         </b>
 
         <b>
-            <p class="text-center">Listado del stock de productos registrados</p>
+            <p class="text-center">Listado del clientes</p>
         </b>
 
         {{-- Botón Agregar producto solo para roles permitidos --}}
         @if(auth()->check() && in_array(auth()->user()->id_rol, [1, 4, 8]))
-            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
-                Agregar producto
+            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalClientes">
+                Agregar cliente
             </button>
         @endif
 
         {{-- Botón Filtros visible para todos --}}
-        <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+        <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalFiltrosClientes">
             Filtros
         </button>
 
@@ -43,18 +43,18 @@
                         <table class="table_id" id="tbl_stock">
                             <thead>
                                 <tr>
-                                    <th class="text-center">Nombre de producto</th>
-                                    <th class="text-center">Cantidad</th>
-                                    <th class="text-center">Ubicación</th>
-                                    <th class="text-center">Estado</th>
-                                    <th class="text-center">Mínimo seguro</th>
-                                    <th class="text-center">Máximo permitido</th>
-                                    <th class="text-center">Fecha ingreso</th>
-                                    <th class="text-center">Fecha vencimiento</th>
-                                    <th class="text-center">Lote</th>
-                                    <th class="text-center">Fecha Salida</th>
-                                    <th class="text-center">Observaciones</th>
-                                    <th class="text-center">Tipo movimiento</th>
+                                    <th class="text-center">Nombre de clientes</th>
+                                    <th class="text-center">Correo</th>
+                                    <th class="text-center">Telefono</th>
+                                    <th class="text-center">Dirección</th>
+                                    <th class="text-center">Fecha registro</th>
+                                    <th class="text-center">id usuario</th>
+                                    {{-- <th class="text-center">Fecha ingreso</th> --}}
+                                    {{-- <th class="text-center">Fecha vencimiento</th> --}}
+                                    {{-- <th class="text-center">Lote</th> --}}
+                                    {{-- <th class="text-center">Fecha Salida</th> --}}
+                                    {{-- <th class="text-center">Observaciones</th> --}}
+                                    {{-- <th class="text-center">Tipo movimiento</th> --}}
                                     <th class="text-center">Acciones</th>
                                 </tr>
                             </thead>
@@ -107,7 +107,7 @@
                                 <label class="form-label">Cantidad máxima</label>
                                 <input type="number" name="cantidad_maxima" class="form-control" required>
                             </div>
-
+{{--
                             <div class="col-md-4">
                                 <label class="form-label">Estado</label>
                                 <select name="estado" class="form-select" required>
@@ -116,9 +116,9 @@
                                         <option value="{{ $estado }}">{{ ucfirst($estado) }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <label class="form-label">Marca</label>
                                 <select name="id_marca" class="form-select" required>
                                     <option value="">Seleccione marca</option>
@@ -126,9 +126,9 @@
                                         <option value="{{ $marca->id }}">{{ $marca->nombre }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <label class="form-label">Categoría</label>
                                 <select name="id_categoria" class="form-select" required>
                                     <option value="">Seleccione categoría</option>
@@ -136,7 +136,7 @@
                                         <option value="{{ $cat->id }}">{{ $cat->categoria }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
                             <div class="col-md-6">
                                 <label class="form-label">Lote</label>
@@ -148,7 +148,7 @@
                                 <input type="text" name="ubicacion" class="form-control" required>
                             </div>
 
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <label class="form-label">Tipo movimiento</label>
                                 <select name="tipo_movimiento" class="form-select" required>
                                     <option value="">Seleccione tipo</option>
@@ -156,7 +156,7 @@
                                         <option value="{{ $tipo }}">{{ ucfirst($tipo) }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
                             <div class="col-md-6">
                                 <label class="form-label">Fecha ingreso</label>
                                 <input type="date" name="fecha_ingreso" class="form-control" required>
@@ -223,7 +223,7 @@
                                 <label class="form-label">Ubicación</label>
                                 <input type="text" name="ubicacion" class="form-control">
                             </div>
-
+{{--
                             <div class="col-md-6">
                                 <label class="form-label">Estado</label>
                                 <select name="estado" class="form-select">
@@ -231,16 +231,16 @@
                                         <option value="{{ $estado }}">{{ ucfirst($estado) }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <label class="form-label">Lote</label>
                                 <select name="id_lote" class="form-select">
                                     @foreach ($lotes as $lote)
                                         <option value="{{ $lote->id_lote }}">{{ $lote->codigo_lote }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
                             <div class="col-md-3">
                                 <label class="form-label">Mínimos</label>
@@ -262,14 +262,14 @@
                                 <input type="date" name="fecha_vencimiento" class="form-control">
                             </div>
 
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <label class="form-label">Tipo movimiento</label>
                                 <select name="tipo_movimiento" class="form-select">
                                     @foreach ($tiposMovimiento as $tipo)
                                         <option value="{{ $tipo }}">{{ ucfirst($tipo) }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
                             <div class="col-md-12">
                                 <label class="form-label">Observaciones</label>

@@ -12,17 +12,17 @@ class Producto extends Model
     public $timestamps = false;
 
     protected $fillable = [
-    'descripcion',
-    'descripcion_larga', // <- debe estar aquí
-    'stock',
-    'precio_venta',
-    'id_status',
-    'id_categoria',
-    'id_marca',
-    'fecha',
-    'name_file',
-    'stock_actual',      // opcional si lo actualizas
-];
+        'descripcion',
+        'observaciones',
+        'stock',
+        'precio_venta',
+        'id_status',
+        'id_categoria',
+        'id_marca',
+        'fecha',
+        'name_file',
+        'stock_actual',
+    ];
 
     // Relación con Stock
     public function stock()
@@ -30,11 +30,11 @@ class Producto extends Model
         return $this->hasMany(Stock::class, 'producto_id');
     }
 
-public function getStockActualAttribute()
-{
-    $total = DB::table('stock')
-        ->where('producto_id', $this->id)
-        ->sum(DB::raw("
+    public function getStockActualAttribute()
+    {
+        $total = DB::table('stock')
+            ->where('producto_id', $this->id)
+            ->sum(DB::raw("
             CASE
                 WHEN tipo_movimiento = 'entrada' THEN cantidad
                 WHEN tipo_movimiento = 'salida' THEN -cantidad
@@ -42,7 +42,6 @@ public function getStockActualAttribute()
             END
         "));
 
-    return $total;
+        return $total;
+    }
 }
-}
-

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-<link rel="stylesheet" href="{{ asset('css/tablas.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('css/tablas.css') }}"> --}}
+@vite('resources/css/tablas.css')
 
 @section('title', 'Proveedores')
 
@@ -165,7 +166,7 @@
 
 {{-- Modal Filtros Proveedores --}}
 
-<div class="modal fade" id="modalFiltrosProveedores" tabindex="-1" aria-hidden="true">
+<div class="modal fade modal-producto" id="modalFiltrosProveedores" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form id="formFiltrosProveedores">

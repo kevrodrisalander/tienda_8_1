@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-<link rel="stylesheet" href="{{ asset('css/tablas.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('css/tablas.css') }}"> --}}
+@vite('resources/css/tablas.css')
 
 @section('title', 'Envios')
 

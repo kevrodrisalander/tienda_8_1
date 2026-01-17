@@ -119,22 +119,35 @@
 
 /* modal */
 
-#modalSimple .modal-header {
-  background-color: #212529; /* Fondo negro */
-  color: #fff;            /* Texto blanco */
+/* #modalSimple .modal-header {
+  background-color: #212529;
+  color: #fff;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #444;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-}
+} */
 
-#modalSimple .modal-title {
+/* #modalSimple .modal-title {
   color: #fff;
   font-size: 1.3rem;
   font-weight: 600;
-}
+} */
 
 /* Botón de cerrar en fondo oscuro */
-#modalSimple .btn-close {
+/* #modalSimple .btn-close {
   filter: invert(1); /* Convierte el ícono a blanco */
+/* } */
+
+/* .modal-producto .modal-dialog {
+    max-width: 700px; /* Ancho máximo */
+/* }  */
+
+.modal-producto .modal-header {
+    background-color: #151917; /* Fondo verde oscuro */
+    color: #fff;                /* Texto blanco */
+    border-bottom: 1px solid #444;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
+
