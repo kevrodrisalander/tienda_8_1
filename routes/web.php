@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+// use Illuminate\Support\Facades\Hash;
+
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\TiendaController;
+// use App\Http\Controllers\TiendaController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ProvedoresController;
 use App\Http\Controllers\Auth\LoginController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\ClientesController;
 
 
 // Página principal de la tienda
@@ -115,6 +118,8 @@ Route::get('/venta/{id}/ticket', [VentaController::class, 'ticketPdf'])->name('v
 Route::get('/reportes/reportes', [ReporteController::class, 'index']);
 Route::get('/reportes/lista', [ReporteController::class, 'lista']);
 
-Route::get('/clientes', function () {
-    return view('clientes');
-})->name('clientes');
+// Esta es la que escribes en el navegador: midominio.com/clientes
+Route::get('/clientes', [ClientesController::class, 'index'])->name('clientes');
+
+// Esta es la que usa el JS internamente para llenar la tabla
+Route::get('/clientes/consulta', [ClientesController::class, 'consulta'])->name('clientes.consulta');

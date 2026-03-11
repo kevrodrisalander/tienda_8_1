@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
 
 class UsuariosController extends Controller
 {
     public function consultaUsuarios(Request $request)
     {
-        // 1️ Consulta individual por ID (usuario para editar)
+        //1️ Consulta individual por ID
         if ($request->filled('id')) {
             $usuario = DB::table('usuarios as u')
                 ->join('cat_roles as r', 'u.id_rol', '=', 'r.id_rol')
@@ -28,7 +30,7 @@ class UsuariosController extends Controller
             return response()->json($usuario);
         }
 
-        // 2️ Lista general con filtros
+        //Lista general con filtros
         $query = DB::table('usuarios as u')
             ->join('cat_roles as r', 'u.id_rol', '=', 'r.id_rol')
             ->select(
@@ -145,30 +147,47 @@ class UsuariosController extends Controller
 
         return response()->json($roles);
     }
+    public function store(Request $request)
+    {
+        $request->validate([
+            'usuario'   => 'required|string|max:255',
+            'correo'    => 'required|email|unique:usuarios,correo',
+            'id_rol'    => 'required|integer',
+            'password'  => 'required|min:6',
+            'nombre'    => 'required_if:id_rol,6',
+            'direccion' => 'required_if:id_rol,6',
+        ]);
 
-public function store(Request $request)
-{
-    $request->validate([
-        'usuario'  => 'required|string|max:255',
-        'correo'   => 'required|email|unique:usuarios,correo',
-        'id_rol'   => 'required|exists:cat_roles,id_rol',
-        'password' => 'required|min:6|confirmed',
-    ]);
+        try {
+            DB::beginTransaction();
 
-    DB::table('usuarios')->insert([
-        'usuario'    => $request->usuario,
-        'correo'     => $request->correo,
-        'id_rol'     => $request->id_rol,
-        'password'   => Hash::make($request->password),
-        'activo'     => 1,
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
+            // 1. Siempre creamos el usuario
+            $usuarioId = DB::table('usuarios')->insertGetId([
+                'usuario' => $request->usuario,
+                'correo'  => $request->correo,
+                'id_rol'  => $request->id_rol,
+                'clave'   => Hash::make($request->password),
+                'activo'  => 1,
+                'fecha'   => now(),
+            ]);
 
-    return response()->json([
-        'ok' => true,
-        'mensaje' => 'Usuario registrado correctamente'
-    ]);
-}
+            // 2. ¿Es rol de Cliente? (ID 6)
+            if ($request->id_rol == 6) {
+                DB::table('clientes')->insert([
+                    'id_usuario'     => $usuarioId,
+                    'nombre'         => $request->nombre,
+                    'correo'         => $request->correo,
+                    'telefono'       => $request->telefono,
+                    'direccion'      => $request->direccion,
+                    'fecha_registro' => now(),
+                ]);
+            }
 
+            DB::commit();
+            return response()->json(['ok' => true, 'mensaje' => 'Registro procesado']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['ok' => false, 'mensaje' => $e->getMessage()], 500);
+        }
+    }
 }

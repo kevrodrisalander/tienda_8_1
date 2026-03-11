@@ -81,8 +81,7 @@
                 <div class="icon text-4xl mb-2">📦</div>
                 <div class="title">Stock</div>
                 <div class="description">
-                    Diseñamos experiencias digitales que no solo se ven increíbles, sino que funcionan al 100% para tus
-                    usuarios.
+                    Conjunto de productos, mercancías o materias primas que una empresa mantiene almacenados para su venta
                 </div>
                 <a href="{{ route('stock') }}" class="boton-verde">
                     Entrar
@@ -91,10 +90,10 @@
 
             <!-- Comercio Electrónico -->
             <div class="card">
-                <div class="icon text-4xl mb-2">👥</div>
+                <div class="icon text-4xl mb-2">👷</div>
                 <div class="title">Usuarios</div>
                 <div class="description">
-                    Creamos herramientas funcionales, atractivas y adaptadas al crecimiento de tus ventas.
+                    Gestionar perfiles, credenciales, roles de acceso y nombres
                 </div>
                 <a href="{{ route('usuarios') }}" class="boton-verde">
                     Entrar
@@ -102,10 +101,10 @@
             </div>
 
             <div class="card">
-                <div class="icon text-4xl mb-2">🏬</div>
+                <div class="icon text-4xl mb-2">🏭</div>
                 <div class="title">Provedores</div>
                 <div class="description">
-                    Creamos herramientas funcionales, atractivas y adaptadas al crecimiento de tus ventas.
+                   Registrar y gestionar los datos de los proveedores que abastecen a la organización.
                 </div>
                 <a href="{{ route('provedores') }}" class="boton-verde">
                     Entrar
@@ -115,19 +114,19 @@
                 <div class="icon text-4xl mb-2">🚛</div>
                 <div class="title">Envios</div>
                 <div class="description">
-                    Creamos herramientas funcionales, atractivas y adaptadas al crecimiento de tus ventas.
+                    Controlar y registrar el proceso logístico desde que un pedido sale del almacén hasta que llega a su destino.
                 </div>
                 <a href="{{ route('envios') }}" class="boton-verde">
                     Entrar
                 </a>
             </div>
             <div class="card">
-                <div class="icon text-4xl mb-2">👤</div>
+                <div class="icon text-4xl mb-2">👨‍👩‍👦</div>
                 <div class="title">Clientes</div>
                 <div class="description">
-                    Creamos herramientas funcionales, atractivas y adaptadas al crecimiento de tus ventas.
+                    Registrar, organizar y dar seguimiento a los datos de los clientes.
                 </div>
-                <a href="{{ route('provedores') }}" class="boton-verde">
+                <a href="{{ route('clientes') }}" class="boton-verde">
                     Entrar
                 </a>
             </div>
