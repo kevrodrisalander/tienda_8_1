@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('maximo_permitido')->nullable();
             $table->timestamp('fecha_ingreso')->nullable();
             $table->date('fecha_vencimiento')->nullable();
+            $table->date('fecha_salida')->nullable(); // campo nuevo 11/03/26
             $table->string('lote', 50)->nullable();
             $table->text('observaciones')->nullable();
             $table->boolean('activo')->default(true);

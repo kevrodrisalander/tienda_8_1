@@ -14,13 +14,23 @@ class CatCategoriasSeeder extends Seeder
 
         // Ahora puedes insertar los registros sin problemas
         DB::table('cat_categorias')->insert([
-            ['categoria' => 'Electronica', 'fecha' => now()],
-            ['categoria' => 'Ropa', 'fecha' => now()],
-            ['categoria' => 'Hogar', 'fecha' => now()],
-            ['categoria' => 'Juguetes', 'fecha' => now()],
-            ['categoria' => 'Deportes', 'fecha' => now()],
-            ['categoria' => 'Oficina', 'fecha' => now()],
-            ['categoria' => 'Frutas', 'fecha' => now()],
-        ]);
+    ['categoria' => 'Electronica', 'fecha' => now()],
+    ['categoria' => 'Ropa', 'fecha' => now()],
+    ['categoria' => 'Hogar', 'fecha' => now()],
+    ['categoria' => 'Juguetes', 'fecha' => now()],
+    ['categoria' => 'Deportes', 'fecha' => now()],
+    ['categoria' => 'Oficina', 'fecha' => now()],
+    ['categoria' => 'Frutas', 'fecha' => now()],
+    ['categoria' => 'Automotriz', 'fecha' => now()],
+    ['categoria' => 'Belleza', 'fecha' => now()],
+    ['categoria' => 'Mascotas', 'fecha' => now()],
+    ['categoria' => 'Libros', 'fecha' => now()],
+    ['categoria' => 'Música', 'fecha' => now()],
+    ['categoria' => 'Salud', 'fecha' => now()],
+    ['categoria' => 'Videojuegos', 'fecha' => now()],
+    ['categoria' => 'Panadería', 'fecha' => now()],
+    ['categoria' => 'Verduras', 'fecha' => now()],
+    ['categoria' => 'Accesorios', 'fecha' => now()],
+]);
     }
 }

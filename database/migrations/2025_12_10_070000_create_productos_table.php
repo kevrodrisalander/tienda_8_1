@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('name_file', 350);
             $table->timestamp('fecha');
             $table->unsignedBigInteger('id_marca')->nullable();
+            $table->unsignedBigInteger('id_observaciones')->nullable(); //  columna agregada 11/03/26
+             $table->boolean('activo')->default(true); // columna agregada 11/03/26
 
             // FKs
             $table->foreign('id_status')->references('id')->on('cat_estatus_inventario')->onDelete('cascade');

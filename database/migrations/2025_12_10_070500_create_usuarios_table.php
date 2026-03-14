@@ -19,11 +19,15 @@ return new class extends Migration
             $table->unsignedBigInteger('id_rol'); // referencia a cat_roles
             $table->timestamp('fecha')->useCurrent();
 
+            $table->boolean('activo')->default(true); // 11/03/26
+
             // Foreign key
-            $table->foreign('id_rol')->references('id_rol')->on('cat_roles')->onDelete('restrict');
+            $table->foreign('id_rol')
+                  ->references('id_rol')
+                  ->on('cat_roles')
+                  ->onDelete('restrict');
         });
     }
-
 
     /**
      * Reverse the migrations.

@@ -13,18 +13,19 @@ class DatabaseSeeder extends Seeder
     {
         // Primero, inserta las categorías, marcas, métodos de pago, etc.
         $this->call([
-            CatCategoriasSeeder::class,
-            CatEStatusInventarioSeeder::class,
-            CatProvedoresSeeder::class,
-            CatMarcasSeeder::class,
-            CatMetodosPagoSeeder::class,
-            CatRolesSeeder::class,
-            CatSeccionesSeeder::class,
-            CatTipoAlmacenSeeder::class,
-            CatTipoMovimientoSeeder::class,
-            CatTipoProductoSeeder::class,
-            CatUbicacionDeptoSeeder::class,
-        ]);
+    CatCategoriasSeeder::class,
+    CatEStatusInventarioSeeder::class,
+    CatProvedoresSeeder::class,
+    ProveedoresSeeder::class,
+    CatMarcasSeeder::class,
+    CatMetodosPagoSeeder::class,
+    CatRolesSeeder::class,
+    CatSeccionesSeeder::class,
+    CatTipoAlmacenSeeder::class,
+    CatTipoMovimientoSeeder::class,
+    CatTipoProductoSeeder::class,
+    CatUbicacionDeptoSeeder::class,
+]);
 
         // Luego, inserta productos y datos relacionados.
         $this->call([

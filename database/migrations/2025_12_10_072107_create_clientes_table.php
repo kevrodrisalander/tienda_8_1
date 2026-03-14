@@ -18,6 +18,12 @@ return new class extends Migration
             $table->string('telefono', 20)->nullable();
             $table->text('direccion')->nullable();
             $table->timestamp('fecha_registro')->useCurrent()->nullable();
+
+            $table->unsignedBigInteger('id_usuario')->nullable(); // 11/03/2026
+            $table->boolean('activo')->default(true); // 11/03/2026
+
+            // FK opcional hacia usuarios
+            $table->foreign('id_usuario')->references('id')->on('usuarios')->nullOnDelete();
         });
     }
 
