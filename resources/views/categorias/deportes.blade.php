@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Oficina - Tienda Departamental')
+@section('title', 'Deportes - Tienda Departamental')
 
 @section('content')
     <div class="container">
         <!-- Encabezado visual -->
         <div class="py-4 text-center bg-light rounded mb-4">
-            <h1 class="fw-bold">Oficina</h1>
-            <p class="text-muted">Explora nuestra seccion de productos de oficina</p>
+            <h1 class="fw-bold">Deportes</h1>
+            <p class="text-muted">Incia el dia haciendo deporte</p>
         </div>
 
         <div class="row">

@@ -70,21 +70,19 @@
     </style>
 
     <div class="container">
-        <p class="text-center fs-5">Encuentra todo lo que necesitas en un solo lugar: ropa, electrónica, hogar, belleza y
-            más.</p>
-<form method="GET" action="{{ route('home') }}" class="mb-4">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <input
-                type="text"
-                name="buscar"
-                class="form-control rounded-pill"
-                placeholder="Buscar categoría..."
-                value="{{ request('buscar') }}"
-            >
-        </div>
-    </div>
-</form>
+        <b>
+            <p class="text-center fs-5">Encuentra todo lo que necesitas en un solo lugar: ropa, electrónica, hogar, belleza
+                y
+                más.</p>
+        </b><br>
+        <form method="GET" action="{{ route('home') }}" class="mb-4">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <input type="text" name="buscar" class="form-control rounded-pill" placeholder="Buscar categoría..."
+                        value="{{ request('buscar') }}">
+                </div>
+            </div>
+        </form>
 
 
 
@@ -97,8 +95,8 @@
                         <div class="card-body text-center">
                             <h5 class="card-title">{{ $seccion->nombre }}</h5>
                             <p class="card-text">{{ $seccion->descripcion ?? 'Explora esta categoría.' }}</p>
-                            <a href="{{ route('categoria.mostrar', ['slug' => $seccion->slug]) }}"
-                                class="btn btn-primary">Ver más</a>
+                            <a href="{{ route('categoria.mostrar', ['slug' => $seccion->slug]) }}" class="btn btn-primary">Ver
+                                más</a>
                         </div>
                     </div>
                 </div>

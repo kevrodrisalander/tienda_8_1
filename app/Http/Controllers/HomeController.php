@@ -7,15 +7,28 @@ use App\Models\Seccion;
 
 class HomeController extends Controller
 {
-    public function index(Request $request)
+//     public function index(Request $request)
+// {
+//     $secciones = Seccion::query()
+//         ->when($request->filled('buscar'), function ($query) use ($request) {
+//             $query->where('nombre', 'LIKE', '%' . $request->buscar . '%');
+//         })
+//         ->get();
+
+//     return view('home', compact('secciones'));
+// }
+
+public function index(Request $request)
 {
     $secciones = Seccion::query()
         ->when($request->filled('buscar'), function ($query) use ($request) {
             $query->where('nombre', 'LIKE', '%' . $request->buscar . '%');
         })
+        ->orderBy('nombre', 'asc') // aquí se ordena de A-Z
         ->get();
 
     return view('home', compact('secciones'));
 }
+
 
 }
