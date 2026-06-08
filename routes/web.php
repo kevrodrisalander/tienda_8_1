@@ -16,6 +16,7 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ClientesController;
+use App\Http\Controllers\TiendasController;
 
 
 // Página principal de la tienda
@@ -123,3 +124,7 @@ Route::get('/clientes', [ClientesController::class, 'index'])->name('clientes');
 
 // Esta es la que usa el JS internamente para llenar la tabla
 Route::get('/clientes/consulta', [ClientesController::class, 'consulta'])->name('clientes.consulta');
+
+
+
+Route::get('/tiendas', [TiendasController::class, 'tiendas']);

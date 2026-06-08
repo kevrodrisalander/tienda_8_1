@@ -31,16 +31,16 @@
                             Tiendas
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="tiendasDropdown">
-                            <li><a class="dropdown-item" href="/x">Tiendas</a></li>
+                            <li><a class="dropdown-item" href="/tiendas">Tiendas</a></li>
                         </ul>
                     </li>
                 @endif
 
                 {{-- Menú Administración: solo para roles específicos --}}
-                @if(Auth::check() && in_array(Auth::user()->id_rol, [1,2,9]))
+                @if(Auth::check() && in_array(Auth::user()->id_rol, [1, 2, 9]))
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             Administración
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="adminDropdown">
@@ -73,10 +73,11 @@
                 @endif
 
                 <!--Carrito -->
-                <button class="btn btn-outline-warning position-relative"
-                        data-bs-toggle="modal" data-bs-target="#cartModal">
+                <button class="btn btn-outline-warning position-relative" data-bs-toggle="modal"
+                    data-bs-target="#cartModal">
                     <i class="bi bi-cart3"></i>
-                    <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    <span id="cartCount"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                         0
                     </span>
                 </button>
