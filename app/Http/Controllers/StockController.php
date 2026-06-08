@@ -15,18 +15,86 @@ class StockController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+
     public function consultaStock(Request $request)
     {
         $query = DB::table('stock')
             ->join('productos', 'stock.producto_id', '=', 'productos.id')
             ->leftJoin('lotes_producto', 'stock.id_lote', '=', 'lotes_producto.id_lote');
 
+        // Filtro base: Activos / Eliminados
         if ($request->get('eliminados') == 1) {
             $query->where('stock.activo', 0);
         } else {
             $query->where('stock.activo', 1);
         }
 
+        /**************************************************
+         * APLICACIÓN DE FILTROS AVANZADOS DINÁMICOS
+         **************************************************/
+
+        // 1. Texto (Búsquedas parciales con LIKE)
+        $query->when($request->filled('filter_nombre'), function ($q) use ($request) {
+            return $q->where('productos.descripcion', 'LIKE', '%' . $request->filter_nombre . '%');
+        });
+
+        $query->when($request->filled('filter_ubicacion'), function ($q) use ($request) {
+            return $q->where('stock.ubicacion', 'LIKE', '%' . $request->filter_ubicacion . '%');
+        });
+
+        $query->when($request->filled('filter_lote'), function ($q) use ($request) {
+            return $q->where('lotes_producto.codigo_lote', 'LIKE', '%' . $request->filter_lote . '%');
+        });
+
+        $query->when($request->filled('filter_observaciones'), function ($q) use ($request) {
+            return $q->where('stock.observaciones', 'LIKE', '%' . $request->filter_observaciones . '%');
+        });
+
+        $query->when($request->filled('filter_estado'), function ($q) use ($request) {
+             return $q->whereRaw('LOWER(stock.estado) = ?', [strtolower($request->filter_estado)]);
+        });
+
+        $query->when($request->filled('filter_tipo_movimiento'), function ($q) use ($request) {
+        return $q->whereRaw('LOWER(stock.tipo_movimiento) = ?', [strtolower($request->filter_tipo_movimiento)]);
+        });
+
+        // 3. Rangos de Cantidades y Límites numéricos
+        $query->when($request->filled('filter_cantidad_min'), function ($q) use ($request) {
+            return $q->where('stock.cantidad', '>=', $request->filter_cantidad_min);
+        });
+
+        $query->when($request->filled('filter_cantidad_max'), function ($q) use ($request) {
+            return $q->where('stock.cantidad', '<=', $request->filter_cantidad_max);
+        });
+
+        $query->when($request->filled('filter_minimo'), function ($q) use ($request) {
+            return $q->where('stock.minimo_seguro', '>=', $request->filter_minimo);
+        });
+
+        $query->when($request->filled('filter_maximo'), function ($q) use ($request) {
+            return $q->where('stock.maximo_permitido', '<=', $request->filter_maximo);
+        });
+
+        // 4. Rangos de Fechas (Ingreso y Vencimiento)
+        $query->when($request->filled('filter_fecha_ingreso_desde'), function ($q) use ($request) {
+            return $q->whereDate('stock.fecha_ingreso', '>=', $request->filter_fecha_ingreso_desde);
+        });
+
+        $query->when($request->filled('filter_fecha_ingreso_hasta'), function ($q) use ($request) {
+            return $q->whereDate('stock.fecha_ingreso', '<=', $request->filter_fecha_ingreso_hasta);
+        });
+
+        $query->when($request->filled('filter_fecha_vencimiento_desde'), function ($q) use ($request) {
+            return $q->whereDate('stock.fecha_vencimiento', '>=', $request->filter_fecha_vencimiento_desde);
+        });
+
+        $query->when($request->filled('filter_fecha_vencimiento_hasta'), function ($q) use ($request) {
+            return $q->whereDate('stock.fecha_vencimiento', '<=', $request->filter_fecha_vencimiento_hasta);
+        });
+
+        /**************************************************/
+
+        // Ejecución de la consulta con las columnas requeridas
         $stocks = $query->select([
             'stock.id',
             'productos.descripcion as nombre_producto',

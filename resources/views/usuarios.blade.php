@@ -17,15 +17,15 @@
         </b>
 
         <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
-            Agregar usuario
+            <i class="bi bi-plus-circle me-2"></i>Agregar usuario
         </button>
 
         <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalFiltrosUsuarios">
-            Filtros
+            <i class="bi bi-funnel"></i>Filtros
         </button>
 
         <button id="btnVerUsuariosEliminados" class="btn btn-danger mb-3">
-            Ver eliminados
+            <i class="bi bi-file-earmark-x"></i>Ver eliminados
         </button>
 
         <div class="row">
@@ -131,7 +131,7 @@
                                 {{-- Usuario --}}
                                 <div class="col-md-6 mb-3">
                                     <label for="filtro_usuario" class="form-label">
-                                        Usuario
+                                        <i class="bi bi-person"></i> Usuario
                                     </label>
                                     <input type="text" class="form-control" id="filtro_usuario" name="usuario"
                                         placeholder="Buscar por usuario">
@@ -140,7 +140,7 @@
                                 {{-- Correo --}}
                                 <div class="col-md-6 mb-3">
                                     <label for="filtro_correo" class="form-label">
-                                        Correo
+                                        <i class="bi bi-envelope"></i> Correo
                                     </label>
                                     <input type="text" class="form-control" id="filtro_correo" name="correo"
                                         placeholder="Buscar por correo">
@@ -151,7 +151,7 @@
                                 {{-- Rol con búsqueda --}}
                                 <div class="col-md-6 mb-3">
                                     <label for="filtro_rol" class="form-label">
-                                        Rol
+                                        <i class="bi bi-person-rolodex"></i> Rol
                                     </label>
                                     <select class="form-select" id="filtro_rol" name="rol" style="width: 100%">
                                         <option value="">Todos los roles</option>
@@ -216,7 +216,7 @@
                             {{-- Usuario --}}
                             <div class="mb-3">
                                 <label for="nuevo_usuario" class="form-label">
-                                    Usuario
+                                    <i class="bi bi-person-circle"></i> Usuario
                                 </label>
                                 <input type="text" class="form-control" id="nuevo_usuario" name="usuario" required>
                             </div>
@@ -224,7 +224,7 @@
                             {{-- Correo --}}
                             <div class="mb-3">
                                 <label for="nuevo_correo" class="form-label">
-                                    Correo
+                                    <i class="bi bi-envelope"></i> Correo
                                 </label>
                                 <input type="email" class="form-control" id="nuevo_correo" name="correo" required>
                             </div>
@@ -232,7 +232,7 @@
                             {{-- Rol --}}
                             <div class="mb-3">
                                 <label for="nuevo_id_rol" class="form-label">
-                                    Rol
+                                    <i class="bi bi-person-rolodex"></i>Rol
                                 </label>
                                 <select class="form-select" id="nuevo_id_rol" name="id_rol" required>
                                     <option value="">Selecciona un rol</option>
@@ -243,7 +243,7 @@
                             {{-- Password --}}
                             <div class="mb-3">
                                 <label for="nuevo_password" class="form-label">
-                                    Contraseña
+                                    <i class="bi bi-file-earmark-lock"></i> Contraseña
                                 </label>
                                 <input type="password" class="form-control" id="nuevo_password" name="password" required>
                             </div>
@@ -251,7 +251,7 @@
                             {{-- Confirmar Password --}}
                             <div class="mb-3">
                                 <label for="nuevo_password_confirmation" class="form-label">
-                                    Confirmar Contraseña
+                                    <i class="bi bi-file-earmark-lock"></i> Confirmar Contraseña
                                 </label>
                                 <input type="password" class="form-control" id="nuevo_password_confirmation"
                                     name="password_confirmation" required>

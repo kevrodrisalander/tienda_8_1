@@ -18,20 +18,23 @@
 
         {{-- Botón Agregar producto solo para roles permitidos --}}
         @if(auth()->check() && in_array(auth()->user()->id_rol, [1, 4, 8]))
-            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
+            {{-- <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
                 Agregar producto
+            </button> --}}
+            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
+                <i class="bi bi-plus-circle me-2"></i> Agregar producto
             </button>
         @endif
-
+        {{-- b --}}
         {{-- Botón Filtros visible para todos --}}
         <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalFiltros">
-            Filtros
+            <i class="bi bi-funnel"></i> Filtros
         </button>
 
         {{-- Ver eliminados solo para roles permitidos --}}
         @if(auth()->check() && in_array(auth()->user()->id_rol, [1, 4]))
             <button id="btnVerEliminados" class="btn btn-danger mb-3">
-                Ver eliminados
+                <i class="bi bi-file-earmark-x"></i>Ver eliminados
             </button>
         @endif
 
@@ -149,7 +152,6 @@
                                     <label class="form-label">Ubicación</label>
                                     <input type="text" name="ubicacion" class="form-control" required>
                                 </div>
-
                                 <div class="col-md-6">
                                     <label class="form-label">Tipo movimiento</label>
                                     <select name="tipo_movimiento" class="form-select" required>
@@ -286,6 +288,129 @@
                             <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         </div>
 
+                    </form>
+                </div>
+            </div>
+        </div>
+        {{-- Modal Filtros Avanzados para DataTables --}}
+
+        <div class="modal fade modal-producto" id="modalFiltros" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form id="formFiltrosStock">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Filtrar Listado de Stock</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row g-3">
+
+                                {{-- Filtro por Nombre de Producto --}}
+                                <div class="col-md-6">
+                                    <label class="form-label">Nombre del producto</label>
+                                    <input type="text" name="filter_nombre" class="form-control"
+                                        placeholder="Buscar por nombre...">
+                                </div>
+
+                                {{-- Filtro por Ubicación --}}
+                                <div class="col-md-6">
+                                    <label class="form-label">Ubicación</label>
+                                    <input type="text" name="filter_ubicacion" class="form-control"
+                                        placeholder="Ej: Estante A1">
+                                </div>
+
+                                {{-- Filtro por Lote --}}
+                                <div class="col-md-4">
+                                    <label class="form-label">Lote</label>
+                                    <input type="text" name="filter_lote" class="form-control"
+                                        placeholder="Código de lote...">
+                                </div>
+
+                                {{-- Filtro por Estado --}}
+                                <div class="col-md-4">
+                                    <label class="form-label">Estado</label>
+                                    <select name="filter_estado" class="form-select">
+                                        <option value="">Todos los estados</option>
+                                        @foreach ($estados as $estado)
+                                            <option value="{{ $estado }}">{{ ucfirst($estado) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                {{-- Filtro por Tipo de Movimiento --}}
+                                <div class="col-md-4">
+                                    <label class="form-label">Tipo movimiento</label>
+                                    <select name="filter_tipo_movimiento" class="form-select">
+                                        <option value="">Todos los tipos</option>
+                                        @foreach ($tiposMovimiento as $tipo)
+                                            <option value="{{ $tipo }}">{{ ucfirst($tipo) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <hr class="my-3 text-muted">
+                                <h6 class="fw-bold mb-0">Rangos de Cantidades</h6>
+
+                                {{-- Rango de Cantidad --}}
+                                <div class="col-md-6">
+                                    <label class="form-label">Cantidad (Desde - Hasta)</label>
+                                    <div class="input-group">
+                                        <input type="number" name="filter_cantidad_min" class="form-control"
+                                            placeholder="Min">
+                                        <input type="number" name="filter_cantidad_max" class="form-control"
+                                            placeholder="Max">
+                                    </div>
+                                </div>
+
+                                {{-- Límites de Seguridad --}}
+                                <div class="col-md-3">
+                                    <label class="form-label">Mínimo Seguro (>=)</label>
+                                    <input type="number" name="filter_minimo" class="form-control" placeholder="Ej: 5">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Máximo Permitido (<=)< /label>
+                                            <input type="number" name="filter_maximo" class="form-control"
+                                                placeholder="Ej: 100">
+                                </div>
+
+                                <hr class="my-3 text-muted">
+                                <h6 class="fw-bold mb-0">Rangos de Fechas</h6>
+
+                                {{-- Rango de Fecha de Ingreso --}}
+                                <div class="col-md-6">
+                                    <label class="form-label">Fecha de Ingreso (Desde / Hasta)</label>
+                                    <div class="input-group">
+                                        <input type="date" name="filter_fecha_ingreso_desde" class="form-control">
+                                        <input type="date" name="filter_fecha_ingreso_hasta" class="form-control">
+                                    </div>
+                                </div>
+
+                                {{-- Rango de Fecha de Vencimiento --}}
+                                <div class="col-md-6">
+                                    <label class="form-label">Fecha de Vencimiento (Desde / Hasta)</label>
+                                    <div class="input-group">
+                                        <input type="date" name="filter_fecha_vencimiento_desde" class="form-control">
+                                        <input type="date" name="filter_fecha_vencimiento_hasta" class="form-control">
+                                    </div>
+                                </div>
+
+                                {{-- Filtro por Observaciones --}}
+                                <div class="col-md-12">
+                                    <label class="form-label">Observaciones (Contiene texto)</label>
+                                    <input type="text" name="filter_observaciones" class="form-control"
+                                        placeholder="Buscar palabras clave en observaciones...">
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" id="btnLimpiarFiltros" class="btn btn-outline-danger">Limpiar
+                                Filtros</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-success">Aplicar Filtros</button>
+                        </div>
                     </form>
                 </div>
             </div>

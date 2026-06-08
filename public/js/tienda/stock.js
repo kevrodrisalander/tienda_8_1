@@ -46,12 +46,54 @@ let verEliminados = false;
         pageLength: 10,
         scrollX: true,
 
+        // ajax: {
+        //     url: "stock/consulta",
+        //     type: "GET",
+        //     headers: { "X-CSRF-TOKEN": formToken },
+        //     data: function (d) {
+        //         d.eliminados = verEliminados ? 1 : 0;
+        //     },
+        // },
+
         ajax: {
             url: "stock/consulta",
             type: "GET",
             headers: { "X-CSRF-TOKEN": formToken },
             data: function (d) {
                 d.eliminados = verEliminados ? 1 : 0;
+
+                // Con esta función asignamos el valor solo si existe y no está vacío
+                const getVal = (selector) => {
+                    const el = $(selector);
+                    return el.length && el.val() ? el.val().trim() : null;
+                };
+
+                d.filter_nombre = getVal('[name="filter_nombre"]');
+                d.filter_ubicacion = getVal('[name="filter_ubicacion"]');
+                d.filter_lote = getVal('[name="filter_lote"]');
+                d.filter_estado = getVal('[name="filter_estado"]');
+                d.filter_tipo_movimiento = getVal(
+                    '[name="filter_tipo_movimiento"]',
+                );
+                d.filter_cantidad_min = getVal('[name="filter_cantidad_min"]');
+                d.filter_cantidad_max = getVal('[name="filter_cantidad_max"]');
+                d.filter_minimo = getVal('[name="filter_minimo"]');
+                d.filter_maximo = getVal('[name="filter_maximo"]');
+                d.filter_fecha_ingreso_desde = getVal(
+                    '[name="filter_fecha_ingreso_desde"]',
+                );
+                d.filter_fecha_ingreso_hasta = getVal(
+                    '[name="filter_fecha_ingreso_hasta"]',
+                );
+                d.filter_fecha_vencimiento_desde = getVal(
+                    '[name="filter_fecha_vencimiento_desde"]',
+                );
+                d.filter_fecha_vencimiento_hasta = getVal(
+                    '[name="filter_fecha_vencimiento_hasta"]',
+                );
+                d.filter_observaciones = getVal(
+                    '[name="filter_observaciones"]',
+                );
             },
         },
 
@@ -156,7 +198,7 @@ let verEliminados = false;
 
             // Estado normalizado
             $('[name="estado"]').val(
-                data.estado ? data.estado.toLowerCase().trim() : ""
+                data.estado ? data.estado.toLowerCase().trim() : "",
             );
 
             // Lote
@@ -169,7 +211,7 @@ let verEliminados = false;
             // Fechas
             $('[name="fecha_ingreso"]').val(soloFecha(data.fecha_ingreso));
             $('[name="fecha_vencimiento"]').val(
-                soloFecha(data.fecha_vencimiento)
+                soloFecha(data.fecha_vencimiento),
             );
 
             // Otros
@@ -199,14 +241,14 @@ let verEliminados = false;
                     type: "DELETE",
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
-                            "content"
+                            "content",
                         ),
                     },
                     success: function () {
                         Swal.fire(
                             "Eliminado",
                             "Registro desactivado",
-                            "success"
+                            "success",
                         );
                         $("#tbl_stock").DataTable().ajax.reload();
                     },
@@ -237,14 +279,14 @@ let verEliminados = false;
                     type: "PUT",
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
-                            "content"
+                            "content",
                         ),
                     },
                     success: function () {
                         Swal.fire(
                             "Restaurado",
                             "Registro activo nuevamente",
-                            "success"
+                            "success",
                         );
                         $("#tbl_stock").DataTable().ajax.reload();
                     },
@@ -265,11 +307,27 @@ let verEliminados = false;
     });
 
     /**************************************************
+     * PROCESAR FILTROS DEL MODAL (DATATABLES)
+     **************************************************/
+    // Cuando el usuario pulsa "Aplicar Filtros"
+    $("#formFiltrosStock").on("submit", function (e) {
+        e.preventDefault(); // Evita que la página se recargue
+        tabla.ajax.reload(); // Recarga la tabla enviando los nuevos parámetros
+        $("#modalFiltros").modal("hide"); // Cierra el modal de forma limpia
+    });
+
+    // Cuando el usuario pulsa "Limpiar Filtros"
+    $("#btnLimpiarFiltros").on("click", function (e) {
+        e.preventDefault();
+        $("#formFiltrosStock")[0].reset(); // Resetea visualmente todos los inputs
+        tabla.ajax.reload(); // Recarga la tabla vacía de filtros
+        $("#modalFiltros").modal("hide");
+    });
+
+    /**************************************************
      * PREVENIR DOBLE SUBMIT EN EDICIÓN
      **************************************************/
     $("#formEditarStock").on("submit", function () {
         $(this).find('button[type="submit"]').prop("disabled", true);
     });
-
-
 })(); // ← auto-ejecución, no tocar
