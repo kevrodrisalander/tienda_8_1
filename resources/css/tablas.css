@@ -1,108 +1,85 @@
-/* Estilo general de la tabla */
-#tbl_productos {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #ffffff;
-    color: #1e2d85;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+/* ==========================================
+   TABLAS GENERALES
+========================================== */
 
-/* Encabezado */
-#tbl_productos thead tr {
-    background-color: #09351f;
-    color: #ffffff;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Celdas del encabezado */
-#tbl_productos thead th {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 2px solid #ffffff;
-}
-
-/* Filas alternas */
-#tbl_productos tbody tr:nth-child(even) {
-    background-color: #e9ecef;
-}
-
-#tbl_productos tbody tr:nth-child(odd) {
-    background-color: #ffffff;
-}
-
-/* Celdas del cuerpo */
-#tbl_productos tbody td {
-    padding: 10px;
-    text-align: center;
-    border-bottom: 1px solid #a5a5a5;
-}
-
-/* Hover sobre filas */
-#tbl_productos tbody tr:hover {
-    background-color: #a1dfbd;
-    cursor: pointer;
-}
-
-/* Bordes redondeados */
-#tbl_productos {
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-/* Tabla stock  */
-
+#tbl_productos,
 .table_id {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95rem;
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    color: #1e2d85;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.table_id {
+    font-size: 0.95rem;
+}
+
+/* ==========================================
+   ENCABEZADOS
+========================================== */
+
+#tbl_productos thead tr,
 .table_id thead th {
     background-color: #09351f;
-    color: #ffffff;
+    color: #fff;
+}
+
+#tbl_productos thead th,
+.table_id thead th {
     padding: 12px;
     text-align: center;
     font-weight: 600;
+}
+
+#tbl_productos thead th {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #fff;
+}
+
+.table_id thead th {
     border-bottom: 2px solid #dee2e6;
 }
 
+/* ==========================================
+   CUERPO DE TABLAS
+========================================== */
+
+#tbl_productos tbody td,
 .table_id tbody td {
     padding: 10px;
     text-align: center;
     vertical-align: middle;
+}
+
+#tbl_productos tbody td {
+    border-bottom: 1px solid #a5a5a5;
+}
+
+.table_id tbody td {
     border-bottom: 1px solid #dee2e6;
 }
 
-.table_id tbody tr:hover {
-    background-color: #f1f1f1;
-}
+/* Filas alternas */
 
+#tbl_productos tbody tr:nth-child(even),
 .table_id tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
+#tbl_productos tbody tr:nth-child(odd),
 .table_id tbody tr:nth-child(odd) {
-    background-color: #ffffff;
+    background-color: #fff;
 }
 
-/* Responsive scroll if needed */
-.table-responsive {
-    overflow-x: auto;
-}
+/* Hover */
 
-/* Optional: highlight critical stock levels */
-.table_id td[data-low="true"] {
-    background-color: #ffe5e5;
-    color: #b30000;
-    font-weight: bold;
-}
-
-.table_id {
-    color: #1e2d85; /* Azul Bootstrap, puedes usar otro tono si prefieres */
+#tbl_productos tbody tr:hover {
+    background-color: #a1dfbd;
+    cursor: pointer;
 }
 
 .table_id tbody tr:hover {
@@ -110,26 +87,66 @@
     cursor: pointer;
 }
 
-.table_id {
-    border-radius: 8px;
-    overflow: hidden;
+/* Stock crítico */
+
+.table_id td[data-low="true"] {
+    background-color: #ffe5e5;
+    color: #b30000;
+    font-weight: bold;
 }
 
+/* ==========================================
+   MODAL PRODUCTO
+========================================== */
+
 .modal-producto .modal-header {
-    background-color: #151917; /* Fondo verde oscuro */
-    color: #fff; /* Texto blanco */
+    background-color: #151917;
+    color: #fff;
     border-bottom: 1px solid #444;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
+
+.modal-producto .modal-dialog {
+    max-width: 600px;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+html,
+body {
+    overflow-x: hidden;
+}
+
 @media (max-width: 768px) {
     .modal-dialog {
         margin: 0.5rem;
         max-width: calc(100% - 1rem);
     }
 
+    .modal-producto .modal-dialog {
+        max-width: 100%;
+        margin: 10px;
+    }
+
     .modal-body {
         padding: 1rem;
+    }
+
+    .modal-header h5 {
+        font-size: 1rem;
     }
 
     .modal-footer {
@@ -140,37 +157,4 @@
     .modal-footer .btn {
         width: 100%;
     }
-
-    .modal-header h5 {
-        font-size: 1rem;
-    }
-}
-
-.modal-producto .modal-dialog {
-    max-width: 600px;
-}
-
-@media (max-width: 768px) {
-    .modal-producto .modal-dialog {
-        max-width: 100%;
-        margin: 10px;
-    }
-}
-
-/* Imágenes responsivas */
-img {
-    max-width: 100%;
-    height: auto;
-}
-
-/* Evita desbordamientos horizontales */
-html,
-body {
-    overflow-x: hidden;
-}
-
-/* Tablas responsivas */
-.table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
 }

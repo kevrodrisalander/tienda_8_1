@@ -365,13 +365,12 @@
 
                                 {{-- Límites de Seguridad --}}
                                 <div class="col-md-3">
-                                    <label class="form-label">Mínimo Seguro (>=)</label>
+                                    <label class="form-label">Mínimo Seguro</label>
                                     <input type="number" name="filter_minimo" class="form-control" placeholder="Ej: 5">
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label">Máximo Permitido (<=)< /label>
-                                            <input type="number" name="filter_maximo" class="form-control"
-                                                placeholder="Ej: 100">
+                                    <label class="form-label">Máximo Permitido</label>
+                                    <input type="number" name="filter_maximo" class="form-control" placeholder="Ej: 100">
                                 </div>
 
                                 <hr class="my-3 text-muted">

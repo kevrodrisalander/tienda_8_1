@@ -15,11 +15,11 @@
         <b>
             <p class="text-center">Listado de provedores</p>
         </b>
-        <button id="btnRegistrarProveedor" class="btn btn-success mb-3">Registrar Proveedor</button>
+        <button id="btnRegistrarProveedor" class="btn btn-primary mb-3">Registrar Proveedor</button>
 
 
-        <button id="btnFiltrosProveedores" class="btn btn-primary mb-3">
-            Filtrar proveedores
+        <button id="btnFiltrosProveedores" class="btn btn-success mb-3">
+            Filtros
         </button>
         <button id="btnVerProveedoresEliminados" class="btn btn-danger mb-3">
             Ver eliminados
