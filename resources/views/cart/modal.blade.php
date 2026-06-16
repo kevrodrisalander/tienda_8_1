@@ -24,3 +24,34 @@
         </div>
     </div>
 </div>
+
+
+<!-- Modal de Envío -->
+<div class="modal fade" id="envioModal" tabindex="-1" aria-labelledby="envioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="envioModalLabel">¡Te lo enviamos a casa!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formEnvio">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="direccion" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="direccion" name="direccion" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefono" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="telefono" name="telefono" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="referencias" class="form-label">Referencias</label>
+                        <textarea class="form-control" id="referencias" name="referencias"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar información</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

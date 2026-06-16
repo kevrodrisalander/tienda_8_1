@@ -97,7 +97,9 @@ window.CartApp = (function () {
                 e.target.value = cantidad;
 
                 const cart = readCart();
-                const index = cart.findIndex((p) => String(p.id) === String(id));
+                const index = cart.findIndex(
+                    (p) => String(p.id) === String(id),
+                );
                 if (index >= 0) {
                     cart[index].cantidad = cantidad;
                     writeCart(cart);
@@ -177,30 +179,42 @@ window.CartApp = (function () {
             cancelButtonText: "Cancelar",
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch('/checkout', {
-                    method: 'POST',
+                fetch("/checkout", {
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken,
                     },
-                    body: JSON.stringify({ cart })
+                    body: JSON.stringify({ cart }),
                 })
-                .then(response => response.blob()) // esperamos un PDF
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `ticket_compra_${Date.now()}.pdf`;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                })
-                .catch(err => console.error(err));
+                    .then((res) => res.json())
+                    .then((data) => {
+                        const idPedido = data.id_pedido; // 👈 aquí lo tienes
+                        // abrir modal de envío y pasar idPedido
+                        const envioModal = new bootstrap.Modal(
+                            document.getElementById("envioModal"),
+                        );
+                        envioModal.show();
+
+                        // guardar idPedido en un hidden input del formulario
+                        document
+                            .getElementById("formEnvio")
+                            .insertAdjacentHTML(
+                                "beforeend",
+                                `<input type="hidden" name="id_pedido" value="${idPedido}">`,
+                            );
+                    });
 
                 clearCart();
-                const modal = bootstrap.Modal.getInstance(document.getElementById('cartModal'));
+                const modal = bootstrap.Modal.getInstance(
+                    document.getElementById("cartModal"),
+                );
                 if (modal) modal.hide();
-                Swal.fire("Compra realizada", "Gracias por tu compra 🎉", "success");
+                Swal.fire(
+                    "Compra realizada",
+                    "Gracias por tu compra 🎉",
+                    "success",
+                );
             }
         });
     };
@@ -244,18 +258,17 @@ window.CartApp = (function () {
             cartModalEl.addEventListener("show.bs.modal", renderCart);
         }
 
-//Desabilitar botton
-document.querySelectorAll(".btn-add").forEach(btn => {
-    const id = btn.dataset.id;
-    const input = document.querySelector(`#cantidad-${id}`);
-    if (parseInt(input?.max) === 0) {
-        btn.disabled = true;
-        btn.textContent = "Agotado";
-        btn.classList.remove("btn-primary"); // quitar azul
-        btn.classList.add("btn-danger"); // poner rojo
-    }
-});
-
+        //Desabilitar botton
+        document.querySelectorAll(".btn-add").forEach((btn) => {
+            const id = btn.dataset.id;
+            const input = document.querySelector(`#cantidad-${id}`);
+            if (parseInt(input?.max) === 0) {
+                btn.disabled = true;
+                btn.textContent = "Agotado";
+                btn.classList.remove("btn-primary"); // quitar azul
+                btn.classList.add("btn-danger"); // poner rojo
+            }
+        });
     };
 
     const init = () => {
@@ -268,3 +281,44 @@ document.querySelectorAll(".btn-add").forEach(btn => {
 
     return { addItem, removeItem, clearCart, renderCart, updateCartCount };
 })();
+
+document.addEventListener("DOMContentLoaded", () => {
+    const formEnvio = document.getElementById("formEnvio");
+    if (formEnvio) {
+        formEnvio.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const data = {
+                direccion: document.getElementById("direccion").value,
+                telefono: document.getElementById("telefono").value,
+                referencias: document.getElementById("referencias").value,
+            };
+
+            fetch("/envios/info", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector(
+                        'meta[name="csrf-token"]',
+                    ).content,
+                },
+                body: JSON.stringify(data),
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    if (res.success) {
+                        Swal.fire(
+                            "Información guardada ✅",
+                            "Tu pedido será enviado a casa",
+                            "success",
+                        );
+                        const envioModal = bootstrap.Modal.getInstance(
+                            document.getElementById("envioModal"),
+                        );
+                        envioModal.hide();
+                    }
+                })
+                .catch((err) => console.error(err));
+        });
+    }
+});

@@ -18,6 +18,8 @@ use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\TiendasController;
 use App\Http\Controllers\EnvioController;
+use App\Http\Controllers\CheckoutController;
+
 
 
 // Página principal de la tienda
@@ -130,3 +132,6 @@ Route::get('/tiendas', [TiendasController::class, 'tiendas']);
 
 Route::get('/envios', [EnvioController::class, 'index'])->name('envios.index');
 Route::get('/envios/consulta', [EnvioController::class, 'consulta']);
+// routes/web.php
+Route::post('/envios/info', [EnvioController::class, 'guardarInfo']);
+Route::post('/envios/info', [EnvioController::class, 'guardarInfo'])->name('envios.info');
