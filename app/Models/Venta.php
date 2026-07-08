@@ -33,4 +33,9 @@ class Venta extends Model
     {
         return $this->belongsTo(Cliente::class, 'id_cliente', 'id_cliente');
     }
+
+    public function envio()
+{
+    return $this->hasOne(Envio::class, 'id_pedido', 'id_venta');
+}
 }

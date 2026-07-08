@@ -1,6 +1,6 @@
 // public/js/tienda/cart.js
 window.CartApp = (function () {
-    const cartKey = "miCarrito";
+    const cartKey = "miCarrito"; // 👈 Se mantiene tu clave original
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
 
@@ -48,7 +48,7 @@ window.CartApp = (function () {
                                     <th class="text-end">Subtotal</th>
                                     <th></th>
                                 </tr>
-                            </thead>
+                            </tbody>
                             <tbody>`;
 
         cart.forEach((item) => {
@@ -106,7 +106,7 @@ window.CartApp = (function () {
                 }
 
                 updateCartCount();
-                renderCart(); // refresca subtotal y total
+                renderCart();
             });
         });
 
@@ -124,7 +124,7 @@ window.CartApp = (function () {
         if (!id) return;
         let cart = readCart();
         const idx = cart.findIndex((p) => String(p.id) === String(id));
-        cantidad = Math.min(cantidad, stock); // no permitir más que stock
+        cantidad = Math.min(cantidad, stock);
         if (cantidad < 1) return;
 
         if (idx >= 0) {
@@ -153,6 +153,13 @@ window.CartApp = (function () {
         renderCart();
     };
 
+    // const checkout = () => {
+    //     const cart = readCart();
+    //     if (cart.length === 0) {
+    //         Swal.fire("Tu carrito está vacío", "", "info");
+    //         return;
+    //     }
+
     const checkout = () => {
         const cart = readCart();
         if (cart.length === 0) {
@@ -164,7 +171,7 @@ window.CartApp = (function () {
         const csrfToken = csrfMeta ? csrfMeta.getAttribute("content") : null;
 
         if (!csrfToken) {
-            console.error("CSRF token no encontrado.");
+            console.error("❌ [Error] CSRF token no encontrado en el HTML.");
             return;
         }
 
@@ -179,6 +186,12 @@ window.CartApp = (function () {
             cancelButtonText: "Cancelar",
         }).then((result) => {
             if (result.isConfirmed) {
+                // 📦 LOG 1: Ver el contenido exacto del array que se enviará
+                console.log(
+                    "📦 [Checkout] 1. Enviando este arreglo al servidor:",
+                    cart,
+                );
+
                 fetch("/checkout", {
                     method: "POST",
                     headers: {
@@ -187,34 +200,123 @@ window.CartApp = (function () {
                     },
                     body: JSON.stringify({ cart }),
                 })
-                    .then((res) => res.json())
-                    .then((data) => {
-                        const idPedido = data.id_pedido; // 👈 aquí lo tienes
-                        // abrir modal de envío y pasar idPedido
-                        const envioModal = new bootstrap.Modal(
-                            document.getElementById("envioModal"),
+                    .then((res) => {
+                        // 🚦 LOG 2: Estatus HTTP devuelto por Laravel (200, 500, etc.)
+                        console.log(
+                            "🚦 [Checkout] 2. Status HTTP de la Respuesta:",
+                            res.status,
+                            res.statusText,
                         );
-                        envioModal.show();
 
-                        // guardar idPedido en un hidden input del formulario
-                        document
-                            .getElementById("formEnvio")
-                            .insertAdjacentHTML(
-                                "beforeend",
-                                `<input type="hidden" name="id_pedido" value="${idPedido}">`,
+                        // Capturamos como texto crudo para "espiar" la respuesta real antes de decodificarla
+                        return res.text().then((textoCrudo) => {
+                            // 📝 LOG 3: Ver CUALQUIER carácter, espacio en blanco o error oculto enviado por el servidor
+                            console.log(
+                                "📝 [Checkout] 3. Texto Crudo que llegó del Servidor (Culpable real):",
+                                textoCrudo,
                             );
-                    });
 
-                clearCart();
-                const modal = bootstrap.Modal.getInstance(
-                    document.getElementById("cartModal"),
-                );
-                if (modal) modal.hide();
-                Swal.fire(
-                    "Compra realizada",
-                    "Gracias por tu compra 🎉",
-                    "success",
-                );
+                            if (!res.ok) {
+                                throw new Error(
+                                    `El servidor respondió con estatus incorreco: ${res.status}`,
+                                );
+                            }
+
+                            // Si todo marcha bien, convertimos manualmente a objeto JSON
+                            return JSON.parse(textoCrudo);
+                        });
+                    })
+                    .then((data) => {
+                        // 🎉 LOG 4: Ver el objeto JSON ya parseado correctamente
+                        console.log(
+                            "✅ [Checkout] 4. JSON Limpio Parseado con Éxito:",
+                            data,
+                        );
+                        const idPedido = data.id_pedido;
+
+                        if (!idPedido) {
+                            console.warn(
+                                "⚠️ [Advertencia] El objeto data llegó, pero 'id_pedido' es indefinido o nulo:",
+                                data,
+                            );
+                            throw new Error(
+                                "El JSON de respuesta no contiene la propiedad 'id_pedido'.",
+                            );
+                        }
+
+                        Swal.fire({
+                            title: "¿Desea envío a domicilio? 🚚",
+                            text: "Podemos llevar tus productos directo a tu casa",
+                            icon: "question",
+                            showDenyButton: true,
+                            confirmButtonText: "Sí, solicitar envío",
+                            denyButtonText: "No, retirar en tienda",
+                        }).then((envioResult) => {
+                            if (envioResult.isConfirmed) {
+                                console.log(
+                                    `➡️ [Checkout] Cliente seleccionó envío a domicilio para el pedido #${idPedido}`,
+                                );
+
+                                const envioModalEl =
+                                    document.getElementById("envioModal");
+                                const envioModal = new bootstrap.Modal(
+                                    envioModalEl,
+                                );
+                                envioModal.show();
+
+                                const antiguoInput =
+                                    document.getElementById("hidden-id-pedido");
+                                if (antiguoInput) antiguoInput.remove();
+
+                                document
+                                    .getElementById("formEnvio")
+                                    .insertAdjacentHTML(
+                                        "beforeend",
+                                        `<input type="hidden" id="hidden-id-pedido" name="id_pedido" value="${idPedido}">`,
+                                    );
+
+                                clearCart();
+                                const modal = bootstrap.Modal.getInstance(
+                                    document.getElementById("cartModal"),
+                                );
+                                if (modal) modal.hide();
+                            } else if (envioResult.isDenied) {
+                                console.log(
+                                    `➡️ [Checkout] Cliente seleccionó retiro en tienda para el pedido #${idPedido}`,
+                                );
+
+                                clearCart();
+                                const modal = bootstrap.Modal.getInstance(
+                                    document.getElementById("cartModal"),
+                                );
+                                if (modal) modal.hide();
+
+                                Swal.fire(
+                                    "Compra realizada 🎉",
+                                    `Tu pedido #${idPedido} ha sido procesado. ¡Te esperamos en tienda!`,
+                                    "success",
+                                );
+
+                                // 🎫 Abre el ticket PDF directo en una pestaña nueva
+                                window.open(
+                                    `/pedido/ticket/${idPedido}`,
+                                    "_blank",
+                                );
+                            }
+                        });
+                    })
+                    .catch((err) => {
+                        // 💥 LOG 5: Captura exacta de en qué línea o conversión falló el proceso
+                        console.error(
+                            "💥 [Checkout] 5. Error detectado en el flujo catch general:",
+                            err,
+                        );
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un problema en el servidor. Abre la consola (F12) para inspeccionar los logs.",
+                            "error",
+                        );
+                    });
             }
         });
     };
@@ -258,15 +360,14 @@ window.CartApp = (function () {
             cartModalEl.addEventListener("show.bs.modal", renderCart);
         }
 
-        //Desabilitar botton
         document.querySelectorAll(".btn-add").forEach((btn) => {
             const id = btn.dataset.id;
             const input = document.querySelector(`#cantidad-${id}`);
             if (parseInt(input?.max) === 0) {
                 btn.disabled = true;
                 btn.textContent = "Agotado";
-                btn.classList.remove("btn-primary"); // quitar azul
-                btn.classList.add("btn-danger"); // poner rojo
+                btn.classList.remove("btn-primary");
+                btn.classList.add("btn-danger");
             }
         });
     };
@@ -282,17 +383,24 @@ window.CartApp = (function () {
     return { addItem, removeItem, clearCart, renderCart, updateCartCount };
 })();
 
+// Listener del Formulario de Envíos Externo
 document.addEventListener("DOMContentLoaded", () => {
     const formEnvio = document.getElementById("formEnvio");
     if (formEnvio) {
         formEnvio.addEventListener("submit", function (e) {
             e.preventDefault();
 
+            const hiddenInput = document.getElementById("hidden-id-pedido");
+            const idPedido = hiddenInput ? hiddenInput.value : null;
+
             const data = {
+                id_pedido: idPedido,
                 direccion: document.getElementById("direccion").value,
                 telefono: document.getElementById("telefono").value,
                 referencias: document.getElementById("referencias").value,
             };
+
+            console.log("🚚 [Envio] Enviando datos post-registro:", data);
 
             fetch("/envios/info", {
                 method: "POST",
@@ -304,21 +412,97 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 body: JSON.stringify(data),
             })
-                .then((res) => res.json())
                 .then((res) => {
-                    if (res.success) {
+                    console.log("🚦 [Envio] HTTP Status:", res.status);
+                    return res.text().then((textoCrudo) => {
+                        console.log(
+                            "📝 [Texto Crudo del Servidor]:",
+                            textoCrudo,
+                        );
+
+                        if (!res.ok) {
+                            throw new Error(
+                                "Respuesta del servidor no fue OK.",
+                            );
+                        }
+                        return JSON.parse(textoCrudo);
+                    });
+                })
+                // .then((res) => {
+                //     console.log("✅ [Envio] Servidor Respondió:", res);
+                //     if (res.success) {
+                //         Swal.fire(
+                //             "Información guardada ✅",
+                //             `Tu pedido #${idPedido} será enviado a casa. ¡Gracias por tu compra!`,
+                //             "success",
+                //         );
+
+                //         const envioModal = bootstrap.Modal.getInstance(
+                //             document.getElementById("envioModal"),
+                //         );
+                //         if (envioModal) envioModal.hide();
+
+                //         formEnvio.reset();
+
+                //         // 🎫 ¡AQUÍ ENTRA! Abre el PDF de la venta tras agendar el envío a domicilio con éxito
+                //         window.open(`/pedido/ticket/${idPedido}`, "_blank");
+                //     }
+                // })
+
+                .then((res) => {
+                    console.log("🚦 [Envio] Status HTTP:", res.status);
+
+                    // 👁️ Leemos la respuesta como texto primero para espiar si Laravel manda un error HTML o algo raro
+                    return res.text().then((textoCrudo) => {
+                        console.log("📝 [Texto Crudo del Envio]:", textoCrudo);
+
+                        if (!res.ok) {
+                            throw new Error(
+                                "La respuesta del servidor para el envío no fue OK.",
+                            );
+                        }
+
+                        // Si el estatus es correcto (200), lo convertimos manualmente a JSON
+                        return JSON.parse(textoCrudo);
+                    });
+                })
+                .then((res) => {
+                    console.log("✅ [Envio] JSON Limpio Recibido:", res);
+
+                    // Validamos si tu controlador responde con 'success' o con 'ok'
+                    if (res.success || res.ok) {
                         Swal.fire(
                             "Información guardada ✅",
-                            "Tu pedido será enviado a casa",
+                            `Tu pedido #${idPedido} será enviado a casa. ¡Gracias por tu compra!`,
                             "success",
                         );
+
                         const envioModal = bootstrap.Modal.getInstance(
                             document.getElementById("envioModal"),
                         );
-                        envioModal.hide();
+                        if (envioModal) envioModal.hide();
+
+                        formEnvio.reset(); // Limpia el formulario
+
+                        // 🎫 Abre el PDF de la venta tras agendar el envío a domicilio con éxito
+                        window.open(`/pedido/ticket/${idPedido}`, "_blank");
+                    } else {
+                        Swal.fire(
+                            "Error",
+                            res.error ||
+                                "No se pudo registrar la información de entrega.",
+                            "error",
+                        );
                     }
                 })
-                .catch((err) => console.error(err));
+                .catch((err) => {
+                    console.error("💥 Error guardando datos de envío:", err);
+                    Swal.fire(
+                        "Error",
+                        "No se pudo vincular la dirección del paquete.",
+                        "error",
+                    );
+                });
         });
     }
 });

@@ -23,7 +23,6 @@ use App\Http\Controllers\CheckoutController;
 
 
 // Página principal de la tienda
-// Route::get('/home', [HomeController::class, 'index'])->name('home');  // Ruta para la página principal de la tienda
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // Mostrar productos de una categoría por slug
@@ -72,9 +71,8 @@ Route::put('/stock/{id}/restaurar', [StockController::class, 'restaurar'])->name
 // Agregar producto al carrito
 Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add'); //Agregar producto al carrito
 Route::get('/cart/show', [CartController::class, 'show'])->name('cart.show');  //Mostrar el carrito
-Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout'); //Procesar la venta
 Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear'); //Vaciar el carrito
-Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout'); //Procesar la venta
+
 
 //Ruta de provedores
 Route::view('/provedores', 'provedores')->name('provedores'); // Muestra la vista de provedore
@@ -113,7 +111,6 @@ Route::post('usuarios', [UsuariosController::class, 'store']); // Crear usuario
 
 
 //Venta del producto
-Route::post('/checkout', [VentaController::class, 'checkout']); //Procesar la venta
 
 //Creación del pdf
 Route::get('/venta/{id}/ticket', [VentaController::class, 'ticketPdf'])->name('venta.ticket');
@@ -132,6 +129,12 @@ Route::get('/tiendas', [TiendasController::class, 'tiendas']);
 
 Route::get('/envios', [EnvioController::class, 'index'])->name('envios.index');
 Route::get('/envios/consulta', [EnvioController::class, 'consulta']);
+
 // routes/web.php
 Route::post('/envios/info', [EnvioController::class, 'guardarInfo']);
 Route::post('/envios/info', [EnvioController::class, 'guardarInfo'])->name('envios.info');
+// Route::get('/pedido/ticket/{id}', [CheckoutController::class, 'descargarTicket']);
+
+//NUEVO FLUJO DE CHECKOUT Y ENVÍOS
+Route::post('/checkout', [CheckoutController::class, 'checkout']);
+Route::get('/pedido/ticket/{id}', [CheckoutController::class, 'descargarTicket']);
