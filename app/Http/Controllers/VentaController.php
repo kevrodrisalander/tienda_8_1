@@ -10,7 +10,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Venta;
 use App\Models\DetalleVenta;
 use App\Models\Stock;
-use App\Models\Pedido; // 👈 Asegúrate de importar Pedido si lo usas como sinonimo de venta
+use App\Models\Pedido;
 
 class VentaController extends Controller
 {
@@ -71,7 +71,7 @@ class VentaController extends Controller
 
             DB::commit();
 
-// 🔍 Buscamos el ID de forma dinámica por si el modelo no tiene configurado el primaryKey
+//Buscamos el ID de forma dinámica por si el modelo no tiene configurado el primaryKey
             $idFinal = $venta->id_venta ?? $venta->id_venta_generado ?? $venta->id ?? null;
 
             if (!$idFinal) {

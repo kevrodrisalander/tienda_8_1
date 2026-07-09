@@ -11,14 +11,14 @@ class CheckoutController extends Controller
 {
     public function checkout(Request $request)
     {
-        // 🔒 1. Validar sesión manualmente para evitar redirecciones del middleware auth
+        //1. Validar sesión manualmente para evitar redirecciones del middleware auth
         if (!Auth::check()) {
             return response()->json([
                 'error' => 'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.'
             ], 401);
         }
 
-        // 🛍️ 2. Validar que el carrito llegue en la petición AJAX sin redirigir
+        //2. Validar que el carrito llegue en la petición AJAX sin redirigir
         if (!$request->has('cart') || empty($request->cart)) {
             return response()->json([
                 'error' => 'El carrito está vacío o no se recibieron los productos.'
@@ -26,14 +26,14 @@ class CheckoutController extends Controller
         }
 
         try {
-            // 📝 3. Creamos el pedido básico con el cliente logueado
+            //3. Creamos el pedido básico con el cliente logueado
             $pedido = Pedido::create([
                 'id_cliente'   => Auth::id(),
                 'fecha_pedido' => now(),
                 'estado'       => 'pendiente'
             ]);
 
-            // 🔍 Aseguramos capturar la clave primaria correcta de tu modelo Pedido
+            //Aseguramos capturar la clave primaria correcta de tu modelo Pedido
             $idFinal = $pedido->id_pedido ?? $pedido->id ?? null;
 
             if (!$idFinal) {
@@ -42,7 +42,7 @@ class CheckoutController extends Controller
                 ], 500);
             }
 
-            // 🎉 4. Retornamos con éxito el ID del pedido en formato JSON limpio
+            // 4. Retornamos con éxito el ID del pedido en formato JSON limpio
             return response()->json([
                 'id_pedido' => $idFinal
             ]);
@@ -55,12 +55,10 @@ class CheckoutController extends Controller
         }
     }
 
-    // 🎫 ¡ESTA ES LA FUNCIÓN QUE LE FALTABA A TU CONTROLADOR!
-  public function descargarTicket($id)
+    //Generación del Ticket PDF (DomPDF) estilo Térmico
+    public function descargarTicket($id)
     {
         // 1. Buscamos el pedido con los detalles de los productos vendidos
-        // Nota: Asegúrate de que tu modelo Pedido tenga la relación 'detalles' o similar.
-        // Si no la tienes configurada, abajo extraemos los datos de forma segura.
         $pedido = \App\Models\Pedido::find($id);
 
         if (!$pedido) {
@@ -68,7 +66,6 @@ class CheckoutController extends Controller
         }
 
         // 2. Mapeamos los datos para que coincidan exactamente con tu estructura Blade ($cart)
-        // Si tienes una tabla 'detalle_pedidos' o 'ventas_detalles', la recorremos aquí:
         $cart = [];
         if (isset($pedido->detalles) && count($pedido->detalles) > 0) {
             foreach ($pedido->detalles as $detalle) {
@@ -79,22 +76,21 @@ class CheckoutController extends Controller
                 ];
             }
         } else {
-            // 💡 Simulamos datos de prueba con el total guardado si aún no configuras la tabla detalle
+            //Simulamos datos de prueba con el total guardado si aún no configuras la tabla detalle o relaciones
             $cart[] = [
-                'nombre'   => 'Nota de Venta #' . $pedido->id_pedido,
+                'nombre'   => 'Nota de Venta #' . ($pedido->id_pedido ?? $id),
                 'cantidad' => 1,
                 'precio'   => $pedido->total ?? 0.00,
             ];
         }
 
-        // Definimos el método de pago (puedes jalarlo de una columna de tu base de datos)
+        // Definimos el método de pago
         $metodo_pago = $pedido->metodo_pago ?? 'Efectivo';
 
         // 3. Cargamos la vista de tu ticket con los datos ensamblados
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.ticket', compact('cart', 'metodo_pago'));
 
-        // 4. Configuramos el tamaño de papel para estilo Ticket (Ancho aproximado de 80mm en puntos)
-        // El tamaño de rollo de ticket normal suele ser de 226pt de ancho por la altura que requiera el contenido
+        // 4. Configuramos el tamaño de papel para estilo Ticket (Ancho de 80mm en puntos / alto adaptable)
         $pdf->setPaper([0, 0, 226, 450]);
 
         // 5. Lo lanzamos como un stream para que se abra directo en el navegador

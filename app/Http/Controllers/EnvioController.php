@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;   // ✅ importación correcta
+use Illuminate\Http\Request;
 use App\Models\Envio;
 
 class EnvioController extends Controller
@@ -32,18 +32,39 @@ class EnvioController extends Controller
         return response()->json(['data' => $data]);
     }
 
-   public function guardarInfo(Request $request)
-{
-    Envio::create([
-        'id_pedido'   => $request->id_pedido, // 👈 ya no es null
-        'direccion'   => $request->direccion,
-        'telefono'    => $request->telefono,
-        'referencias' => $request->referencias,
-        'estado_envio'=> 'preparando',
-        'fecha_envio' => now()
-    ]);
+public function guardarInfo(Request $request)
+    {
+        // 1. Validamos los datos mínimos requeridos para evitar fallos de base de datos
+        if (!$request->has('id_pedido') || empty($request->id_pedido)) {
+            return response()->json([
+                'success' => false,
+                'error' => 'El identificador del pedido está ausente en la petición.'
+            ], 400);
+        }
 
-    return response()->json(['success' => true]);
-}
+        try {
+            // 2. Intentamos realizar el registro del domicilio
+            Envio::create([
+                'id_pedido'    => $request->id_pedido,
+                'direccion'    => $request->direccion,
+                'telefono'     => $request->telefono,
+                'referencias'  => $request->referencias,
+                'estado_envio' => 'preparando',
+                'fecha_envio'  => now()
+            ]);
+
+            // Retornamos true para acoplar con tu JS
+            return response()->json([
+                'success' => true
+            ]);
+
+        } catch (\Exception $e) {
+            // 3. Si ocurre un error de SQL (ej: campos nulos o llaves foráneas), lo atrapamos aquí
+            return response()->json([
+                'success' => false,
+                'error'   => 'Error en base de datos: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
 }

@@ -1,6 +1,6 @@
 // public/js/tienda/cart.js
 window.CartApp = (function () {
-    const cartKey = "miCarrito"; // 👈 Se mantiene tu clave original
+    const cartKey = "miCarrito";
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
 
@@ -152,13 +152,6 @@ window.CartApp = (function () {
         updateCartCount();
         renderCart();
     };
-
-    // const checkout = () => {
-    //     const cart = readCart();
-    //     if (cart.length === 0) {
-    //         Swal.fire("Tu carrito está vacío", "", "info");
-    //         return;
-    //     }
 
     const checkout = () => {
         const cart = readCart();
@@ -414,6 +407,8 @@ document.addEventListener("DOMContentLoaded", () => {
             })
                 .then((res) => {
                     console.log("🚦 [Envio] HTTP Status:", res.status);
+
+                    // Convertimos a texto para auditar la respuesta del servidor de forma segura
                     return res.text().then((textoCrudo) => {
                         console.log(
                             "📝 [Texto Crudo del Servidor]:",
@@ -425,44 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 "Respuesta del servidor no fue OK.",
                             );
                         }
-                        return JSON.parse(textoCrudo);
-                    });
-                })
-                // .then((res) => {
-                //     console.log("✅ [Envio] Servidor Respondió:", res);
-                //     if (res.success) {
-                //         Swal.fire(
-                //             "Información guardada ✅",
-                //             `Tu pedido #${idPedido} será enviado a casa. ¡Gracias por tu compra!`,
-                //             "success",
-                //         );
-
-                //         const envioModal = bootstrap.Modal.getInstance(
-                //             document.getElementById("envioModal"),
-                //         );
-                //         if (envioModal) envioModal.hide();
-
-                //         formEnvio.reset();
-
-                //         // 🎫 ¡AQUÍ ENTRA! Abre el PDF de la venta tras agendar el envío a domicilio con éxito
-                //         window.open(`/pedido/ticket/${idPedido}`, "_blank");
-                //     }
-                // })
-
-                .then((res) => {
-                    console.log("🚦 [Envio] Status HTTP:", res.status);
-
-                    // 👁️ Leemos la respuesta como texto primero para espiar si Laravel manda un error HTML o algo raro
-                    return res.text().then((textoCrudo) => {
-                        console.log("📝 [Texto Crudo del Envio]:", textoCrudo);
-
-                        if (!res.ok) {
-                            throw new Error(
-                                "La respuesta del servidor para el envío no fue OK.",
-                            );
-                        }
-
-                        // Si el estatus es correcto (200), lo convertimos manualmente a JSON
+                        // Retornamos el objeto JSON ya parseado hacia el siguiente .then
                         return JSON.parse(textoCrudo);
                     });
                 })
@@ -482,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
                         if (envioModal) envioModal.hide();
 
-                        formEnvio.reset(); // Limpia el formulario
+                        formEnvio.reset(); // Limpia los inputs del modal
 
                         // 🎫 Abre el PDF de la venta tras agendar el envío a domicilio con éxito
                         window.open(`/pedido/ticket/${idPedido}`, "_blank");
