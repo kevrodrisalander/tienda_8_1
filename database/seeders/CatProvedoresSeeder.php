@@ -25,7 +25,6 @@ class CatProvedoresSeeder extends Seeder
     ['descripcion' => 'Electrodomésticos premium', 'nombre' => 'Electrolux México'],
     ['descripcion' => 'Calzado y ropa deportiva', 'nombre' => 'Reebok Proveedor'],
 
-    // 10 adicionales
     ['descripcion' => 'Dispositivos móviles y computadoras', 'nombre' => 'Apple Distribuciones'],
     ['descripcion' => 'Ropa y accesorios deportivos', 'nombre' => 'Under Armour México'],
     ['descripcion' => 'Electrodomésticos y herramientas', 'nombre' => 'Bosch México'],

@@ -4,76 +4,70 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UsuariosSeeder extends Seeder
 {
     public function run(): void
     {
+        // Limpieza segura
+        DB::statement('TRUNCATE TABLE usuarios CASCADE;');
+
         DB::table('usuarios')->insert([
+            // Tus usuarios administrativos previos (ej. admin id 1, etc.) si es que tenías
             [
                 'id' => 1,
-                'usuario' => 'Administrador',
-                'correo' => 'admin@gmail.com',
-                'clave' => '$2y$12$jsGFxU4KCunDLEYTjKip5ejWmzeMha6nhyZVrU7K48firHHX.oCbm',
+                'usuario' => 'admin',
+                'correo' => 'admin@cherry.com',
+                'clave' => Hash::make('123456'),
                 'id_rol' => 1,
-                'fecha' => '2024-05-12 16:19:12'
+                'fecha' => '2026-03-16 11:14:31'
             ],
+
+            // 🌟 FORZAR LOS IDS DEL 10 AL 14 PARA TUS CLIENTES
             [
-                'id' => 2,
-                'usuario' => 'Example',
-                'correo' => 'example@gmail.com',
-                'clave' => '$2y$12$jsGFxU4KCunDLEYTjKip5ejWmzeMha6nhyZVrU7K48firHHX.oCbm',
+                'id' => 10,
+                'usuario' => 'user_cliente3',
+                'correo' => 'cliente3@gmail.com',
+                'clave' => Hash::make('password_seguro'),
                 'id_rol' => 2,
-                'fecha' => '2024-05-12 16:19:21'
+                'fecha' => '2026-03-16 12:14:44'
             ],
             [
-                'id' => 3,
-                'usuario' => 'Emanuel',
-                'correo' => 'example@gmail.com.mx',
-                'clave' => '$2y$12$jsGFxU4KCunDLEYTjKip5ejWmzeMha6nhyZVrU7K48firHHX.oCbm',
+                'id' => 11,
+                'usuario' => 'user_kevin',
+                'correo' => 'kevincliente@gmail.com',
+                'clave' => Hash::make('password_seguro'),
                 'id_rol' => 2,
-                'fecha' => '2024-05-12 16:23:08'
+                'fecha' => '2026-04-16 13:35:47'
             ],
             [
-                'id' => 4,
-                'usuario' => 'Alejandro',
-                'correo' => 'newuser@genotipo.com',
-                'clave' => '$2y$12$jsGFxU4KCunDLEYTjKip5ejWmzeMha6nhyZVrU7K48firHHX.oCbm',
+                'id' => 12,
+                'usuario' => 'user_joepred',
+                'correo' => 'joepred@gmail.com',
+                'clave' => Hash::make('password_seguro'),
                 'id_rol' => 2,
-                'fecha' => '2024-05-12 23:53:00'
+                'fecha' => '2026-06-02 21:37:39'
             ],
             [
-                'id' => 5,
-                'usuario' => 'Alex',
-                'correo' => 'lex@hotmail.com',
-                'clave' => '$2y$12$jsGFxU4KCunDLEYTjKip5ejWmzeMha6nhyZVrU7K48firHHX.oCbm',
+                'id' => 13,
+                'usuario' => 'user_yeyon',
+                'correo' => 'llelloxdxd@gmail.com',
+                'clave' => Hash::make('password_seguro'),
                 'id_rol' => 2,
-                'fecha' => '2024-05-13 14:39:24'
+                'fecha' => '2026-06-02 21:41:14'
             ],
             [
-                'id' => 6,
-                'usuario' => 'Marcos',
-                'correo' => 'marcos@gmail.com',
-                'clave' => '$2y$12$jsGFxU4KCunDLEYTjKip5ejWmzeMha6nhyZVrU7K48firHHX.oCbm',
+                'id' => 14, // 🌟 ¡Este es el que te pedía a gritos el error!
+                'usuario' => 'user_charly',
+                'correo' => 'charly@mail.com',
+                'clave' => Hash::make('password_seguro'),
                 'id_rol' => 2,
-                'fecha' => '2024-09-07 17:40:50'
-            ],
-            [
-                'id' => 7,
-                'usuario' => 'kevin.dos',
-                'correo' => 'kev@gmail.com',
-                'clave' => '$2y$12$jsGFxU4KCunDLEYTjKip5ejWmzeMha6nhyZVrU7K48firHHX.oCbm',
-                'id_rol' => 6,
-                'fecha' => '2025-11-24 13:32:00.391'
-            ],
-            [
-                'id' => 8,
-                'usuario' => 'karla',
-                'correo' => 'karla.lozano@gmail.com',
-                'clave' => '$2y$12$jsGFxU4KCunDLEYTjKip5ejWmzeMha6nhyZVrU7K48firHHX.oCbm',
-                'id_rol' => 6,
-                'fecha' => '2025-12-06 13:23:30.947'
+                'fecha' => '2026-06-07 15:02:22'
             ],
         ]);
+
+        // 🔄 Resincronizar la secuencia de la tabla usuarios en Postgres
+        DB::statement("SELECT setval(pg_get_serial_sequence('usuarios', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM usuarios;");
     }
 }

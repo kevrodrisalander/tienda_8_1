@@ -57,66 +57,117 @@ if (is_string($carritoData)) {
 \Log::info('📥 [Checkout] Contenido recibido en el carrito:', ['cart' => $carritoData]);
 
 if (is_array($carritoData) || $carritoData instanceof \Countable) {
-    foreach ($carritoData as $details) {
-        $id_real = $details['id'] ?? null;
+    // foreach ($carritoData as $details) {
+    //     $id_real = $details['id'] ?? null;
 
-        // 🚨 CAMBIO CLAVE: Obtenemos el valor absoluto limpio para eliminar signos menos del frontend
-        $cantidadComprada = abs(intval($details['cantidad'] ?? $details['quantity'] ?? 0));
+    //     // 🚨 CAMBIO CLAVE: Obtenemos el valor absoluto limpio para eliminar signos menos del frontend
+    //     $cantidadComprada = abs(intval($details['cantidad'] ?? $details['quantity'] ?? 0));
 
-        if ($id_real && $cantidadComprada > 0) {
+    //     if ($id_real && $cantidadComprada > 0) {
 
-            // Buscamos el registro en la tabla 'stock'
-            $stockItem = \DB::table('stock')
-                ->where('producto_id', $id_real)
-                ->where('activo', 1)
-                ->first();
+    //         // Buscamos el registro en la tabla 'stock'
+    //         $stockItem = \DB::table('stock')
+    //             ->where('producto_id', $id_real)
+    //             ->where('activo', 1)
+    //             ->first();
 
-            if (!$stockItem) {
-                $stockItem = \DB::table('stock')
-                    ->where('id', $id_real)
-                    ->where('activo', 1)
-                    ->first();
-            }
+    //         if (!$stockItem) {
+    //             $stockItem = \DB::table('stock')
+    //                 ->where('id', $id_real)
+    //                 ->where('activo', 1)
+    //                 ->first();
+    //         }
 
-            if ($stockItem) {
-                $id_producto_base = $stockItem->producto_id;
+    //         if ($stockItem) {
+    //             $id_producto_base = $stockItem->producto_id;
 
-                // 🛠️ USAREMOS EL MÉTODO NATIVO decrement() QUE EVITA ERRORES DE SINTAXIS SQL
-                \DB::table('stock')
-                    ->where('id', $stockItem->id)
-                    ->decrement('cantidad', $cantidadComprada);
+    //             // 🛠️ USAREMOS EL MÉTODO NATIVO decrement() QUE EVITA ERRORES DE SINTAXIS SQL
+    //             \DB::table('stock')
+    //                 ->where('id', $stockItem->id)
+    //                 ->decrement('cantidad', $cantidadComprada);
 
-                // Evitamos que baje de cero de forma manual por si acaso
-                \DB::table('stock')
-                    ->where('id', $stockItem->id)
-                    ->where('cantidad', '<', 0)
-                    ->update(['cantidad' => 0]);
+    //             // Evitamos que baje de cero de forma manual por si acaso
+    //             \DB::table('stock')
+    //                 ->where('id', $stockItem->id)
+    //                 ->where('cantidad', '<', 0)
+    //                 ->update(['cantidad' => 0]);
 
-                // Actualizamos el estado si el inventario llegó a 0
-                $checkStockActualizado = \DB::table('stock')->where('id', $stockItem->id)->first();
-                if ($checkStockActualizado && $checkStockActualizado->cantidad <= 0) {
-                    \DB::table('stock')->where('id', $stockItem->id)->update(['estado' => 'agotado']);
-                }
+    //             // Actualizamos el estado si el inventario llegó a 0
+    //             $checkStockActualizado = \DB::table('stock')->where('id', $stockItem->id)->first();
+    //             if ($checkStockActualizado && $checkStockActualizado->cantidad <= 0) {
+    //                 \DB::table('stock')->where('id', $stockItem->id)->update(['estado' => 'agotado']);
+    //             }
 
-                // 🛠️ DECREMENTO EN LA TABLA PRODUCTOS
-                \DB::table('productos')
-                    ->where('id', $id_producto_base)
-                    ->decrement('stock', $cantidadComprada);
+    //             // 🛠️ DECREMENTO EN LA TABLA PRODUCTOS
+    //             \DB::table('productos')
+    //                 ->where('id', $id_producto_base)
+    //                 ->decrement('stock', $cantidadComprada);
 
-                // Evitamos que baje de cero en productos
-                \DB::table('productos')
-                    ->where('id', $id_producto_base)
-                    ->where('stock', '<', 0)
-                    ->update(['stock' => 0]);
+    //             // Evitamos que baje de cero en productos
+    //             \DB::table('productos')
+    //                 ->where('id', $id_producto_base)
+    //                 ->where('stock', '<', 0)
+    //                 ->update(['stock' => 0]);
 
-                $productoFinalLog = \DB::table('productos')->where('id', $id_producto_base)->first();
+    //             $productoFinalLog = \DB::table('productos')->where('id', $id_producto_base)->first();
 
-                \Log::info("✅ [Checkout] RESTA EFECTUADA. Producto ID {$id_producto_base}. Cantidad restada: {$cantidadComprada}. Nuevo stock prod: " . ($productoFinalLog->stock ?? 'N/A') . ". Nuevo stock inv: " . ($checkStockActualizado->cantidad ?? 'N/A'));
-            } else {
-                \Log::warning("⚠️ [Checkout] No se encontró en la tabla 'stock' el ID: {$id_real}");
-            }
+    //             \Log::info("✅ [Checkout] RESTA EFECTUADA. Producto ID {$id_producto_base}. Cantidad restada: {$cantidadComprada}. Nuevo stock prod: " . ($productoFinalLog->stock ?? 'N/A') . ". Nuevo stock inv: " . ($checkStockActualizado->cantidad ?? 'N/A'));
+    //         } else {
+    //             \Log::warning("⚠️ [Checkout] No se encontró en la tabla 'stock' el ID: {$id_real}");
+    //         }
+    //     }
+    // }
+// =================================================================
+// 📦 SISTEMA DE KARDEX: REGISTRO DE SALIDAS DIRECTAS
+// =================================================================
+foreach ($carritoData as $details) {
+    $id_real = intval($details['id'] ?? 0);
+    $cantidadComprada = abs(intval($details['cantidad'] ?? $details['quantity'] ?? 0));
+
+    if ($id_real > 0 && $cantidadComprada > 0) {
+
+        // 1. Insertamos la fila de SALIDA en la tabla stock (Kardex dinámico)
+        \DB::table('stock')->insert([
+            'producto_id'     => $id_real,
+            'cantidad'        => $cantidadComprada, // Se guarda el delta exacto de la venta (ej: 1 o 2)
+            'tipo_movimiento' => 'salida',
+            'estado'          => 'disponible',
+            'activo'          => true,
+            'observaciones'   => 'Venta en Checkout - Pedido #' . $idFinal,
+            'created_at'      => now(),
+            'updated_at'      => now()
+        ]);
+
+        // 2. Mantenemos sincronizado el acumulador de la tabla productos por rendimiento
+        // Calculamos el stock actual neto sumando entradas y restando salidas
+        $nuevoStockCalculado = \DB::table('stock')
+            ->where('producto_id', $id_real)
+            ->where('activo', true)
+            ->selectRaw("
+                SUM(
+                    CASE
+                        WHEN tipo_movimiento IN ('entrada','ajuste') THEN cantidad
+                        WHEN tipo_movimiento = 'salida' THEN -cantidad
+                        ELSE 0
+                    END
+                ) as total
+            ")->value('total') ?? 0;
+
+        if ($nuevoStockCalculado < 0) {
+            $nuevoStockCalculado = 0;
         }
+
+        // Actualizamos la tabla productos
+        \DB::table('productos')
+            ->where('id', $id_real)
+            ->update([
+                'stock' => $nuevoStockCalculado
+            ]);
+
+        \Log::info("🔥 [Kardex Sincronizado] Producto ID {$id_real}. Salida registrada: {$cantidadComprada}. Stock neto final: {$nuevoStockCalculado}");
     }
+}
+
 } else {
     \Log::error('❌ [Checkout] El carrito no es un array válido.');
 }

@@ -15,7 +15,7 @@ class ProductosSeeder extends Seeder
         DB::table('productos')->insert([
             [
                 'descripcion' => 'Manzana roja',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 2,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -25,7 +25,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Manzana verde',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 2,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -35,7 +35,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Sandia',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 20,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -45,7 +45,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Uva verde',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 20,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -55,7 +55,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Durazno',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 20,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -65,7 +65,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Fresa',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 10,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -75,7 +75,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Cereza',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 10,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -85,7 +85,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Zanahorias',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 2,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -95,7 +95,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Tomate Verde',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 5,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -105,7 +105,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Papa blanca',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 10,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -115,7 +115,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Ajo blanco',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 2,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -125,7 +125,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Cebolla morada',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 10,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -135,7 +135,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Cebolla blanca',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 5,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -145,7 +145,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Camisa blanca',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 50,
                 'id_status' => 1,
                 'id_categoria' => 2,
@@ -155,7 +155,7 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'moras pruebas',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 1,
                 'id_status' => 1,
                 'id_categoria' => 7,
@@ -165,22 +165,12 @@ class ProductosSeeder extends Seeder
             ],
             [
                 'descripcion' => 'Manzana amarilla',
-                'stock' => 0,
+                'stock' => 100,
                 'precio_venta' => 1,
                 'id_status' => 1,
                 'id_categoria' => 7,
                 'name_file' => 'productos/xnK0eXCyjtkNjvl4tB7z5bYkemVhAvLEaZJR7Fln.jpg',
                 'fecha' => '2025-11-02 00:00:00',
-                'id_marca' => DB::table('cat_marcas')->where('nombre', 'mora')->value('id'),
-            ],
-            [
-                'descripcion' => 'ajo 2',
-                'stock' => 10,
-                'precio_venta' => 5,
-                'id_status' => 1,
-                'id_categoria' => 7,
-                'name_file' => 'productos/9AayVM4Z1RXMdeAKQdhLCvv0eGhBVp1zKZ3eHRzr.webp',
-                'fecha' => '2025-12-07 00:00:00',
                 'id_marca' => DB::table('cat_marcas')->where('nombre', 'mora')->value('id'),
             ],
         ]);

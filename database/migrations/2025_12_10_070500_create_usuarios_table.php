@@ -12,21 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('usuarios', function (Blueprint $table) {
-            $table->id(); // serial4 NOT NULL
-            $table->string('usuario', 50);
-            $table->string('correo', 50);
-            $table->string('clave', 350);
-            $table->unsignedBigInteger('id_rol'); // referencia a cat_roles
-            $table->timestamp('fecha')->useCurrent();
+    $table->id(); // serial4 NOT NULL
+    $table->string('usuario', 50);
+    $table->string('correo', 50)->unique();
+    $table->string('clave', 350); // Tu columna original intacta
+    $table->unsignedBigInteger('id_rol');
 
-            $table->boolean('activo')->default(true); // 11/03/26
+    // ✅ Mantenemos tu columna de fecha original:
+    $table->timestamp('fecha')->useCurrent();
 
-            // Foreign key
-            $table->foreign('id_rol')
-                  ->references('id_rol')
-                  ->on('cat_roles')
-                  ->onDelete('restrict');
-        });
+    $table->boolean('activo')->default(true);
+
+    $table->foreign('id_rol')->references('id_rol')->on('cat_roles')->onDelete('restrict');
+});
     }
 
     /**

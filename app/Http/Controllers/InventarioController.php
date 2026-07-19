@@ -7,19 +7,24 @@ use Illuminate\Support\Facades\DB;
 
 class InventarioController extends Controller
 {
-    // 🔹 Inventario con filtros
+    // 🔹 Inventario con filtros y cálculo de Kardex exacto
     public function consultaInventario(Request $request)
     {
         if ($request->ajax()) {
 
-            $query = DB::table('productos as p')
-                ->leftJoin('cat_categorias as c', 'p.id_categoria', '=', 'c.id')
-                ->leftJoin('cat_marcas as m', 'p.id_marca', '=', 'm.id')
-                ->leftJoin('stock as s', 'p.id_observaciones', '=', 's.id')
-                ->select(
-                    'p.id',
-                    'p.descripcion',
-                    DB::raw("
+           $query = DB::table('productos as p')
+    ->leftJoin('cat_categorias as c', 'p.id_categoria', '=', 'c.id') // <-- Corregido aquí
+    ->leftJoin('cat_marcas as m', 'p.id_marca', '=', 'm.id')
+    ->select([
+        'p.id',
+        'p.descripcion',
+        'p.precio_venta',
+        'p.activo',
+        'm.id as id_marca',
+        'm.nombre as marca',
+        'c.categoria as categoria',
+        // Cálculo matemático real del Kardex dinámico
+        DB::raw("
             COALESCE(
                 (
                     SELECT SUM(
@@ -34,15 +39,8 @@ class InventarioController extends Controller
                       AND st.activo = true
                 ), 0
             ) AS stock_actual
-        "),
-                    's.observaciones as id_observaciones', // ← OBSERVACIONES
-                    'p.precio_venta',
-                    'p.activo',
-                    'm.id as id_marca',
-                    'm.nombre as marca',
-                    'c.categoria as categoria'
-                );
-
+        ")
+    ]);
 
             // 🔹 Filtros
             if ($request->filled('marca')) {
@@ -62,39 +60,38 @@ class InventarioController extends Controller
             }
 
             if ($request->filled('stock')) {
-
                 if ($request->stock === 'con') {
                     $query->whereRaw("
-                    (
-                        SELECT COALESCE(SUM(
-                            CASE
-                                WHEN st.tipo_movimiento IN ('entrada','ajuste') THEN st.cantidad
-                                WHEN st.tipo_movimiento = 'salida' THEN -st.cantidad
-                                ELSE 0
-                            END
-                        ),0)
-                        FROM stock st
-                        WHERE st.producto_id = p.id
-                          AND st.activo = true
-                    ) > 0
-                ");
+                        (
+                            SELECT COALESCE(SUM(
+                                CASE
+                                    WHEN st.tipo_movimiento IN ('entrada','ajuste') THEN st.cantidad
+                                    WHEN st.tipo_movimiento = 'salida' THEN -st.cantidad
+                                    ELSE 0
+                                END
+                            ), 0)
+                            FROM stock st
+                            WHERE st.producto_id = p.id
+                              AND st.activo = true
+                        ) > 0
+                    ");
                 }
 
                 if ($request->stock === 'sin') {
                     $query->whereRaw("
-                    (
-                        SELECT COALESCE(SUM(
-                            CASE
-                                WHEN st.tipo_movimiento IN ('entrada','ajuste') THEN st.cantidad
-                                WHEN st.tipo_movimiento = 'salida' THEN -st.cantidad
-                                ELSE 0
-                            END
-                        ),0)
-                        FROM stock st
-                        WHERE st.producto_id = p.id
-                          AND st.activo = true
-                    ) <= 0
-                ");
+                        (
+                            SELECT COALESCE(SUM(
+                                CASE
+                                    WHEN st.tipo_movimiento IN ('entrada','ajuste') THEN st.cantidad
+                                    WHEN st.tipo_movimiento = 'salida' THEN -st.cantidad
+                                    ELSE 0
+                                END
+                            ), 0)
+                            FROM stock st
+                            WHERE st.producto_id = p.id
+                              AND st.activo = true
+                        ) <= 0
+                    ");
                 }
             }
 
@@ -124,11 +121,14 @@ class InventarioController extends Controller
             ->get();
     }
 
+    // Muestra todas las observaciones acumuladas de los movimientos activos
     public function observaciones($id)
     {
         $observaciones = DB::table('stock')
             ->where('producto_id', $id)
             ->where('activo', true)
+            ->whereNotNull('observaciones')
+            ->where('observaciones', '!=', '')
             ->pluck('observaciones');
 
         return response()->json([
@@ -137,5 +137,4 @@ class InventarioController extends Controller
                 : $observaciones->implode("\n")
         ]);
     }
-
 }

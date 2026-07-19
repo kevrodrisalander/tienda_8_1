@@ -13,7 +13,7 @@ class StockSeeder extends Seeder
             [
                 'id' => 1,
                 'producto_id' => 1,
-                'cantidad' => 40,
+                'cantidad' => 100,
                 'ubicacion' => 'Ciudad de Mexico',
                 'estado' => 'disponible',
                 'minimo_seguro' => 100,
@@ -32,7 +32,7 @@ class StockSeeder extends Seeder
             [
                 'id' => 2,
                 'producto_id' => 2,
-                'cantidad' => 20,
+                'cantidad' => 100,
                 'ubicacion' => 'Ciudad de México',
                 'estado' => 'disponible',
                 'minimo_seguro' => 10,
@@ -298,25 +298,6 @@ class StockSeeder extends Seeder
             [
                 'id' => 16,
                 'producto_id' => 16,
-                'cantidad' => 100,
-                'ubicacion' => 'Ciudad de México',
-                'estado' => 'disponible',
-                'minimo_seguro' => 10,
-                'maximo_permitido' => 200,
-                'fecha_ingreso' => '2025-11-14 00:00:00',
-                'fecha_vencimiento' => '2025-11-14',
-                'lote' => '',
-                'observaciones' => 'x',
-                'activo' => true,
-                'tipo_movimiento' => 'entrada',
-                'usuario_id' => null,
-                'created_at' => '2025-11-14 17:46:44.901',
-                'updated_at' => '2025-11-14 17:46:44.901',
-                'id_lote' => 4
-            ],
-            [
-                'id' => 17,
-                'producto_id' => 17,
                 'cantidad' => 100,
                 'ubicacion' => 'Ciudad de México',
                 'estado' => 'disponible',
