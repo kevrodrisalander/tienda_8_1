@@ -13,66 +13,6 @@
 
                 {{-- Menú Productos: disponible para todos los usuarios logueados --}}
                 @if(Auth::check())
-                    {{-- <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="productosDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Productos
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="productosDropdown">
-                            <li>
-                                <h6 class="dropdown-header">Alimentos</h6>
-                            </li>
-                            <li><a class="dropdown-item" href="/categoria/frutas">Frutas</a></li>
-                            <li><a class="dropdown-item" href="/categoria/verduras">Verduras</a></li>
-                            <li><a class="dropdown-item" href="/categoria/panaderia">Panadería</a></li>
-
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-
-                            <li>
-                                <h6 class="dropdown-header">Tecnología</h6>
-                            </li>
-                            <li><a class="dropdown-item" href="/categoria/electronica">Electrónica</a></li>
-                            <li><a class="dropdown-item" href="/categoria/videojuegos">Videojuegos</a></li>
-
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-
-                            <li>
-                                <h6 class="dropdown-header">Hogar y Oficina</h6>
-                            </li>
-                            <li><a class="dropdown-item" href="/categoria/hogar">Hogar</a></li>
-                            <li><a class="dropdown-item" href="/categoria/oficina">Oficina</a></li>
-
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-
-                            <li>
-                                <h6 class="dropdown-header">Moda y Belleza</h6>
-                            </li>
-                            <li><a class="dropdown-item" href="/categoria/ropa">Ropa</a></li>
-                            <li><a class="dropdown-item" href="/categoria/belleza">Belleza</a></li>
-                            <li><a class="dropdown-item" href="/categoria/accesorios">Accesorios</a></li>
-
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-
-                            <li>
-                                <h6 class="dropdown-header">Otros</h6>
-                            </li>
-                            <li><a class="dropdown-item" href="/categoria/deportes">Deportes</a></li>
-                            <li><a class="dropdown-item" href="/categoria/juguetes">Juguetes</a></li>
-                            <li><a class="dropdown-item" href="/categoria/libros">Libros</a></li>
-                            <li><a class="dropdown-item" href="/categoria/mascotas">Mascotas</a></li>
-                            <li><a class="dropdown-item" href="/categoria/musica">Música</a></li>
-                            <li><a class="dropdown-item" href="/categoria/salud">Salud</a></li>
-                            <li><a class="dropdown-item" href="/categoria/automotriz">Automotriz</a></li>
-                        </ul>
-                    </li> --}}
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="productosDropdown" role="button"
@@ -110,13 +50,13 @@
                                 <!-- Columna 3 -->
                                 <div class="col-md-4">
                                     <h6 class="dropdown-header">Otros</h6>
-                                    <a class="dropdown-item" href="/categoria/deportes">Deportes</a>
-                                    <a class="dropdown-item" href="/categoria/juguetes">Juguetes</a>
-                                    <a class="dropdown-item" href="/categoria/libros">Libros</a>
-                                    <a class="dropdown-item" href="/categoria/mascotas">Mascotas</a>
-                                    <a class="dropdown-item" href="/categoria/musica">Música</a>
-                                    <a class="dropdown-item" href="/categoria/salud">Salud</a>
-                                    <a class="dropdown-item" href="/categoria/automotriz">Automotriz</a>
+                                    <a class="dropdown-item" href="/categoria/deportes">Deportes ⛷️</a>
+                                    <a class="dropdown-item" href="/categoria/juguetes">Juguetes 🏎️</a>
+                                    <a class="dropdown-item" href="/categoria/libros">Libros 📚</a>
+                                    <a class="dropdown-item" href="/categoria/mascotas">Mascotas 🐱</a>
+                                    <a class="dropdown-item" href="/categoria/musica">Música 🎵</a>
+                                    <a class="dropdown-item" href="/categoria/salud">Salud 🧑‍⚕️</a>
+                                    <a class="dropdown-item" href="/categoria/automotriz">Automotriz 🏎️</a>
                                 </div>
 
                             </div>

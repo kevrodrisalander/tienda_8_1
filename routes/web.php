@@ -100,6 +100,9 @@ Route::put('usuarios/{id}/restaurar', [UsuariosController::class, 'restaurar'])-
 // ---CLIENTES ---
 Route::get('/clientes', [ClientesController::class, 'index'])->name('clientes');
 Route::get('/clientes/consulta', [ClientesController::class, 'consulta'])->name('clientes.consulta');
+Route::post('/clientes/update/{id}', [ClientesController::class, 'update']);
+Route::post('/clientes/desactivar/{id}', [ClientesController::class, 'desactivar']);
+Route::post('/clientes/restaurar/{id}', [ClientesController::class, 'restaurar']);
 
 // ---REPORTES ---
 Route::get('/reportes/reportes', [ReporteController::class, 'index'])->name('reportes');

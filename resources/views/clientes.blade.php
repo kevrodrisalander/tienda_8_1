@@ -1,142 +1,125 @@
 @extends('layouts.app')
 @vite('resources/css/tablas.css')
-@section('title', 'Stock')
-
+@section('title', 'Clientes')
 @section('content')
+
     <div class="container">
-        <b>
-            <h2 class="text-center my-5">Clientes</h2>
-        </b>
+        <h2 class="text-center my-4">Clientes</h2>
+        <p class="text-center">
+            Listado de clientes
+        </p>
 
-        <b>
-            <p class="text-center">Listado del clientes</p>
-        </b>
-
-
-        {{-- Botón Filtros visible para todos --}}
-        <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalcliente">
-            Filtros
-        </button>
-
-        {{-- Ver eliminados solo para roles permitidos --}}
-        @if(auth()->check() && in_array(auth()->user()->id_rol, [1, 4]))
-            <button id="btnVerEliminados" class="btn btn-danger mb-3">
-                Ver eliminados
+        <div class="d-flex gap-2 mb-3">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalFiltrosClientes">
+                <i class="fas fa-filter"></i> Filtros
             </button>
-        @endif
 
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="check-out-box">
-                    <meta name="csrf-token" content="{{ csrf_token() }}">
+            @if(auth()->check() && in_array(auth()->user()->id_rol, [1, 4]))
+                <button id="btnVerEliminados" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Ver eliminados
+                </button>
+            @endif
 
-                    {{-- <div class="row"> --}}
-                        <div class="table-responsive">
-                            <table class="table_id" id="tbl_clientes">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Nombre de clientes</th>
-                                        <th class="text-center">Correo</th>
-                                        <th class="text-center">Telefono</th>
-                                        <th class="text-center">Dirección</th>
-                                        <th class="text-center">Fecha registro</th>
-                                        <th class="text-center">id usuario</th>
-                                        <th class="text-center">Observaciones</th>
-                                        <th class="text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+        </div>
+
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <div class="table-responsive">
+            <table id="tbl_clientes" class="table_id">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                        <th>Dirección</th>
+                        <th>Fecha registro</th>
+                        <th>ID Usuario</th>
+                        <th>Observaciones</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    {{-- Modal Editar Cliente --}}
+    <div class="modal fade modal-producto" id="modalEditarCliente" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="formEditarCliente">
+                    @csrf
+                    <input type="hidden" id="edit_id_cliente" name="id_cliente">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar cliente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="edit_nombre" name="nombre">
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" id="edit_telefono" name="telefono">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Dirección</label>
+                            <textarea class="form-control" id="edit_direccion" name="direccion" rows="3"></textarea>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="edit_activo" name="activo">
+                            <label class="form-check-label" for="edit_activo">Cliente activo</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
 
+                        <button type="submit" class="btn btn-primary">
+                            Guardar cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    {{-- Modal Filtros --}}
+    <div class="modal fade modal-producto" id="modalFiltrosClientes" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Filtrar clientes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" id="filtroNombre" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Correo</label>
+                        <input type="text" id="filtroCorreo" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" id="filtroTelefono" class="form-control">
                     </div>
                 </div>
-            </div>
-        </div>
-@endsection
-
-    {{-- Modal editar stock solo para roles permitidos --}}
-    @if(auth()->check() && in_array(auth()->user()->id_rol, [1, 4, 8]))
-        <div class="modal fade modal-producto" id="modalcliente" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <form id="formEditarStock" method="POST">
-                        @csrf
-                        @method('PUT')
-
-                        <div class="modal-header">
-                            <h5 class="modal-title">Filtrar clientes</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-
-                        <div class="modal-body">
-                            <div class="row g-3">
-
-                                <div class="col-md-8">
-                                    <label class="form-label">Producto</label>
-                                    <input type="text" id="producto_nombre" class="form-control" disabled>
-                                    <input type="hidden" name="producto_id">
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">Cantidad</label>
-                                    <input type="number" name="cantidad" class="form-control">
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label">Ubicación</label>
-                                    <input type="text" name="ubicacion" class="form-control">
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Mínimos</label>
-                                    <input type="number" name="minimos" class="form-control">
-                                </div>
-
-                                <div class="col-md-3">
-                                    <label class="form-label">Máximos</label>
-                                    <input type="number" name="maximos" class="form-control">
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label">Fecha ingreso</label>
-                                    <input type="date" name="fecha_ingreso" class="form-control">
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label">Fecha vencimiento</label>
-                                    <input type="date" name="fecha_vencimiento" class="form-control">
-                                </div>
-
-                                {{-- <div class="col-md-6">
-                                    <label class="form-label">Tipo movimiento</label>
-                                    <select name="tipo_movimiento" class="form-select">
-                                        @foreach ($tiposMovimiento as $tipo)
-                                        <option value="{{ $tipo }}">{{ ucfirst($tipo) }}</option>
-                                        @endforeach
-                                    </select>
-                                </div> --}}
-
-                                <div class="col-md-12">
-                                    <label class="form-label">Observaciones</label>
-                                    <input type="text" name="observaciones" class="form-control">
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button class="btn btn-success">Guardar</button>
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        </div>
-
-                    </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btnAplicarFiltros" class="btn btn-primary">Buscar</button>
                 </div>
             </div>
         </div>
-    @endif
+    </div>
 
-    {{-- JS --}}
-    @section('js_footer')
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script src="{{ asset('js/tienda/clientes.js') }}"></script>
-    @endsection
+@endsection
+
+@section('js_footer')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('js/tienda/clientes.js') }}"></script>
+@endsection
