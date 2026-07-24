@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Models\Lote; // Solo si tienes este modelo
+use App\Exports\StockExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -110,7 +112,9 @@ class StockController extends Controller
             'stock.activo',
             'stock.tipo_movimiento',
             'stock.fecha_salida',
-        ])->get();
+        ])
+        ->orderBy('stock.id', 'desc') //Se agrega el orderBy aquí
+        ->get();
 
         return response()->json(['data' => $stocks]);
     }
@@ -318,4 +322,11 @@ class StockController extends Controller
 
         return response()->json(['ok' => true]);
     }
+
+public function exportarExcel(Request $request)
+{
+    dd($request->all()); //Verifica qué parámetros llegan aquí
+    return Excel::download(new StockExport($request->all()), 'reporte_stock.xlsx');
+}
+
 }

@@ -55,14 +55,30 @@ Route::view('/administracion', 'administracion')->name('administracion');
 //  4. MÓDULOS DE GESTIÓN (CRUDs, Inventarios y DataTables)
 
 // ---STOCK & PRODUCTOS ---
+// Route::get('/stock', [StockController::class, 'catalogos'])->name('stock');
+// Route::get('/stock/consulta', [StockController::class, 'consultaStock'])->name('stock.consulta');
+// Route::post('/stock/guardar', [StockController::class, 'guardar'])->name('stock.guardar');
+// Route::post('/productos', [ProductoController::class, 'store'])->name('producto.guardar');
+// Route::get('/stock/{id}', [StockController::class, 'show'])->name('stock.show');
+// Route::put('/stock/{id}', [StockController::class, 'update'])->name('stock.update');
+// Route::delete('/stock/{id}', [StockController::class, 'destroy'])->name('stock.destroy');
+// Route::put('/stock/{id}/restaurar', [StockController::class, 'restaurar'])->name('stock.restaurar');
+
+// --- STOCK & PRODUCTOS ---
 Route::get('/stock', [StockController::class, 'catalogos'])->name('stock');
 Route::get('/stock/consulta', [StockController::class, 'consultaStock'])->name('stock.consulta');
+
+//RUTA AGREGADA (Debe ir ARRIBA de las rutas con {id})
+Route::get('/stock/exportar-excel', [StockController::class, 'exportarExcel'])->name('stock.exportarExcel');
+
 Route::post('/stock/guardar', [StockController::class, 'guardar'])->name('stock.guardar');
 Route::post('/productos', [ProductoController::class, 'store'])->name('producto.guardar');
-Route::get('/stock/{id}', [StockController::class, 'show'])->name('stock.show');
-Route::put('/stock/{id}', [StockController::class, 'update'])->name('stock.update');
-Route::delete('/stock/{id}', [StockController::class, 'destroy'])->name('stock.destroy');
-Route::put('/stock/{id}/restaurar', [StockController::class, 'restaurar'])->name('stock.restaurar');
+
+//RUTAS CON ID (Al final y protegidas para recibir solo números)
+Route::get('/stock/{id}', [StockController::class, 'show'])->name('stock.show')->whereNumber('id');
+Route::put('/stock/{id}', [StockController::class, 'update'])->name('stock.update')->whereNumber('id');
+Route::delete('/stock/{id}', [StockController::class, 'destroy'])->name('stock.destroy')->whereNumber('id');
+Route::put('/stock/{id}/restaurar', [StockController::class, 'restaurar'])->name('stock.restaurar')->whereNumber('id');
 
 // INVENTARIO & CATÁLOGOS
 Route::get('/inventario', function () { return view('inventario'); })->name('inventario');
@@ -116,3 +132,6 @@ Route::get('/venta/{id}/ticket', [VentaController::class, 'ticketPdf'])->name('v
 Route::get('/test-vista/{slug}', function ($slug) {
     return view('mensaje.sin_categoria', ['slug' => $slug]);
 })->name('test.vista');
+
+
+Route::get('/stock/exportar-excel', [StockController::class, 'exportarExcel'])->name('stock.exportarExcel');
