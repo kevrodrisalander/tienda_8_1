@@ -20,57 +20,238 @@ class StockExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSiz
         $this->filters = $filters;
     }
 
+    // public function query()
+    // {
+    //     $query = DB::table('stock')
+    //         ->join('productos', 'stock.producto_id', '=', 'productos.id')
+    //         ->leftJoin('lotes_producto', 'stock.id_lote', '=', 'lotes_producto.id_lote');
+
+    //     // Filtro base: Activos / Eliminados
+    //     if (isset($this->filters['eliminados']) && $this->filters['eliminados'] == 1) {
+    //         $query->where('stock.activo', 0);
+    //     } else {
+    //         $query->where('stock.activo', 1);
+    //     }
+
+    //     // Filtros dinámicos usando filled/empty sobre el array
+    //     $query->when(!empty($this->filters['filter_nombre']), function ($q) {
+    //         return $q->where('productos.descripcion', 'LIKE', '%' . $this->filters['filter_nombre'] . '%');
+    //     });
+
+    //     $query->when(!empty($this->filters['filter_ubicacion']), function ($q) {
+    //         return $q->where('stock.ubicacion', 'LIKE', '%' . $this->filters['filter_ubicacion'] . '%');
+    //     });
+
+    //     $query->when(!empty($this->filters['filter_lote']), function ($q) {
+    //         return $q->where('lotes_producto.codigo_lote', 'LIKE', '%' . $this->filters['filter_lote'] . '%');
+    //     });
+
+    //     $query->when(!empty($this->filters['filter_estado']), function ($q) {
+    //         return $q->whereRaw('LOWER(stock.estado) = ?', [strtolower($this->filters['filter_estado'])]);
+    //     });
+
+    //     $query->when(!empty($this->filters['filter_tipo_movimiento']), function ($q) {
+    //         return $q->whereRaw('LOWER(stock.tipo_movimiento) = ?', [strtolower($this->filters['filter_tipo_movimiento'])]);
+    //     });
+
+    //     $query->when(!empty($this->filters['filter_cantidad_min']), function ($q) {
+    //         return $q->where('stock.cantidad', '>=', $this->filters['filter_cantidad_min']);
+    //     });
+
+    //     $query->when(!empty($this->filters['filter_cantidad_max']), function ($q) {
+    //         return $q->where('stock.cantidad', '<=', $this->filters['filter_cantidad_max']);
+    //     });
+
+    //     $query->when(!empty($this->filters['filter_fecha_ingreso_desde']), function ($q) {
+    //         return $q->whereDate('stock.fecha_ingreso', '>=', $this->filters['filter_fecha_ingreso_desde']);
+    //     });
+
+    //     $query->when(!empty($this->filters['filter_fecha_ingreso_hasta']), function ($q) {
+    //         return $q->whereDate('stock.fecha_ingreso', '<=', $this->filters['filter_fecha_ingreso_hasta']);
+    //     });
+
+    //     return $query->select([
+    //         'stock.id',
+    //         'productos.descripcion as nombre_producto',
+    //         'lotes_producto.codigo_lote as lote',
+    //         'stock.cantidad',
+    //         'stock.minimo_seguro',
+    //         'stock.maximo_permitido',
+    //         'stock.ubicacion',
+    //         'stock.estado',
+    //         'stock.tipo_movimiento',
+    //         'stock.fecha_ingreso',
+    //         'stock.fecha_vencimiento',
+    //         'stock.observaciones',
+    //     ])
+    //     ->orderBy('stock.id', 'desc');
+    // }
+
     public function query()
-    {
-        $query = DB::table('stock')
-            ->join('productos', 'stock.producto_id', '=', 'productos.id')
-            ->leftJoin('lotes_producto', 'stock.id_lote', '=', 'lotes_producto.id_lote');
+{
+    $query = DB::table('stock')
+        ->join(
+            'productos',
+            'stock.producto_id',
+            '=',
+            'productos.id'
+        )
+        ->leftJoin(
+            'lotes_producto',
+            'stock.id_lote',
+            '=',
+            'lotes_producto.id_lote'
+        );
 
-        // Filtro base: Activos / Eliminados
-        if (isset($this->filters['eliminados']) && $this->filters['eliminados'] == 1) {
-            $query->where('stock.activo', 0);
-        } else {
-            $query->where('stock.activo', 1);
-        }
+    /*
+    |--------------------------------------------------------------------------
+    | Activos o eliminados
+    |--------------------------------------------------------------------------
+    */
 
-        // Filtros dinámicos usando filled/empty sobre el array
-        $query->when(!empty($this->filters['filter_nombre']), function ($q) {
-            return $q->where('productos.descripcion', 'LIKE', '%' . $this->filters['filter_nombre'] . '%');
-        });
+    if (
+        isset($this->filters['eliminados']) &&
+        (int) $this->filters['eliminados'] === 1
+    ) {
+        $query->where('stock.activo', 0);
+    } else {
+        $query->where('stock.activo', 1);
+    }
 
-        $query->when(!empty($this->filters['filter_ubicacion']), function ($q) {
-            return $q->where('stock.ubicacion', 'LIKE', '%' . $this->filters['filter_ubicacion'] . '%');
-        });
+    /*
+    |--------------------------------------------------------------------------
+    | Nombre del producto
+    |--------------------------------------------------------------------------
+    */
 
-        $query->when(!empty($this->filters['filter_lote']), function ($q) {
-            return $q->where('lotes_producto.codigo_lote', 'LIKE', '%' . $this->filters['filter_lote'] . '%');
-        });
+    if (!empty($this->filters['filter_nombre'])) {
+        $nombre = trim($this->filters['filter_nombre']);
 
-        $query->when(!empty($this->filters['filter_estado']), function ($q) {
-            return $q->whereRaw('LOWER(stock.estado) = ?', [strtolower($this->filters['filter_estado'])]);
-        });
+        $query->where(
+            'productos.descripcion',
+            'ILIKE',
+            '%' . $nombre . '%'
+        );
+    }
 
-        $query->when(!empty($this->filters['filter_tipo_movimiento']), function ($q) {
-            return $q->whereRaw('LOWER(stock.tipo_movimiento) = ?', [strtolower($this->filters['filter_tipo_movimiento'])]);
-        });
+    /*
+    |--------------------------------------------------------------------------
+    | Ubicación
+    |--------------------------------------------------------------------------
+    */
 
-        $query->when(!empty($this->filters['filter_cantidad_min']), function ($q) {
-            return $q->where('stock.cantidad', '>=', $this->filters['filter_cantidad_min']);
-        });
+    if (!empty($this->filters['filter_ubicacion'])) {
+        $ubicacion = trim($this->filters['filter_ubicacion']);
 
-        $query->when(!empty($this->filters['filter_cantidad_max']), function ($q) {
-            return $q->where('stock.cantidad', '<=', $this->filters['filter_cantidad_max']);
-        });
+        $query->where(
+            'stock.ubicacion',
+            'ILIKE',
+            '%' . $ubicacion . '%'
+        );
+    }
 
-        $query->when(!empty($this->filters['filter_fecha_ingreso_desde']), function ($q) {
-            return $q->whereDate('stock.fecha_ingreso', '>=', $this->filters['filter_fecha_ingreso_desde']);
-        });
+    /*
+    |--------------------------------------------------------------------------
+    | Lote
+    |--------------------------------------------------------------------------
+    */
 
-        $query->when(!empty($this->filters['filter_fecha_ingreso_hasta']), function ($q) {
-            return $q->whereDate('stock.fecha_ingreso', '<=', $this->filters['filter_fecha_ingreso_hasta']);
-        });
+    if (!empty($this->filters['filter_lote'])) {
+        $lote = trim($this->filters['filter_lote']);
 
-        return $query->select([
+        $query->where(
+            'lotes_producto.codigo_lote',
+            'ILIKE',
+            '%' . $lote . '%'
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Estado
+    |--------------------------------------------------------------------------
+    */
+
+    if (!empty($this->filters['filter_estado'])) {
+        $estado = strtolower(
+            trim($this->filters['filter_estado'])
+        );
+
+        $query->whereRaw(
+            'LOWER(TRIM(stock.estado)) = ?',
+            [$estado]
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tipo de movimiento
+    |--------------------------------------------------------------------------
+    */
+
+    if (!empty($this->filters['filter_tipo_movimiento'])) {
+        $tipoMovimiento = strtolower(
+            trim($this->filters['filter_tipo_movimiento'])
+        );
+
+        $query->whereRaw(
+            'LOWER(TRIM(stock.tipo_movimiento)) = ?',
+            [$tipoMovimiento]
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cantidades
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        isset($this->filters['filter_cantidad_min']) &&
+        $this->filters['filter_cantidad_min'] !== ''
+    ) {
+        $query->where(
+            'stock.cantidad',
+            '>=',
+            $this->filters['filter_cantidad_min']
+        );
+    }
+
+    if (
+        isset($this->filters['filter_cantidad_max']) &&
+        $this->filters['filter_cantidad_max'] !== ''
+    ) {
+        $query->where(
+            'stock.cantidad',
+            '<=',
+            $this->filters['filter_cantidad_max']
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Fechas
+    |--------------------------------------------------------------------------
+    */
+
+    if (!empty($this->filters['filter_fecha_ingreso_desde'])) {
+        $query->whereDate(
+            'stock.fecha_ingreso',
+            '>=',
+            $this->filters['filter_fecha_ingreso_desde']
+        );
+    }
+
+    if (!empty($this->filters['filter_fecha_ingreso_hasta'])) {
+        $query->whereDate(
+            'stock.fecha_ingreso',
+            '<=',
+            $this->filters['filter_fecha_ingreso_hasta']
+        );
+    }
+
+    return $query
+        ->select([
             'stock.id',
             'productos.descripcion as nombre_producto',
             'lotes_producto.codigo_lote as lote',
@@ -84,8 +265,8 @@ class StockExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSiz
             'stock.fecha_vencimiento',
             'stock.observaciones',
         ])
-        ->orderBy('stock.id', 'desc');
-    }
+        ->orderByDesc('stock.id');
+}
 
     public function headings(): array
     {
