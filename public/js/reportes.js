@@ -1,8 +1,4 @@
-console.log("1. El archivo reportes.js se ha cargado correctamente");
-
 $(document).ready(function () {
-    console.log("2. jQuery y el DOM están listos");
-
     const $tabla = $("#tblReportes");
     const urlConsulta = $tabla.data("url-consulta");
     const urlExportar = $tabla.data("url-exportar");
@@ -86,13 +82,11 @@ $(document).ready(function () {
     // 1. Evento de Filtrar (Submit del Formulario)
     $("#formFiltrosReportes").on("submit", function (e) {
         e.preventDefault();
-        console.log("Aplicando filtros y recargando tabla...");
         tabla.ajax.reload();
     });
 
     // 2. Evento de Limpiar Filtros
     $("#btnLimpiarFiltros").on("click", function () {
-        console.log("Limpiando filtros...");
         $("#formFiltrosReportes")[0].reset();
         tabla.ajax.reload();
     });
@@ -100,8 +94,6 @@ $(document).ready(function () {
     // 3. Evento para Exportar a Excel
     $("#btnExportarExcel").on("click", function (e) {
         e.preventDefault();
-        console.log("Generando descarga de Excel...");
-
         const params = new URLSearchParams({
             filter_nombre: $("#filter_nombre").val() || "",
             filter_ubicacion: $("#filter_ubicacion").val() || "",

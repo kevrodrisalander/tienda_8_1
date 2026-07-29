@@ -284,7 +284,6 @@ $(document).ready(function () {
                 modal.hide();
             },
             error: function (xhr) {
-                console.log(xhr.responseJSON); // para depuración
                 Swal.fire(
                     "Error",
                     "No se pudo registrar el proveedor",

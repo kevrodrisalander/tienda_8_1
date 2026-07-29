@@ -19,6 +19,7 @@ use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\TiendasController;
 use App\Http\Controllers\EnvioController;
 
+Route::redirect('/', '/home');
 
 // 1. AUTENTICACIÓN (Login, Registro y Sesiones)
 
@@ -53,16 +54,6 @@ Route::get('/pedido/ticket/{id}', [CheckoutController::class, 'descargarTicket']
 Route::view('/administracion', 'administracion')->name('administracion');
 
 //  4. MÓDULOS DE GESTIÓN (CRUDs, Inventarios y DataTables)
-
-// ---STOCK & PRODUCTOS ---
-// Route::get('/stock', [StockController::class, 'catalogos'])->name('stock');
-// Route::get('/stock/consulta', [StockController::class, 'consultaStock'])->name('stock.consulta');
-// Route::post('/stock/guardar', [StockController::class, 'guardar'])->name('stock.guardar');
-// Route::post('/productos', [ProductoController::class, 'store'])->name('producto.guardar');
-// Route::get('/stock/{id}', [StockController::class, 'show'])->name('stock.show');
-// Route::put('/stock/{id}', [StockController::class, 'update'])->name('stock.update');
-// Route::delete('/stock/{id}', [StockController::class, 'destroy'])->name('stock.destroy');
-// Route::put('/stock/{id}/restaurar', [StockController::class, 'restaurar'])->name('stock.restaurar');
 
 // --- STOCK & PRODUCTOS ---
 Route::get('/stock', [StockController::class, 'catalogos'])->name('stock');
@@ -132,6 +123,3 @@ Route::get('/venta/{id}/ticket', [VentaController::class, 'ticketPdf'])->name('v
 Route::get('/test-vista/{slug}', function ($slug) {
     return view('mensaje.sin_categoria', ['slug' => $slug]);
 })->name('test.vista');
-
-
-Route::get('/stock/exportar-excel', [StockController::class, 'exportarExcel'])->name('stock.exportarExcel');

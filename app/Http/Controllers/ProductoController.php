@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Producto;
-use App\Models\CatSeccion;
-use Illuminate\Support\Facades\View;
+use App\Models\Seccion;
 use Illuminate\Support\Facades\DB;
-use Intervention\Image\Facades\Image;
 
 
 class ProductoController extends Controller
@@ -15,7 +13,7 @@ class ProductoController extends Controller
     // Vista específica para la categoría
     public function mostrarCategoria($slug)
     {
-        $categoria = CatSeccion::where('slug', $slug)->firstOrFail();
+        $categoria = Seccion::where('slug', $slug)->firstOrFail();
 
         // Obtener productos con stock calculado
         $productos = Producto::leftJoin('stock as s', 'productos.id', '=', 's.producto_id')
@@ -49,7 +47,7 @@ class ProductoController extends Controller
             )
             ->get();
 
-        return view("categorias.$slug", compact('categoria', 'productos'));
+        return view('categorias.show', compact('categoria', 'productos'));
     }
 
 

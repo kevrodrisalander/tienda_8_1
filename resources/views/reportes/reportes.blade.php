@@ -86,9 +86,6 @@
     </div>
 @endsection
 
-{{-- @section('scripts')
-<script src="{{ asset('js/reportes.js') }}"></script>
-@endsection --}}
 @section('js_footer')
     <script src="{{ asset('js/reportes.js') }}"></script>
 @endsection

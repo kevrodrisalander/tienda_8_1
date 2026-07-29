@@ -179,12 +179,6 @@ window.CartApp = (function () {
             cancelButtonText: "Cancelar",
         }).then((result) => {
             if (result.isConfirmed) {
-                // 📦 LOG 1: Ver el contenido exacto del array que se enviará
-                console.log(
-                    "📦 [Checkout] 1. Enviando este arreglo al servidor:",
-                    cart,
-                );
-
                 fetch("/checkout", {
                     method: "POST",
                     headers: {
@@ -194,21 +188,7 @@ window.CartApp = (function () {
                     body: JSON.stringify({ cart }),
                 })
                     .then((res) => {
-                        // 🚦 LOG 2: Estatus HTTP devuelto por Laravel (200, 500, etc.)
-                        console.log(
-                            "🚦 [Checkout] 2. Status HTTP de la Respuesta:",
-                            res.status,
-                            res.statusText,
-                        );
-
-                        // Capturamos como texto crudo para "espiar" la respuesta real antes de decodificarla
                         return res.text().then((textoCrudo) => {
-                            // 📝 LOG 3: Ver CUALQUIER carácter, espacio en blanco o error oculto enviado por el servidor
-                            console.log(
-                                "📝 [Checkout] 3. Texto Crudo que llegó del Servidor (Culpable real):",
-                                textoCrudo,
-                            );
-
                             if (!res.ok) {
                                 throw new Error(
                                     `El servidor respondió con estatus incorreco: ${res.status}`,
@@ -220,11 +200,6 @@ window.CartApp = (function () {
                         });
                     })
                     .then((data) => {
-                        // 🎉 LOG 4: Ver el objeto JSON ya parseado correctamente
-                        console.log(
-                            "✅ [Checkout] 4. JSON Limpio Parseado con Éxito:",
-                            data,
-                        );
                         const idPedido = data.id_pedido;
 
                         if (!idPedido) {
@@ -246,10 +221,6 @@ window.CartApp = (function () {
                             denyButtonText: "No, retirar en tienda",
                         }).then((envioResult) => {
                             if (envioResult.isConfirmed) {
-                                console.log(
-                                    `➡️ [Checkout] Cliente seleccionó envío a domicilio para el pedido #${idPedido}`,
-                                );
-
                                 const envioModalEl =
                                     document.getElementById("envioModal");
                                 const envioModal = new bootstrap.Modal(
@@ -274,10 +245,6 @@ window.CartApp = (function () {
                                 );
                                 if (modal) modal.hide();
                             } else if (envioResult.isDenied) {
-                                console.log(
-                                    `➡️ [Checkout] Cliente seleccionó retiro en tienda para el pedido #${idPedido}`,
-                                );
-
                                 clearCart();
                                 const modal = bootstrap.Modal.getInstance(
                                     document.getElementById("cartModal"),
@@ -393,8 +360,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 referencias: document.getElementById("referencias").value,
             };
 
-            console.log("🚚 [Envio] Enviando datos post-registro:", data);
-
             fetch("/envios/info", {
                 method: "POST",
                 headers: {
@@ -406,15 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify(data),
             })
                 .then((res) => {
-                    console.log("🚦 [Envio] HTTP Status:", res.status);
-
-                    // Convertimos a texto para auditar la respuesta del servidor de forma segura
                     return res.text().then((textoCrudo) => {
-                        console.log(
-                            "📝 [Texto Crudo del Servidor]:",
-                            textoCrudo,
-                        );
-
                         if (!res.ok) {
                             throw new Error(
                                 "Respuesta del servidor no fue OK.",
@@ -425,8 +382,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                 })
                 .then((res) => {
-                    console.log("✅ [Envio] JSON Limpio Recibido:", res);
-
                     // Validamos si tu controlador responde con 'success' o con 'ok'
                     if (res.success || res.ok) {
                         Swal.fire(

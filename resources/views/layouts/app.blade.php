@@ -17,10 +17,8 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Tus estilos personalizados (app.css y tablas.css) -->
+    <!-- Estilos personalizados -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    {{--
-    <link rel="stylesheet" href="{{ asset('css/tablas.css') }}"> --}}
     @vite('resources/css/tablas.css')
 
     <!-- Librerías JS necesarias en head -->

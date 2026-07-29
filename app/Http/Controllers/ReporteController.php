@@ -3,11 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Producto;
-use App\Models\CatSeccion;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
-use Intervention\Image\Facades\Image;
 
 
 class ReporteController extends Controller
