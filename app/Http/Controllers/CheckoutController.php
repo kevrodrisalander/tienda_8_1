@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DetallePedido;
 use App\Models\Pedido;
+use App\Models\PagoPedido;
 use App\Models\Producto;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -23,6 +24,13 @@ class CheckoutController extends Controller
             'cart' => ['required', 'array', 'min:1'],
             'cart.*.id' => ['required', 'integer', 'exists:productos,id'],
             'cart.*.cantidad' => ['required', 'integer', 'min:1'],
+            'pago.metodo' => ['required', 'in:efectivo,tarjeta,vales'],
+            'pago.monto_recibido' => ['nullable', 'numeric', 'min:0'],
+            'pago.tipo_tarjeta' => ['nullable', 'in:credito,debito'],
+            'pago.marca_tarjeta' => ['nullable', 'in:visa,mastercard,amex'],
+            'pago.ultimos_cuatro' => ['nullable', 'digits:4'],
+            'pago.emisor_vale' => ['nullable', 'string', 'max:50'],
+            'pago.referencia' => ['nullable', 'string', 'max:100'],
         ]);
 
         try {
@@ -33,6 +41,8 @@ class CheckoutController extends Controller
                     'fecha_pedido' => now(),
                     'estado' => 'pendiente',
                 ]);
+
+                $total = 0;
 
                 foreach ($validated['cart'] as $item) {
                     $producto = Producto::query()->lockForUpdate()->findOrFail($item['id']);
@@ -54,6 +64,8 @@ class CheckoutController extends Controller
                         'precio_unitario' => $producto->precio_venta,
                     ]);
 
+                    $total += $cantidad * (float) $producto->precio_venta;
+
                     DB::table('stock')->insert([
                         'producto_id' => $producto->id,
                         'cantidad' => $cantidad,
@@ -70,6 +82,8 @@ class CheckoutController extends Controller
                     $producto->update(['stock' => $existencia - $cantidad]);
                 }
 
+                $this->guardarPago($pedido, $validated['pago'], $total);
+
                 return $pedido;
             });
 
@@ -82,9 +96,59 @@ class CheckoutController extends Controller
         }
     }
 
+    /**
+     * Valida las reglas específicas del método y guarda un resumen seguro.
+     * La validación se repite en servidor porque el modal del navegador puede
+     * ser alterado por el usuario.
+     */
+    private function guardarPago(Pedido $pedido, array $pago, float $total): void
+    {
+        $datos = [
+            'id_pedido' => $pedido->id_pedido,
+            'metodo' => $pago['metodo'],
+            'monto' => round($total, 2),
+            'fecha_pago' => now(),
+        ];
+
+        if ($pago['metodo'] === 'efectivo') {
+            $recibido = round((float) ($pago['monto_recibido'] ?? 0), 2);
+            if ($recibido < $total) {
+                throw ValidationException::withMessages([
+                    'pago.monto_recibido' => 'El efectivo recibido es menor al total de la compra.',
+                ]);
+            }
+            $datos['monto_recibido'] = $recibido;
+            $datos['cambio'] = round($recibido - $total, 2);
+        }
+
+        if ($pago['metodo'] === 'tarjeta') {
+            foreach (['tipo_tarjeta', 'marca_tarjeta', 'ultimos_cuatro', 'referencia'] as $campo) {
+                if (empty($pago[$campo])) {
+                    throw ValidationException::withMessages([
+                        "pago.{$campo}" => 'Completa todos los datos operativos de la tarjeta.',
+                    ]);
+                }
+                $datos[$campo] = $pago[$campo];
+            }
+        }
+
+        if ($pago['metodo'] === 'vales') {
+            foreach (['emisor_vale', 'referencia'] as $campo) {
+                if (empty($pago[$campo])) {
+                    throw ValidationException::withMessages([
+                        "pago.{$campo}" => 'Completa el emisor y la referencia de los vales.',
+                    ]);
+                }
+                $datos[$campo] = $pago[$campo];
+            }
+        }
+
+        PagoPedido::create($datos);
+    }
+
     public function descargarTicket($id)
     {
-        $pedido = Pedido::with(['detalles', 'envio'])->findOrFail($id);
+        $pedido = Pedido::with(['detalles', 'envio', 'pago'])->findOrFail($id);
 
         if ($pedido->detalles->isEmpty()) {
             abort(422, 'Este pedido no contiene productos registrados y no puede generar un ticket válido.');
@@ -100,7 +164,8 @@ class CheckoutController extends Controller
             'cart' => $cart,
             'pedido' => $pedido,
             'esEnvio' => $pedido->envio !== null,
-            'metodo_pago' => 'Efectivo',
+            'pago' => $pedido->pago,
+            'metodo_pago' => $pedido->pago?->nombre_metodo ?? 'No registrado',
         ]);
 
         // 80 mm de ancho; la altura amplia evita cortar compras con varios artículos.

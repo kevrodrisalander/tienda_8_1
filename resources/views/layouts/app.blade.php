@@ -58,6 +58,7 @@
     </div>
 
     <!-- JS personalizados -->
+    <script src="{{ asset('js/tienda/payment.js') }}"></script>
     <script src="{{ asset('js/tienda/cart.js') }}"></script>
     @yield('js_footer')
 </body>

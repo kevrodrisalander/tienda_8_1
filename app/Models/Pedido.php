@@ -31,4 +31,9 @@ class Pedido extends Model
     {
         return $this->hasMany(DetallePedido::class, 'id_pedido', 'id_pedido');
     }
+
+    public function pago()
+    {
+        return $this->hasOne(PagoPedido::class, 'id_pedido', 'id_pedido');
+    }
 }

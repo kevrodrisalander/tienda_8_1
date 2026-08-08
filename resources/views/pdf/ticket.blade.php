@@ -73,7 +73,19 @@
         </tbody>
     </table>
 
-    <p class="payment"><strong>Forma de pago:</strong> {{ ucfirst(strtolower($metodo_pago ?? 'Efectivo')) }}</p>
+    <div class="payment">
+        <p><strong>Forma de pago:</strong> {{ ucfirst($metodo_pago ?? 'No registrado') }}</p>
+        @if(isset($pago) && $pago)
+            @if($pago->metodo === 'efectivo')
+                <p>Recibido: ${{ number_format($pago->monto_recibido, 2) }} · Cambio: ${{ number_format($pago->cambio, 2) }}</p>
+            @elseif($pago->metodo === 'tarjeta')
+                <p>{{ ucfirst($pago->marca_tarjeta) }} · Terminación {{ $pago->ultimos_cuatro }}</p>
+                <p>Autorización: {{ $pago->referencia }}</p>
+            @elseif($pago->metodo === 'vales')
+                <p>{{ $pago->emisor_vale }} · Autorización: {{ $pago->referencia }}</p>
+            @endif
+        @endif
+    </div>
     <div class="total-box">
         <div class="total-label">TOTAL</div>
         <div class="total">${{ number_format(collect($cart)->sum(fn($i) => $i['precio'] * $i['cantidad']), 2) }} MXN</div>
