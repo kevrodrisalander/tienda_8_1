@@ -156,8 +156,8 @@
                                     <label class="form-label">Tipo movimiento</label>
                                     <select name="tipo_movimiento" class="form-select" required>
                                         <option value="">Seleccione tipo</option>
-                                        @foreach ($tiposMovimiento as $tipo)
-                                            <option value="{{ $tipo }}">{{ ucfirst($tipo) }}</option>
+                                        @foreach ($tiposMovimiento as $valor => $etiqueta)
+                                            <option value="{{ $valor }}">{{ $etiqueta }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -269,8 +269,8 @@
                                 <div class="col-md-6">
                                     <label class="form-label">Tipo movimiento</label>
                                     <select name="tipo_movimiento" class="form-select">
-                                        @foreach ($tiposMovimiento as $tipo)
-                                            <option value="{{ $tipo }}">{{ ucfirst($tipo) }}</option>
+                                        @foreach ($tiposMovimiento as $valor => $etiqueta)
+                                            <option value="{{ $valor }}">{{ $etiqueta }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -343,8 +343,8 @@
                                     <label class="form-label">Tipo movimiento</label>
                                     <select name="filter_tipo_movimiento" class="form-select">
                                         <option value="">Todos los tipos</option>
-                                        @foreach ($tiposMovimiento as $tipo)
-                                            <option value="{{ $tipo }}">{{ ucfirst($tipo) }}</option>
+                                        @foreach ($tiposMovimiento as $valor => $etiqueta)
+                                            <option value="{{ $valor }}">{{ $etiqueta }}</option>
                                         @endforeach
                                     </select>
                                 </div>

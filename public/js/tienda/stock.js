@@ -11,6 +11,28 @@ function soloFecha(f) {
     return f ? f.split(" ")[0] : "";
 }
 
+/**
+ * PostgreSQL entrega estas columnas sin zona horaria. Se interpretan como
+ * hora local de la tienda; no se debe agregar "Z" (UTC).
+ */
+function fechaHoraLocal(f) {
+    if (!f) return "-";
+    const coincidencia = String(f).match(
+        /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?/,
+    );
+    if (!coincidencia) return f;
+    const [, anio, mes, dia, hora, minuto, segundo = "00"] = coincidencia;
+    return `${dia}/${mes}/${anio}, ${hora}:${minuto}:${segundo}`;
+}
+
+function fechaLocal(f) {
+    if (!f) return "-";
+    const partes = String(f).substring(0, 10).split("-");
+    return partes.length === 3
+        ? `${partes[2]}/${partes[1]}/${partes[0]}`
+        : f;
+}
+
 /**************************************************
  * VARIABLES DE CONTROL
  **************************************************/
@@ -120,18 +142,14 @@ let verEliminados = false;
                 data: "fecha_ingreso",
                 className: "text-center",
                 render: function (data) {
-                    if (!data) return "-";
-                    const d = new Date(data + "Z"); // UTC
-                    return d.toLocaleString("es-MX");
+                    return fechaHoraLocal(data);
                 },
             },
             {
                 data: "fecha_vencimiento",
                 className: "text-center",
                 render: function (data) {
-                    if (!data) return "-";
-                    const d = new Date(data + "Z");
-                    return d.toLocaleDateString("es-MX");
+                    return fechaLocal(data);
                 },
             },
             { data: "lote" },
@@ -139,9 +157,7 @@ let verEliminados = false;
                 data: "fecha_salida",
                 className: "text-center",
                 render: function (data) {
-                    if (!data) return "-";
-                    const d = new Date(data + "Z"); // UTC
-                    return d.toLocaleString("es-MX"); // Sin badge ni color
+                    return fechaHoraLocal(data);
                 },
             },
             { data: "observaciones" },
@@ -150,10 +166,17 @@ let verEliminados = false;
                 className: "text-center",
                 render: function (data) {
                     if (!data) return "-";
-                    let color = "";
-                    if (data.toLowerCase() === "entrada") color = "success";
-                    if (data.toLowerCase() === "salida") color = "danger";
-                    return `<span class="badge bg-${color}">${data}</span>`;
+                    const tipos = {
+                        entrada: { texto: "Entrada (+)", color: "success" },
+                        salida: { texto: "Salida (-)", color: "danger" },
+                        ajuste: { texto: "Ajuste", color: "warning text-dark" },
+                        traslado: { texto: "Transferencia interna", color: "info text-dark" },
+                    };
+                    const tipo = tipos[String(data).toLowerCase()] || {
+                        texto: data,
+                        color: "secondary",
+                    };
+                    return `<span class="badge bg-${tipo.color}">${tipo.texto}</span>`;
                 },
             },
             {

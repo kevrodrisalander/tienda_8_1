@@ -341,10 +341,10 @@ class StockController extends Controller
         ];
 
         $tiposMovimiento = [
-            'entrada',
-            'salida',
-            'ajuste',
-            'traslado',
+            'entrada' => 'Entrada de inventario (+)',
+            'salida' => 'Salida por venta o merma (-)',
+            'ajuste' => 'Ajuste de inventario',
+            'traslado' => 'Transferencia interna',
         ];
 
         return view(
