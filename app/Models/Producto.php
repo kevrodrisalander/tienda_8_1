@@ -36,7 +36,7 @@ class Producto extends Model
             ->where('producto_id', $this->id)
             ->sum(DB::raw("
             CASE
-                WHEN tipo_movimiento = 'entrada' THEN cantidad
+                WHEN tipo_movimiento IN ('entrada','ajuste') THEN cantidad
                 WHEN tipo_movimiento = 'salida' THEN -cantidad
                 ELSE 0
             END

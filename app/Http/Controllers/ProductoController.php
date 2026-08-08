@@ -27,7 +27,7 @@ class ProductoController extends Controller
                 DB::raw('COALESCE(
                 SUM(
                     CASE
-                        WHEN s.tipo_movimiento = \'entrada\' AND s.activo THEN s.cantidad
+                        WHEN s.tipo_movimiento IN (\'entrada\', \'ajuste\') AND s.activo THEN s.cantidad
                         WHEN s.tipo_movimiento = \'salida\' AND s.activo THEN -s.cantidad
                         ELSE 0
                     END
@@ -37,7 +37,7 @@ class ProductoController extends Controller
                 DB::raw('CASE
                         WHEN COALESCE(SUM(
                             CASE
-                                WHEN s.tipo_movimiento = \'entrada\' AND s.activo THEN s.cantidad
+                                WHEN s.tipo_movimiento IN (\'entrada\', \'ajuste\') AND s.activo THEN s.cantidad
                                 WHEN s.tipo_movimiento = \'salida\' AND s.activo THEN -s.cantidad
                                 ELSE 0
                             END
