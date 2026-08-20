@@ -7,7 +7,7 @@
 @section('title', 'Stock')
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid data-table-page">
         <b>
             <h2 class="text-center my-5">Stock</h2>
         </b>
@@ -91,6 +91,18 @@
                                 <div class="col-md-6">
                                     <label class="form-label">Nombre del producto</label>
                                     <input type="text" name="nombre_producto" class="form-control" required>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label class="form-label">Detalle para el cliente</label>
+                                    <textarea name="detalle_cliente" class="form-control" rows="3" maxlength="2000"
+                                        placeholder="Características, presentación y beneficios visibles en la tienda"></textarea>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label class="form-label">Detalle administrativo</label>
+                                    <textarea name="detalle_administrativo" class="form-control" rows="3" maxlength="2000"
+                                        placeholder="Información interna; no será visible para el cliente"></textarea>
                                 </div>
 
                                 <div class="col-md-3">
@@ -197,7 +209,7 @@
 
     {{-- Modal editar stock solo para roles permitidos --}}
     @if(auth()->check() && in_array(auth()->user()->id_rol, [1, 4, 8]))
-        <div class="modal fade" id="modalSimple" tabindex="-1">
+        <div class="modal fade modal-producto" id="modalSimple" tabindex="-1">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <form id="formEditarStock" method="POST">
@@ -216,6 +228,16 @@
                                     <label class="form-label">Producto</label>
                                     <input type="text" id="producto_nombre" class="form-control" disabled>
                                     <input type="hidden" name="producto_id">
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label class="form-label">Detalle para el cliente</label>
+                                    <textarea name="detalle_cliente" class="form-control" rows="3" maxlength="2000"></textarea>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label class="form-label">Detalle administrativo</label>
+                                    <textarea name="detalle_administrativo" class="form-control" rows="3" maxlength="2000"></textarea>
                                 </div>
 
                                 <div class="col-md-4">
@@ -276,7 +298,7 @@
                                 </div>
 
                                 <div class="col-md-12">
-                                    <label class="form-label">Observaciones</label>
+                                    <label class="form-label">Observaciones del movimiento de inventario</label>
                                     <input type="text" name="observaciones" class="form-control">
                                 </div>
 

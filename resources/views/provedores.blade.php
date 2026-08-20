@@ -7,7 +7,7 @@
 @section('title', 'Proveedores')
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid data-table-page">
         <b>
             <h2 class="text-center my-5">Provedores</h2>
         </b>
@@ -56,7 +56,7 @@
 @endsection
 
     <!-- Modal Registrar Proveedor -->
-    <div class="modal fade" id="modalRegistrarProveedor" tabindex="-1" aria-hidden="true">
+    <div class="modal fade modal-producto" id="modalRegistrarProveedor" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <form id="formRegistrarProveedor">
@@ -110,7 +110,7 @@
     </div>
 
     <!-- Modal Editar Proveedor -->
-    <div class="modal fade" id="modalEditarProveedor" tabindex="-1" aria-labelledby="modalEditarProveedorLabel"
+    <div class="modal fade modal-producto" id="modalEditarProveedor" tabindex="-1" aria-labelledby="modalEditarProveedorLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">

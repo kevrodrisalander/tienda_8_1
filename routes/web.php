@@ -39,6 +39,9 @@ Route::get('/dashboard', function () {
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/categoria/{slug}', [ProductoController::class, 'mostrarCategoria'])->name('categoria.mostrar');
+Route::get('/producto/{id}/observaciones', [InventarioController::class, 'observaciones'])
+    ->whereNumber('id')
+    ->name('producto.observaciones');
 Route::get('/tiendas', [TiendasController::class, 'tiendas'])->name('tiendas.index');
 
 // Carrito de compras (AJAX / Session)
@@ -51,11 +54,14 @@ Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkou
 Route::get('/pedido/ticket/{id}', [CheckoutController::class, 'descargarTicket'])->name('pedido.ticket');
 
 //  3. PANEL DE ADMINISTRACIÓN VISTAS GENERALES
-Route::view('/administracion', 'administracion')->name('administracion');
+Route::view('/administracion', 'administracion')
+    ->middleware(['auth', 'role:1,2,9'])
+    ->name('administracion');
 
 //  4. MÓDULOS DE GESTIÓN (CRUDs, Inventarios y DataTables)
 
 // --- STOCK & PRODUCTOS ---
+Route::middleware(['auth', 'role:1,4,8'])->group(function () {
 Route::get('/stock', [StockController::class, 'catalogos'])->name('stock');
 Route::get('/stock/consulta', [StockController::class, 'consultaStock'])->name('stock.consulta');
 
@@ -70,20 +76,25 @@ Route::get('/stock/{id}', [StockController::class, 'show'])->name('stock.show')-
 Route::put('/stock/{id}', [StockController::class, 'update'])->name('stock.update')->whereNumber('id');
 Route::delete('/stock/{id}', [StockController::class, 'destroy'])->name('stock.destroy')->whereNumber('id');
 Route::put('/stock/{id}/restaurar', [StockController::class, 'restaurar'])->name('stock.restaurar')->whereNumber('id');
+});
 
 // INVENTARIO & CATÁLOGOS
+Route::middleware(['auth', 'role:1,4'])->group(function () {
 Route::get('/inventario', function () { return view('inventario'); })->name('inventario');
 Route::post('/inventario', [InventarioController::class, 'consultaInventario'])->name('productos.consulta');
 Route::get('/inventario/marcas', [InventarioController::class, 'marcas'])->name('inventario.marcas');
 Route::get('/inventario/categorias', [InventarioController::class, 'categorias'])->name('inventario.categorias');
-Route::get('/producto/{id}/observaciones', [InventarioController::class, 'observaciones'])->name('inventario.observaciones');
+});
 
 // ---ENVÍOS Y DOMICILIOS ---
+Route::middleware(['auth', 'role:1,2,3'])->group(function () {
 Route::get('/envios', [EnvioController::class, 'index'])->name('envios'); // Única ruta GET para la vista
 Route::get('/envios/consulta', [EnvioController::class, 'consulta'])->name('envios.consulta');
 Route::post('/envios/info', [EnvioController::class, 'guardarInfo'])->name('envios.info'); // Se queda con el alias que usa tu JS
+});
 
 // ---PROVEEDORES ---
+Route::middleware(['auth', 'role:1,8'])->group(function () {
 Route::get('/provedores', function () { return view('provedores'); })->name('provedores');
 Route::post('/provedores', [ProvedoresController::class, 'consultaProvedores'])->name('provedores.consulta');
 Route::post('/provedores/store', [ProvedoresController::class, 'store'])->name('provedores.store');
@@ -93,8 +104,10 @@ Route::get('/provedores/{id}', [ProvedoresController::class, 'show'])->where('id
 Route::put('/provedores/{id}', [ProvedoresController::class, 'update'])->where('id', '[0-9]+')->name('provedores.update');
 Route::delete('/provedores/{id}', [ProvedoresController::class, 'destroy'])->name('provedores.destroy');
 Route::put('/provedores/{id}/restaurar', [ProvedoresController::class, 'restaurar'])->name('provedores.restaurar');
+});
 
 // ---USUARIOS ---
+Route::middleware(['auth', 'role:1,9'])->group(function () {
 Route::view('/usuarios', 'usuarios')->name('usuarios'); // Centralizado como vista básica
 Route::get('usuarios/consulta', [UsuariosController::class, 'consultaUsuarios'])->name('usuarios.consulta');
 Route::post('usuarios', [UsuariosController::class, 'store'])->name('usuarios.store');
@@ -103,23 +116,32 @@ Route::get('usuarios/{id}', [UsuariosController::class, 'show'])->name('usuarios
 Route::put('usuarios/{id}', [UsuariosController::class, 'update'])->name('usuarios.update');
 Route::delete('usuarios/{id}', [UsuariosController::class, 'destroy'])->name('usuarios.destroy');
 Route::put('usuarios/{id}/restaurar', [UsuariosController::class, 'restaurar'])->name('usuarios.restaurar');
+});
 
 // ---CLIENTES ---
+Route::middleware(['auth', 'role:1,3,4'])->group(function () {
 Route::get('/clientes', [ClientesController::class, 'index'])->name('clientes');
 Route::get('/clientes/consulta', [ClientesController::class, 'consulta'])->name('clientes.consulta');
 Route::post('/clientes/update/{id}', [ClientesController::class, 'update']);
 Route::post('/clientes/desactivar/{id}', [ClientesController::class, 'desactivar']);
 Route::post('/clientes/restaurar/{id}', [ClientesController::class, 'restaurar']);
+});
 
 // ---REPORTES ---
+Route::middleware(['auth', 'role:1,2,5'])->group(function () {
 Route::get('/reportes/reportes', [ReporteController::class, 'index'])->name('reportes');
 Route::get('/reportes/lista', [ReporteController::class, 'lista'])->name('reportes.lista');
+});
 
 // ---VENTAS ---
-Route::get('/venta/{id}/ticket', [VentaController::class, 'ticketPdf'])->name('venta.ticket');
+Route::get('/venta/{id}/ticket', [VentaController::class, 'ticketPdf'])
+    ->middleware('auth')
+    ->name('venta.ticket');
 
 
 // 5. RUTAS DE PRUEBA / TESTING (Mantener abajo o borrar en producción)
-Route::get('/test-vista/{slug}', function ($slug) {
-    return view('mensaje.sin_categoria', ['slug' => $slug]);
-})->name('test.vista');
+if (app()->environment('local')) {
+    Route::get('/test-vista/{slug}', function ($slug) {
+        return view('mensaje.sin_categoria', ['slug' => $slug]);
+    })->name('test.vista');
+}

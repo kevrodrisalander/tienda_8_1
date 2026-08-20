@@ -110,31 +110,6 @@
             transform: translateX(5px);
         }
 
-        /* MODALES ESTILIZADOS */
-        .modal-content {
-            border: none;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, var(--cherry-dark), var(--cherry-main));
-            color: white;
-            border-bottom: none;
-            padding: 24px;
-        }
-
-        .modal-title {
-            font-family: 'Poppins', Arial, sans-serif;
-            font-weight: 600;
-        }
-
-        .modal-body {
-            padding: 30px;
-            background: white;
-        }
-
         .info-box {
             background-color: var(--cherry-light);
             border-radius: 12px;
@@ -142,11 +117,6 @@
             margin-bottom: 20px;
             border-left: 4px solid var(--cherry-main);
             color: var(--text-dark);
-        }
-
-        .modal-footer {
-            border-top: none;
-            padding: 15px 30px 25px;
         }
 
         .btn-cherry-secondary {
@@ -202,7 +172,7 @@
 
     </div>
 
-    <div class="modal fade" id="campechecc" tabindex="-1">
+    <div class="modal fade modal-producto" id="campechecc" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
 
@@ -232,7 +202,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="chiapas" tabindex="-1">
+    <div class="modal fade modal-producto" id="chiapas" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
 
@@ -262,7 +232,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="durango" tabindex="-1">
+    <div class="modal fade modal-producto" id="durango" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
 

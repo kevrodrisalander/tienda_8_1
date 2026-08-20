@@ -3,7 +3,7 @@
 @section('title', 'Clientes')
 @section('content')
 
-    <div class="container">
+    <div class="container-fluid data-table-page">
         <h2 class="text-center my-4">Clientes</h2>
         <p class="text-center">
             Listado de clientes

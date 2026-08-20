@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container-fluid py-4">
+    <div class="container-fluid data-table-page py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 text-gray-800">Reporte de Inventario</h1>
             <button id="btnExportarExcel" class="btn btn-success">

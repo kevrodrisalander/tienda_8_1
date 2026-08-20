@@ -1,4 +1,4 @@
-<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+<div class="modal fade modal-producto" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
@@ -29,7 +29,7 @@
     El modal de pago solamente captura datos operativos. Por seguridad nunca se
     solicita el número completo de tarjeta, CVV o NIP.
 --}}
-<div class="modal fade" id="pagoModal" tabindex="-1" aria-labelledby="pagoModalLabel" aria-hidden="true"
+<div class="modal fade modal-producto" id="pagoModal" tabindex="-1" aria-labelledby="pagoModalLabel" aria-hidden="true"
     data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -114,7 +114,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="envioModal" tabindex="-1" aria-labelledby="envioModalLabel" aria-hidden="true"
+<div class="modal fade modal-producto" id="envioModal" tabindex="-1" aria-labelledby="envioModalLabel" aria-hidden="true"
     data-bs-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">

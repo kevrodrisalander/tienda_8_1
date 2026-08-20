@@ -214,6 +214,8 @@ let verEliminados = false;
             // Producto (solo lectura)
             $('[name="producto_id"]').val(data.producto_id);
             $("#producto_nombre").val(data.nombre_producto);
+            $('#formEditarStock [name="detalle_cliente"]').val(data.detalle_cliente);
+            $('#formEditarStock [name="detalle_administrativo"]').val(data.detalle_administrativo);
 
             // Campos editables
             $('[name="cantidad"]').val(data.cantidad);
