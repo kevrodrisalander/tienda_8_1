@@ -341,10 +341,10 @@ class StockController extends Controller
         ];
 
         $tiposMovimiento = [
-            'entrada',
-            'salida',
-            'ajuste',
-            'traslado',
+            'entrada' => 'Entrada de inventario (+)',
+            'salida' => 'Salida por venta o merma (-)',
+            'ajuste' => 'Ajuste de inventario',
+            'traslado' => 'Transferencia interna',
         ];
 
         return view(
@@ -374,7 +374,9 @@ class StockController extends Controller
             )
             ->select(
                 'stock.*',
-                'productos.descripcion as nombre_producto'
+                'productos.descripcion as nombre_producto',
+                'productos.detalle_cliente',
+                'productos.detalle_administrativo'
             )
             ->where('stock.id', $id)
             ->first();
@@ -588,11 +590,32 @@ class StockController extends Controller
                 'string',
                 'max:255',
             ],
+            'detalle_cliente' => [
+                'nullable',
+                'string',
+                'max:2000',
+            ],
+            'detalle_administrativo' => [
+                'nullable',
+                'string',
+                'max:2000',
+            ],
         ]);
 
-        $actualizado = DB::table('stock')
-            ->where('id', $id)
-            ->update([
+        $stock = DB::table('stock')->where('id', $id)->first();
+
+        abort_unless($stock, 404);
+
+        DB::transaction(function () use ($id, $stock, $validated) {
+            DB::table('productos')
+                ->where('id', $stock->producto_id)
+                ->update([
+                    'detalle_cliente' => $validated['detalle_cliente'] ?? null,
+                    'detalle_administrativo' => $validated['detalle_administrativo'] ?? null,
+                    'updated_at' => now(),
+                ]);
+
+            DB::table('stock')->where('id', $id)->update([
                 'cantidad' => $validated['cantidad'],
                 'ubicacion' => $validated['ubicacion'] ?? null,
                 'estado' => $validated['estado'],
@@ -608,15 +631,7 @@ class StockController extends Controller
                     $validated['observaciones'] ?? null,
                 'updated_at' => now(),
             ]);
-
-        if (!$actualizado) {
-            return redirect()
-                ->back()
-                ->with(
-                    'warning',
-                    'No se realizaron cambios en el registro.'
-                );
-        }
+        });
 
         return redirect()
             ->route('stock')

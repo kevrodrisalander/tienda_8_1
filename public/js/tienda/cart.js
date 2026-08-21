@@ -170,29 +170,32 @@ window.CartApp = (function () {
 
         const total = cart.reduce((s, p) => s + p.precio * p.cantidad, 0);
 
-        Swal.fire({
-            title: "Confirmar compra",
-            text: `Total: ${total.toLocaleString("es-MX", { style: "currency", currency: "MXN" })}`,
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Sí, comprar",
-            cancelButtonText: "Cancelar",
-        }).then((result) => {
-            if (result.isConfirmed) {
+        // PaymentApp mantiene la captura y validación visual fuera del carrito.
+        window.PaymentApp.open(total).then((pago) => {
+            if (pago) {
                 fetch("/checkout", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": csrfToken,
                     },
-                    body: JSON.stringify({ cart }),
+                    body: JSON.stringify({ cart, pago }),
                 })
                     .then((res) => {
                         return res.text().then((textoCrudo) => {
                             if (!res.ok) {
-                                throw new Error(
-                                    `El servidor respondió con estatus incorreco: ${res.status}`,
-                                );
+                                let message = "No fue posible procesar la compra.";
+                                try {
+                                    const errorData = JSON.parse(textoCrudo);
+                                    message =
+                                        errorData.message ||
+                                        errorData.error ||
+                                        Object.values(errorData.errors || {})[0]?.[0] ||
+                                        message;
+                                } catch (_) {
+                                    // Si el servidor no responde JSON se conserva el mensaje general.
+                                }
+                                throw new Error(message);
                             }
 
                             // Si todo marcha bien, convertimos manualmente a objeto JSON
@@ -273,7 +276,7 @@ window.CartApp = (function () {
                         );
                         Swal.fire(
                             "Error",
-                            "Ocurrió un problema en el servidor. Abre la consola (F12) para inspeccionar los logs.",
+                            err.message || "Ocurrió un problema al procesar la compra.",
                             "error",
                         );
                     });

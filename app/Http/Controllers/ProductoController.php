@@ -22,12 +22,15 @@ class ProductoController extends Controller
             ->groupBy('productos.id')
             ->orderBy('productos.descripcion', 'asc')
             ->select(
-                'productos.*',
+                'productos.id',
+                'productos.descripcion',
+                'productos.precio_venta',
+                'productos.name_file',
                 // Sumar entradas y restar salidas activas
                 DB::raw('COALESCE(
                 SUM(
                     CASE
-                        WHEN s.tipo_movimiento = \'entrada\' AND s.activo THEN s.cantidad
+                        WHEN s.tipo_movimiento IN (\'entrada\', \'ajuste\') AND s.activo THEN s.cantidad
                         WHEN s.tipo_movimiento = \'salida\' AND s.activo THEN -s.cantidad
                         ELSE 0
                     END
@@ -37,7 +40,7 @@ class ProductoController extends Controller
                 DB::raw('CASE
                         WHEN COALESCE(SUM(
                             CASE
-                                WHEN s.tipo_movimiento = \'entrada\' AND s.activo THEN s.cantidad
+                                WHEN s.tipo_movimiento IN (\'entrada\', \'ajuste\') AND s.activo THEN s.cantidad
                                 WHEN s.tipo_movimiento = \'salida\' AND s.activo THEN -s.cantidad
                                 ELSE 0
                             END
@@ -56,6 +59,8 @@ class ProductoController extends Controller
     {
         $validated = $request->validate([
             'nombre_producto'    => 'required|string|max:255',
+            'detalle_cliente'    => 'nullable|string|max:2000',
+            'detalle_administrativo' => 'nullable|string|max:2000',
             'id_categoria'       => 'required|exists:cat_categorias,id',
             'id_marca'           => 'required|exists:cat_marcas,id',
             'cantidad_inicial'   => 'required|integer|min:0',
@@ -88,6 +93,8 @@ class ProductoController extends Controller
         // Guardar producto
         $producto = Producto::create([
             'descripcion'  => $validated['nombre_producto'],
+            'detalle_cliente' => $validated['detalle_cliente'] ?? null,
+            'detalle_administrativo' => $validated['detalle_administrativo'] ?? null,
             'stock'        => $validated['cantidad_inicial'],
             'precio_venta' => $validated['precio_venta'],
             'id_status'    => 1,

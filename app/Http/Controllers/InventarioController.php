@@ -121,20 +121,19 @@ class InventarioController extends Controller
             ->get();
     }
 
-    // Muestra todas las observaciones acumuladas de los movimientos activos
+    // Devuelve únicamente la información comercial autorizada para el cliente.
     public function observaciones($id)
     {
-        $observaciones = DB::table('stock')
-            ->where('producto_id', $id)
-            ->where('activo', true)
-            ->whereNotNull('observaciones')
-            ->where('observaciones', '!=', '')
-            ->pluck('observaciones');
+        $producto = DB::table('productos')
+            ->where('id', $id)
+            ->where('id_status', 1)
+            ->select('detalle_cliente')
+            ->first();
+
+        abort_unless($producto, 404);
 
         return response()->json([
-            'observaciones' => $observaciones->isEmpty()
-                ? 'Sin observaciones'
-                : $observaciones->implode("\n")
+            'detalle' => $producto->detalle_cliente ?: 'Sin descripción disponible.',
         ]);
     }
 }

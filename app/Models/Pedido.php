@@ -26,4 +26,14 @@ class Pedido extends Model
         // Cambia 'id_cliente' si tu columna de clave foránea en la tabla pedidos se llama diferente
         return $this->belongsTo(Cliente::class, 'id_cliente');
     }
+
+    public function detalles()
+    {
+        return $this->hasMany(DetallePedido::class, 'id_pedido', 'id_pedido');
+    }
+
+    public function pago()
+    {
+        return $this->hasOne(PagoPedido::class, 'id_pedido', 'id_pedido');
+    }
 }

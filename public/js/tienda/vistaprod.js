@@ -12,15 +12,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Petición AJAX a la ruta del controlador
             fetch(`/producto/${productoId}/observaciones`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('No fue posible obtener la descripción');
+                    }
+
+                    return response.json();
+                })
                 .then(data => {
-                    // Reemplaza saltos de línea por <br> para HTML
-                    modalBody.innerHTML = data.observaciones
-                        ? data.observaciones.replace(/\n/g, '<br>')
-                        : '<p class="text-muted">Sin observaciones</p>';
+                    modalBody.textContent = data.detalle || 'Sin descripción disponible';
                 })
                 .catch(() => {
-                    modalBody.innerHTML = '<p class="text-danger">Error al cargar observaciones</p>';
+                    modalBody.innerHTML = '<p class="text-danger">No fue posible cargar la descripción.</p>';
                 });
 
         });

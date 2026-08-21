@@ -19,4 +19,26 @@ class PublicRoutesTest extends TestCase
 
         $response->assertOk();
     }
+
+    /**
+     * @dataProvider protectedRoutes
+     */
+    public function test_administration_routes_require_authentication(string $route): void
+    {
+        $this->get($route)->assertRedirect('/login');
+    }
+
+    public static function protectedRoutes(): array
+    {
+        return [
+            'administration' => ['/administracion'],
+            'stock' => ['/stock'],
+            'inventory' => ['/inventario'],
+            'shipments' => ['/envios'],
+            'suppliers' => ['/provedores'],
+            'users' => ['/usuarios'],
+            'customers' => ['/clientes'],
+            'reports' => ['/reportes/reportes'],
+        ];
+    }
 }

@@ -7,7 +7,7 @@
 @section('title', 'Usuarios')
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid data-table-page">
         <b>
             <h2 class="text-center my-5">Usuarios</h2>
         </b>

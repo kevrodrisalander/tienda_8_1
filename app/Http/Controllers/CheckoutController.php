@@ -2,168 +2,175 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\DetallePedido;
 use App\Models\Pedido;
+use App\Models\PagoPedido;
+use App\Models\Producto;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class CheckoutController extends Controller
 {
     public function checkout(Request $request)
     {
-        //1. Validar sesión manualmente para evitar redirecciones del middleware auth
         if (!Auth::check()) {
-            return response()->json([
-                'error' => 'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.'
-            ], 401);
+            return response()->json(['error' => 'Tu sesión ha expirado. Inicia sesión de nuevo.'], 401);
         }
 
-        //2. Validar que el carrito llegue en la petición AJAX sin redirigir
-        if (!$request->has('cart') || empty($request->cart)) {
-            return response()->json([
-                'error' => 'El carrito está vacío o no se recibieron los productos.'
-            ], 400);
-        }
-
-        try {
-            //3. Creamos el pedido básico con el cliente logueado
-            $pedido = Pedido::create([
-                'id_cliente'   => Auth::id(),
-                'fecha_pedido' => now(),
-                'estado'       => 'pendiente'
-            ]);
-
-            //Aseguramos capturar la clave primaria correcta de tu modelo Pedido
-            $idFinal = $pedido->id_pedido ?? $pedido->id ?? null;
-
-            if (!$idFinal) {
-                return response()->json([
-                    'error' => 'El pedido se creó pero no se pudo recuperar su ID. Revisa el $primaryKey en tu Modelo Pedido.'
-                ], 500);
-            }
-
-            // =================================================================
-            // 📦 LÓGICA DE DESCUENTO MEDIANTE EXPRESIONES SQL DIRECTAS E INFALIBLES
-            // =================================================================
-// =================================================================
-// 📦 LÓGICA DE DESCUENTO FORZADA A RESTA IMPLECABLE
-// =================================================================
-$carritoData = $request->cart;
-
-if (is_string($carritoData)) {
-    $carritoData = json_decode($carritoData, true);
-}
-
-\Log::info('📥 [Checkout] Contenido recibido en el carrito:', ['cart' => $carritoData]);
-
-if (is_array($carritoData) || $carritoData instanceof \Countable) {
-// =================================================================
-// 📦 SISTEMA DE KARDEX: REGISTRO DE SALIDAS DIRECTAS
-// =================================================================
-foreach ($carritoData as $details) {
-    $id_real = intval($details['id'] ?? 0);
-    $cantidadComprada = abs(intval($details['cantidad'] ?? $details['quantity'] ?? 0));
-
-    if ($id_real > 0 && $cantidadComprada > 0) {
-
-        // 1. Insertamos la fila de SALIDA en la tabla stock (Kardex dinámico)
-        \DB::table('stock')->insert([
-            'producto_id'     => $id_real,
-            'cantidad'        => $cantidadComprada, // Se guarda el delta exacto de la venta (ej: 1 o 2)
-            'tipo_movimiento' => 'salida',
-            'estado'          => 'disponible',
-            'activo'          => true,
-            'observaciones'   => 'Venta en Checkout - Pedido #' . $idFinal,
-            'created_at'      => now(),
-            'updated_at'      => now()
+        $validated = $request->validate([
+            'cart' => ['required', 'array', 'min:1'],
+            'cart.*.id' => ['required', 'integer', 'exists:productos,id'],
+            'cart.*.cantidad' => ['required', 'integer', 'min:1'],
+            'pago.metodo' => ['required', 'in:efectivo,tarjeta,vales'],
+            'pago.monto_recibido' => ['nullable', 'numeric', 'min:0'],
+            'pago.tipo_tarjeta' => ['nullable', 'in:credito,debito'],
+            'pago.marca_tarjeta' => ['nullable', 'in:visa,mastercard,amex'],
+            'pago.ultimos_cuatro' => ['nullable', 'digits:4'],
+            'pago.emisor_vale' => ['nullable', 'string', 'max:50'],
+            'pago.referencia' => ['nullable', 'string', 'max:100'],
         ]);
 
-        // 2. Mantenemos sincronizado el acumulador de la tabla productos por rendimiento
-        // Calculamos el stock actual neto sumando entradas y restando salidas
-        $nuevoStockCalculado = \DB::table('stock')
-            ->where('producto_id', $id_real)
-            ->where('activo', true)
-            ->selectRaw("
-                SUM(
-                    CASE
-                        WHEN tipo_movimiento IN ('entrada','ajuste') THEN cantidad
-                        WHEN tipo_movimiento = 'salida' THEN -cantidad
-                        ELSE 0
-                    END
-                ) as total
-            ")->value('total') ?? 0;
+        try {
+            $pedido = DB::transaction(function () use ($validated) {
+                $clienteId = optional(Auth::user()->cliente)->id_cliente ?? Auth::id();
+                $pedido = Pedido::create([
+                    'id_cliente' => $clienteId,
+                    'fecha_pedido' => now(),
+                    'estado' => 'pendiente',
+                ]);
 
-        if ($nuevoStockCalculado < 0) {
-            $nuevoStockCalculado = 0;
+                $total = 0;
+
+                foreach ($validated['cart'] as $item) {
+                    $producto = Producto::query()->lockForUpdate()->findOrFail($item['id']);
+                    $cantidad = (int) $item['cantidad'];
+                    $existencia = max(0, (int) $producto->stock);
+
+                    if ($cantidad > $existencia) {
+                        throw ValidationException::withMessages([
+                            'cart' => "No hay existencia suficiente de {$producto->descripcion}. Disponible: {$existencia}.",
+                        ]);
+                    }
+
+                    // El nombre y precio se conservan como una fotografía de la compra.
+                    DetallePedido::create([
+                        'id_pedido' => $pedido->id_pedido,
+                        'id_producto' => $producto->id,
+                        'nombre_producto' => $producto->descripcion,
+                        'cantidad' => $cantidad,
+                        'precio_unitario' => $producto->precio_venta,
+                    ]);
+
+                    $total += $cantidad * (float) $producto->precio_venta;
+
+                    DB::table('stock')->insert([
+                        'producto_id' => $producto->id,
+                        'cantidad' => $cantidad,
+                        'tipo_movimiento' => 'salida',
+                        'estado' => 'disponible',
+                        'activo' => true,
+                        'usuario_id' => Auth::id(),
+                        'fecha_salida' => now(),
+                        'observaciones' => 'Salida por venta - Pedido #' . $pedido->id_pedido,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+
+                    $producto->update(['stock' => $existencia - $cantidad]);
+                }
+
+                $this->guardarPago($pedido, $validated['pago'], $total);
+
+                return $pedido;
+            });
+
+            return response()->json(['id_pedido' => $pedido->id_pedido]);
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            report($e);
+            return response()->json(['error' => 'No fue posible procesar la compra.'], 500);
+        }
+    }
+
+    /**
+     * Valida las reglas específicas del método y guarda un resumen seguro.
+     * La validación se repite en servidor porque el modal del navegador puede
+     * ser alterado por el usuario.
+     */
+    private function guardarPago(Pedido $pedido, array $pago, float $total): void
+    {
+        $datos = [
+            'id_pedido' => $pedido->id_pedido,
+            'metodo' => $pago['metodo'],
+            'monto' => round($total, 2),
+            'fecha_pago' => now(),
+        ];
+
+        if ($pago['metodo'] === 'efectivo') {
+            $recibido = round((float) ($pago['monto_recibido'] ?? 0), 2);
+            if ($recibido < $total) {
+                throw ValidationException::withMessages([
+                    'pago.monto_recibido' => 'El efectivo recibido es menor al total de la compra.',
+                ]);
+            }
+            $datos['monto_recibido'] = $recibido;
+            $datos['cambio'] = round($recibido - $total, 2);
         }
 
-        // Actualizamos la tabla productos
-        \DB::table('productos')
-            ->where('id', $id_real)
-            ->update([
-                'stock' => $nuevoStockCalculado
-            ]);
-
-        \Log::info("🔥 [Kardex Sincronizado] Producto ID {$id_real}. Salida registrada: {$cantidadComprada}. Stock neto final: {$nuevoStockCalculado}");
-    }
-}
-
-} else {
-    \Log::error('❌ [Checkout] El carrito no es un array válido.');
-}
-// =================================================================
-            // =================================================================
-
-            // 4. Retornamos con éxito el ID del pedido en formato JSON limpio
-            return response()->json([
-                'id_pedido' => $idFinal
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Error al procesar la compra en la base de datos: ' . $e->getMessage()
-            ], 500);
+        if ($pago['metodo'] === 'tarjeta') {
+            foreach (['tipo_tarjeta', 'marca_tarjeta', 'ultimos_cuatro', 'referencia'] as $campo) {
+                if (empty($pago[$campo])) {
+                    throw ValidationException::withMessages([
+                        "pago.{$campo}" => 'Completa todos los datos operativos de la tarjeta.',
+                    ]);
+                }
+                $datos[$campo] = $pago[$campo];
+            }
         }
+
+        if ($pago['metodo'] === 'vales') {
+            foreach (['emisor_vale', 'referencia'] as $campo) {
+                if (empty($pago[$campo])) {
+                    throw ValidationException::withMessages([
+                        "pago.{$campo}" => 'Completa el emisor y la referencia de los vales.',
+                    ]);
+                }
+                $datos[$campo] = $pago[$campo];
+            }
+        }
+
+        PagoPedido::create($datos);
     }
 
-    //Generación del Ticket PDF (DomPDF) estilo Térmico
     public function descargarTicket($id)
     {
-        // 1. Buscamos el pedido con los detalles de los productos vendidos
-        $pedido = \App\Models\Pedido::find($id);
+        $pedido = Pedido::with(['detalles', 'envio', 'pago'])->findOrFail($id);
 
-        if (!$pedido) {
-            abort(404, 'El pedido no existe.');
+        if ($pedido->detalles->isEmpty()) {
+            abort(422, 'Este pedido no contiene productos registrados y no puede generar un ticket válido.');
         }
 
-        // 2. Mapeamos los datos para que coincidan exactamente con tu estructura Blade ($cart)
-        $cart = [];
-        if (isset($pedido->detalles) && count($pedido->detalles) > 0) {
-            foreach ($pedido->detalles as $detalle) {
-                $cart[] = [
-                    'nombre'   => $detalle->producto->nombre ?? 'Producto Genérico',
-                    'cantidad' => $detalle->cantidad,
-                    'precio'   => $detalle->precio_unitario ?? $detalle->precio,
-                ];
-            }
-        } else {
-            //Simulamos datos de prueba con el total guardado si aún no configuras la tabla detalle o relaciones
-            $cart[] = [
-                'nombre'   => 'Nota de Venta #' . ($pedido->id_pedido ?? $id),
-                'cantidad' => 1,
-                'precio'   => $pedido->total ?? 0.00,
-            ];
-        }
+        $cart = $pedido->detalles->map(fn ($detalle) => [
+            'nombre' => $detalle->nombre_producto,
+            'cantidad' => (int) $detalle->cantidad,
+            'precio' => (float) $detalle->precio_unitario,
+        ])->all();
 
-        // Definimos el método de pago
-        $metodo_pago = $pedido->metodo_pago ?? 'Efectivo';
+        $pdf = Pdf::loadView('pdf.ticket', [
+            'cart' => $cart,
+            'pedido' => $pedido,
+            'esEnvio' => $pedido->envio !== null,
+            'pago' => $pedido->pago,
+            'metodo_pago' => $pedido->pago?->nombre_metodo ?? 'No registrado',
+        ]);
 
-        // 3. Cargamos la vista de tu ticket con los datos ensamblados
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.ticket', compact('cart', 'metodo_pago'));
+        // 80 mm de ancho; la altura amplia evita cortar compras con varios artículos.
+        $pdf->setPaper([0, 0, 226.77, 841.89], 'portrait');
 
-        // 4. Configuramos el tamaño de papel para estilo Ticket (Ancho de 80mm en puntos / alto adaptable)
-        $pdf->setPaper([0, 0, 226, 450]);
-
-        // 5. Lo lanzamos como un stream para que se abra directo en el navegador
-        return $pdf->stream('ticket-pedido-'.$id.'.pdf');
+        return $pdf->stream('ticket-pedido-' . $pedido->id_pedido . '.pdf');
     }
 }
